@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
-{% block title %}Documentos Requeridos - SGTE{% endblock %}
-{% block page_title %}Documentos Requeridos para Apertura de Expediente{% endblock %}
+{% block title %}{% if request.url.path == '/informaciones' %}Informaciones - SGTE{% else %}Documentos Requeridos - SGTE{% endif %}{% endblock %}
+{% block page_title %}{% if request.url.path == '/informaciones' %}Informaciones{% else %}Documentos Requeridos para Apertura de Expediente{% endif %}{% endblock %}
 
 {% block content %}
 <div class="space-y-6">

@@ -267,6 +267,17 @@ async def documentos_estudiante(request: Request, run: str):
     )
 
 
+@app.get("/informaciones", response_class=HTMLResponse)
+async def informaciones_page(request: Request):
+    """Página de informaciones sobre documentos requeridos."""
+    return templates.TemplateResponse(
+        "documentos/lista.html",
+        {
+            "request": request
+        }
+    )
+
+
 @app.get("/documentos", response_class=HTMLResponse)
 async def documentos_page(request: Request, q: str = None):
     """Página de gestión de documentos."""
