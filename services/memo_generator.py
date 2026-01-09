@@ -110,27 +110,27 @@ def obtener_datos_estudiante(run: str) -> Optional[DatosMemorando]:
             ).first()
             
             if not estudiante:
+                logger.warning(f"Estudiante {run} no encontrado")
                 return None
             
-            # Buscar proyecto activo
+            # Buscar proyecto activo (usar estudiante_run1 que es el campo correcto)
             proyecto = session.query(Proyecto).filter(
-                Proyecto.estudiante_run == run
+                Proyecto.estudiante_run1 == run
             ).order_by(Proyecto.created_at.desc()).first()
             
             comision = None
             if proyecto:
-                comision = session.query(Comision).filter(
-                    Comision.proyecto_id == proyecto.id
-                ).first()
+                # La comisión está relacionada directamente con el proyecto
+                comision = proyecto.comision
             
             return DatosMemorando(
                 run=estudiante.run,
                 nombres=estudiante.nombres,
                 apellidos=estudiante.apellidos,
                 carrera=estudiante.carrera,
-                email=estudiante.email,
+                email=getattr(estudiante, 'email', None),
                 semestre=proyecto.semestre if proyecto else None,
-                modalidad=proyecto.modalidad.value if proyecto and proyecto.modalidad else None,
+                modalidad=proyecto.modalidad_titulacion if proyecto else estudiante.modalidad,
                 titulo_proyecto=proyecto.titulo if proyecto else None,
                 profesor_guia=comision.profesor_guia if comision else None,
                 corrector_1=comision.corrector_1 if comision else None,
@@ -138,7 +138,7 @@ def obtener_datos_estudiante(run: str) -> Optional[DatosMemorando]:
             )
             
     except Exception as e:
-        logger.error(f"Error obteniendo datos estudiante: {e}")
+        logger.error(f"Error obteniendo datos estudiante {run}: {e}", exc_info=True)
         return None
 
 
@@ -306,35 +306,79 @@ def generar_memorandum(
         Tuple: (exito, bytes_documento, mensaje)
     """
     try:
+        if not HAS_DOCX:
+            return False, None, "python-docx no está instalado. Ejecuta: pip install python-docx"
+        
         datos = obtener_datos_estudiante(run)
         if not datos:
-            return False, None, f"Estudiante {run} no encontrado"
+            logger.warning(f"No se pudieron obtener datos para estudiante {run}")
+            return False, None, f"Estudiante {run} no encontrado o sin datos suficientes"
         
         datos.numero_memo = numero_memo
         datos.fecha = datetime.now().strftime("%d/%m/%Y")
         
-        # Usar plantilla si existe, sino crear por defecto
+        # Buscar plantilla en múltiples ubicaciones
         config = get_config()
-        plantilla = plantilla_path or Path(config.paths.templates_path) / "memo_template.docx"
+        plantilla = None
         
-        if plantilla.exists():
-            doc = crear_documento_desde_plantilla(plantilla, datos)
+        if plantilla_path:
+            # Si se especifica una ruta, usarla directamente
+            plantilla = Path(plantilla_path)
         else:
-            doc = crear_documento_por_defecto(datos)
+            # Buscar en varias ubicaciones posibles (en orden de prioridad)
+            posibles_rutas = [
+                Path("C:/Users/YomiT/Downloads/Plantilla_Memo_Grado.docx"),  # Plantilla del usuario
+                Path(config.paths.templates_path) / "Plantilla_Memo_Grado.docx",  # En carpeta de templates configurada
+                Path(config.paths.templates_path) / "memo_template.docx",  # Nombre alternativo
+                Path("./templates") / "Plantilla_Memo_Grado.docx",  # Relativo a raíz
+                Path("./templates") / "memo_template.docx",  # Nombre alternativo
+                Path(".") / "Plantilla_Memo_Grado.docx",  # En raíz del proyecto
+                Path(".") / "memo_template.docx",  # Nombre alternativo en raíz
+                Path(__file__).parent.parent / "templates" / "Plantilla_Memo_Grado.docx",  # Relativo al código
+            ]
+            
+            for ruta in posibles_rutas:
+                ruta_absoluta = ruta.resolve() if ruta.is_absolute() else Path.cwd() / ruta
+                if ruta_absoluta.exists():
+                    plantilla = ruta_absoluta
+                    logger.info(f"✓ Plantilla encontrada en: {plantilla}")
+                    break
+        
+        try:
+            if plantilla and plantilla.exists():
+                logger.info(f"Usando plantilla: {plantilla.absolute()}")
+                doc = crear_documento_desde_plantilla(plantilla, datos)
+            else:
+                if plantilla:
+                    logger.warning(f"⚠ Plantilla especificada no encontrada: {plantilla}")
+                logger.warning(f"⚠ No se encontró plantilla. Buscando en: {[str(p) for p in posibles_rutas]}")
+                logger.info("Usando formato por defecto (sin plantilla)")
+                doc = crear_documento_por_defecto(datos)
+        except Exception as e:
+            logger.error(f"Error creando documento para {run}: {e}", exc_info=True)
+            return False, None, f"Error creando documento: {str(e)}"
         
         # Guardar a bytes
-        buffer = io.BytesIO()
-        doc.save(buffer)
-        buffer.seek(0)
-        
-        nombre = generar_nombre_archivo(run)
-        
-        logger.info(f"Memorándum generado para {run}")
-        return True, buffer.getvalue(), nombre
+        try:
+            buffer = io.BytesIO()
+            doc.save(buffer)
+            buffer.seek(0)
+            bytes_doc = buffer.getvalue()
+            
+            if len(bytes_doc) == 0:
+                return False, None, "El documento generado está vacío"
+            
+            nombre = generar_nombre_archivo(run)
+            
+            logger.info(f"Memorándum generado exitosamente para {run}: {nombre} ({len(bytes_doc)} bytes)")
+            return True, bytes_doc, nombre
+        except Exception as e:
+            logger.error(f"Error guardando documento para {run}: {e}", exc_info=True)
+            return False, None, f"Error guardando documento: {str(e)}"
         
     except Exception as e:
-        logger.error(f"Error generando memorándum: {e}")
-        return False, None, str(e)
+        logger.error(f"Error generando memorándum para {run}: {e}", exc_info=True)
+        return False, None, f"Error inesperado: {str(e)}"
 
 
 def generar_memorandums_masivo(
@@ -353,14 +397,28 @@ def generar_memorandums_masivo(
     Returns:
         Tuple: (bytes_zip, lista_resultados)
     """
+    if not HAS_DOCX:
+        logger.error("python-docx no está instalado")
+        return b"", [ResultadoGeneracion(
+            run=run,
+            exito=False,
+            ruta=None,
+            nombre_archivo="",
+            error="python-docx no está instalado"
+        ) for run in runs]
+    
     resultados = []
     documentos = []
+    
+    logger.info(f"Iniciando generación de {len(runs)} memorándums")
     
     for i, run in enumerate(runs):
         if callback:
             callback(i + 1, len(runs), run)
         
         numero = str(numero_memo_inicio + i).zfill(3)
+        logger.debug(f"Generando memo {i+1}/{len(runs)} para {run} (número: {numero})")
+        
         exito, doc_bytes, info = generar_memorandum(run, numero_memo=numero)
         
         if exito:
@@ -371,7 +429,9 @@ def generar_memorandums_masivo(
                 ruta=None,
                 nombre_archivo=info
             ))
+            logger.debug(f"✓ Memorándum generado para {run}")
         else:
+            logger.warning(f"✗ Error generando memorándum para {run}: {info}")
             resultados.append(ResultadoGeneracion(
                 run=run,
                 exito=False,
@@ -380,13 +440,22 @@ def generar_memorandums_masivo(
                 error=info
             ))
     
-    # Crear ZIP
-    zip_buffer = io.BytesIO()
-    with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zf:
-        for nombre, contenido in documentos:
-            zf.writestr(nombre, contenido)
+    # Crear ZIP solo si hay documentos
+    if len(documentos) == 0:
+        logger.error("No se generó ningún memorándum. Todos fallaron.")
+        return b"", resultados
     
-    zip_buffer.seek(0)
-    
-    logger.info(f"ZIP generado con {len(documentos)} memorándums")
-    return zip_buffer.getvalue(), resultados
+    try:
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zf:
+            for nombre, contenido in documentos:
+                zf.writestr(nombre, contenido)
+        
+        zip_buffer.seek(0)
+        zip_bytes = zip_buffer.getvalue()
+        
+        logger.info(f"✓ ZIP generado exitosamente: {len(documentos)}/{len(runs)} memorándums generados ({len(zip_bytes)} bytes)")
+        return zip_bytes, resultados
+    except Exception as e:
+        logger.error(f"Error creando ZIP: {e}", exc_info=True)
+        return b"", resultados

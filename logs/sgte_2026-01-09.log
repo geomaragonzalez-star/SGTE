@@ -56,3 +56,24 @@
 2026-01-09 13:20:57.606 | INFO     | services.pdf_splitter_optimized:procesar_pdf_masivo:275 - Página 48 asignada a 19.361.540-6
 2026-01-09 13:20:57.665 | INFO     | services.pdf_splitter_optimized:procesar_pdf_masivo:275 - Página 53 asignada a 20.120.427-5
 2026-01-09 13:20:57.693 | INFO     | services.pdf_splitter_optimized:procesar_pdf_masivo:275 - Página 54 asignada a 20.120.427-5
+2026-01-09 14:49:59.754 | ERROR    | database.connection:get_session_context:233 - Error en transacción, rollback ejecutado: type object 'Proyecto' has no attribute 'estudiante_run'
+2026-01-09 14:49:59.788 | ERROR    | services.memo_generator:obtener_datos_estudiante:141 - Error obteniendo datos estudiante: type object 'Proyecto' has no attribute 'estudiante_run'
+2026-01-09 14:49:59.792 | ERROR    | database.connection:get_session_context:233 - Error en transacción, rollback ejecutado: type object 'Proyecto' has no attribute 'estudiante_run'
+2026-01-09 14:49:59.792 | ERROR    | services.memo_generator:obtener_datos_estudiante:141 - Error obteniendo datos estudiante: type object 'Proyecto' has no attribute 'estudiante_run'
+2026-01-09 14:49:59.804 | INFO     | services.memo_generator:generar_memorandums_masivo:391 - ZIP generado con 0 memorándums
+2026-01-09 14:50:02.902 | ERROR    | database.connection:get_session_context:233 - Error en transacción, rollback ejecutado: type object 'Proyecto' has no attribute 'estudiante_run'
+2026-01-09 14:50:02.902 | ERROR    | services.memo_generator:obtener_datos_estudiante:141 - Error obteniendo datos estudiante: type object 'Proyecto' has no attribute 'estudiante_run'
+2026-01-09 14:50:02.904 | ERROR    | database.connection:get_session_context:233 - Error en transacción, rollback ejecutado: type object 'Proyecto' has no attribute 'estudiante_run'
+2026-01-09 14:50:02.904 | ERROR    | services.memo_generator:obtener_datos_estudiante:141 - Error obteniendo datos estudiante: type object 'Proyecto' has no attribute 'estudiante_run'
+2026-01-09 14:50:02.906 | INFO     | services.memo_generator:generar_memorandums_masivo:391 - ZIP generado con 0 memorándums
+2026-01-09 14:53:49.720 | ERROR    | database.connection:get_session_context:233 - Error en transacción, rollback ejecutado: type object 'Proyecto' has no attribute 'estudiante_run'
+2026-01-09 14:53:49.730 | ERROR    | services.memo_generator:obtener_datos_estudiante:141 - Error obteniendo datos estudiante: type object 'Proyecto' has no attribute 'estudiante_run'
+2026-01-09 14:53:49.731 | ERROR    | database.connection:get_session_context:233 - Error en transacción, rollback ejecutado: type object 'Proyecto' has no attribute 'estudiante_run'
+2026-01-09 14:53:49.731 | ERROR    | services.memo_generator:obtener_datos_estudiante:141 - Error obteniendo datos estudiante: type object 'Proyecto' has no attribute 'estudiante_run'
+2026-01-09 14:53:49.734 | ERROR    | database.connection:get_session_context:233 - Error en transacción, rollback ejecutado: type object 'Proyecto' has no attribute 'estudiante_run'
+2026-01-09 14:53:49.734 | ERROR    | services.memo_generator:obtener_datos_estudiante:141 - Error obteniendo datos estudiante: type object 'Proyecto' has no attribute 'estudiante_run'
+2026-01-09 14:53:49.734 | INFO     | services.memo_generator:generar_memorandums_masivo:391 - ZIP generado con 0 memorándums
+2026-01-09 15:00:25.064 | DEBUG    | services.memo_generator:generar_memorandum:329 - Usando formato por defecto (sin plantilla)
+2026-01-09 15:00:25.146 | INFO     | services.memo_generator:generar_memorandum:347 - Memorándum generado exitosamente para 19.669.221-5: Memo_Apertura_196692215_20260109.docx (37051 bytes)
+2026-01-09 15:00:25.147 | DEBUG    | services.memo_generator:generar_memorandums_masivo:406 - ✓ Memorándum generado para 19.669.221-5
+2026-01-09 15:00:25.147 | INFO     | services.memo_generator:generar_memorandums_masivo:431 - ✓ ZIP generado exitosamente: 1/1 memorándums generados (34763 bytes)

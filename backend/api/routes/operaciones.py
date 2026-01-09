@@ -32,19 +32,23 @@ async def generar_memos_masivo(request: OperacionMasivaRequest):
         if not request.runs:
             raise HTTPException(status_code=400, detail="Debe seleccionar al menos un estudiante")
         
-        # Callback para progreso (simplificado para API)
-        resultados = []
+        # Generar memorándums
         zip_bytes, resultados_list = generar_memorandums_masivo(
             request.runs,
             numero_memo_inicio=1,
-            callback=None  # En API no podemos hacer callback en tiempo real fácilmente
+            callback=None
         )
         
         exitosos = sum(1 for r in resultados_list if r.exito)
         fallidos = len(resultados_list) - exitosos
         
+        # Si no se generó ningún memorándum, devolver error con detalles
         if exitosos == 0:
-            raise HTTPException(status_code=400, detail="No se pudo generar ningún memorándum")
+            errores = [f"{r.run}: {r.error}" for r in resultados_list if r.error]
+            mensaje = f"No se pudo generar ningún memorándum. Errores: {'; '.join(errores[:5])}"
+            if len(errores) > 5:
+                mensaje += f" ... y {len(errores) - 5} más"
+            raise HTTPException(status_code=400, detail=mensaje)
         
         filename = f"memorandums_{datetime.now().strftime('%Y%m%d_%H%M%S')}.zip"
         
@@ -54,13 +58,16 @@ async def generar_memos_masivo(request: OperacionMasivaRequest):
             headers={
                 "Content-Disposition": f"attachment; filename={filename}",
                 "X-Exitosos": str(exitosos),
-                "X-Fallidos": str(fallidos)
+                "X-Fallidos": str(fallidos),
+                "X-Total": str(len(request.runs))
             }
         )
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        import traceback
+        error_detail = f"{str(e)}\n\nTraceback:\n{traceback.format_exc()}"
+        raise HTTPException(status_code=500, detail=error_detail)
 
 
 @router.post("/enviar-correos")
