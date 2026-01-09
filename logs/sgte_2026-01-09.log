@@ -38,3 +38,21 @@
 2026-01-09 12:55:55.278 | INFO     | database.connection:get_engine:87 - 🔌 Creando engine SQLite (CACHED): ./data/sgte.db
 2026-01-09 12:55:55.329 | DEBUG    | database.connection:_get_session_factory:166 - 📦 SessionLocal factory creado
 2026-01-09 12:55:55.394 | DEBUG    | database.connection:set_sqlite_pragma:142 - ✅ SQLite PRAGMAs optimizados para red aplicados
+2026-01-09 13:20:56.324 | INFO     | services.pdf_splitter_optimized:procesar_pdf_masivo:233 - Procesando PDF con 56 páginas
+2026-01-09 13:20:56.566 | INFO     | services.pdf_splitter_optimized:procesar_pdf_masivo:275 - Página 15 asignada a 19.569.135-5
+2026-01-09 13:20:56.587 | INFO     | services.pdf_splitter_optimized:procesar_pdf_masivo:275 - Página 16 asignada a 19.569.135-5
+2026-01-09 13:20:56.640 | INFO     | services.pdf_splitter_optimized:procesar_pdf_masivo:275 - Página 21 asignada a 20.099.743-3
+2026-01-09 13:20:56.660 | INFO     | services.pdf_splitter_optimized:procesar_pdf_masivo:275 - Página 22 asignada a 20.099.743-3
+2026-01-09 13:20:56.851 | INFO     | services.pdf_splitter_optimized:procesar_pdf_masivo:275 - Página 47 asignada a 19.361.540-6
+2026-01-09 13:20:56.879 | INFO     | services.pdf_splitter_optimized:procesar_pdf_masivo:275 - Página 48 asignada a 19.361.540-6
+2026-01-09 13:20:56.933 | INFO     | services.pdf_splitter_optimized:procesar_pdf_masivo:275 - Página 53 asignada a 20.120.427-5
+2026-01-09 13:20:56.960 | INFO     | services.pdf_splitter_optimized:procesar_pdf_masivo:275 - Página 54 asignada a 20.120.427-5
+2026-01-09 13:20:56.983 | INFO     | services.pdf_splitter_optimized:procesar_pdf_masivo:233 - Procesando PDF con 56 páginas
+2026-01-09 13:20:57.191 | INFO     | services.pdf_splitter_optimized:procesar_pdf_masivo:275 - Página 15 asignada a 19.569.135-5
+2026-01-09 13:20:57.225 | INFO     | services.pdf_splitter_optimized:procesar_pdf_masivo:275 - Página 16 asignada a 19.569.135-5
+2026-01-09 13:20:57.294 | INFO     | services.pdf_splitter_optimized:procesar_pdf_masivo:275 - Página 21 asignada a 20.099.743-3
+2026-01-09 13:20:57.321 | INFO     | services.pdf_splitter_optimized:procesar_pdf_masivo:275 - Página 22 asignada a 20.099.743-3
+2026-01-09 13:20:57.575 | INFO     | services.pdf_splitter_optimized:procesar_pdf_masivo:275 - Página 47 asignada a 19.361.540-6
+2026-01-09 13:20:57.606 | INFO     | services.pdf_splitter_optimized:procesar_pdf_masivo:275 - Página 48 asignada a 19.361.540-6
+2026-01-09 13:20:57.665 | INFO     | services.pdf_splitter_optimized:procesar_pdf_masivo:275 - Página 53 asignada a 20.120.427-5
+2026-01-09 13:20:57.693 | INFO     | services.pdf_splitter_optimized:procesar_pdf_masivo:275 - Página 54 asignada a 20.120.427-5
