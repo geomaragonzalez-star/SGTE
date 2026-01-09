@@ -311,11 +311,11 @@ async function mostrarChecklist(run, nombre, forceReload = false) {
                 
                 const estado = item.validado 
                     ? '<span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Validado</span>' 
-                    : item.tiene_documento 
-                        ? '<span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Pendiente Validación</span>' 
-                        : '<span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Faltante</span>';
+                    : !item.tiene_documento 
+                        ? '<span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Faltante</span>'
+                        : '';
                 
-                // Botón de subir solo si no está validado
+                // Botón de subir solo si no tiene documento o no está validado
                 const botonSubir = !item.validado ? `
                     <label class="cursor-pointer">
                         <input type="file" accept=".pdf" class="hidden" onchange="subirDocumento('${run}', '${item.tipo}', this)">
@@ -332,6 +332,13 @@ async function mostrarChecklist(run, nombre, forceReload = false) {
                     </button>
                 ` : '';
                 
+                // Botón de eliminar solo si tiene documento y no está validado
+                const botonEliminar = item.tiene_documento && item.id && !item.validado ? `
+                    <button onclick="eliminarDocumento(${item.id}, '${run}', '${item.nombre}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-semibold">
+                        <i class="fas fa-trash mr-1"></i>Eliminar
+                    </button>
+                ` : '';
+                
                 html += `
                     <div class="flex items-center justify-between p-3 border rounded-lg ${item.validado ? 'bg-green-50 border-green-200' : item.tiene_documento ? 'bg-yellow-50 border-yellow-200' : 'bg-red-50 border-red-200'}">
                         <div class="flex items-center space-x-3 flex-1">
@@ -341,6 +348,7 @@ async function mostrarChecklist(run, nombre, forceReload = false) {
                         <div class="flex items-center space-x-2">
                             ${estado}
                             ${botonPreview}
+                            ${botonEliminar}
                             ${botonSubir}
                         </div>
                     </div>
@@ -538,6 +546,58 @@ function cerrarPreview() {
     
     modal.classList.add('hidden');
     iframe.src = '';
+}
+
+async function eliminarDocumento(docId, run, nombre) {
+    if (!confirm(`¿Está seguro de eliminar el documento "${nombre}"?`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/documentos/${docId}`, {
+            method: 'DELETE'
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({ detail: 'Error desconocido' }));
+            throw new Error(errorData.detail || 'Error eliminando documento');
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Obtener nombre del estudiante
+            const rowElement = document.getElementById(`row-${run}`);
+            let nombreEstudiante = 'Estudiante';
+            if (rowElement) {
+                nombreEstudiante = rowElement.getAttribute('data-nombre') || estudiantesNombres[run] || 'Estudiante';
+            } else {
+                nombreEstudiante = estudiantesNombres[run] || 'Estudiante';
+            }
+            
+            // Pequeño delay para asegurar que la BD se actualice
+            await new Promise(resolve => setTimeout(resolve, 300));
+            
+            // Actualizar estado en la columna de checklist
+            try {
+                await actualizarEstadoChecklist(run);
+            } catch (e) {
+                console.warn('Error actualizando estado:', e);
+            }
+            
+            // Recargar checklist si está abierto
+            const rowId = `checklist-${run}`;
+            const row = document.getElementById(rowId);
+            if (row && !row.classList.contains('hidden')) {
+                await mostrarChecklist(run, nombreEstudiante, true);
+            }
+        } else {
+            throw new Error(result.message || 'Error eliminando documento');
+        }
+    } catch (error) {
+        console.error('Error eliminando documento:', error);
+        alert('Error: ' + error.message);
+    }
 }
 </script>
 

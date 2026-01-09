@@ -294,6 +294,44 @@ async def previsualizar_documento(doc_id: int):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.delete("/{doc_id}")
+async def eliminar_documento(doc_id: int):
+    """Elimina un documento y su archivo asociado."""
+    try:
+        with get_session_context() as session:
+            doc = session.query(Documento).filter(Documento.id == doc_id).first()
+            if not doc:
+                raise HTTPException(status_code=404, detail="Documento no encontrado")
+            
+            # Guardar información antes de eliminar
+            run_estudiante = doc.estudiante_run
+            ruta_archivo = doc.path
+            
+            # Eliminar archivo físico si existe
+            if ruta_archivo:
+                try:
+                    archivo_path = Path(ruta_archivo)
+                    if archivo_path.exists():
+                        archivo_path.unlink()
+                except Exception as e:
+                    # Log el error pero no fallar si el archivo no existe
+                    print(f"Advertencia: No se pudo eliminar el archivo {ruta_archivo}: {e}")
+            
+            # Eliminar de la BD
+            session.delete(doc)
+            session.commit()
+            
+            return {
+                "success": True,
+                "message": "Documento eliminado correctamente",
+                "run": run_estudiante
+            }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.put("/{doc_id}/validar")
 async def validar_documento(doc_id: int, validado: bool = True):
     """Valida o invalida un documento."""

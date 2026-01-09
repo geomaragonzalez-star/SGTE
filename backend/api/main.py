@@ -63,6 +63,10 @@ async def dashboard_page(request: Request):
     """Dashboard principal."""
     # Obtener métricas desde la API
     from backend.api.routes.dashboard import obtener_metricas, obtener_distribucion_carreras, obtener_ultimos_registros
+    from backend.api.routes.reportes import obtener_estadisticas
+    from datetime import datetime
+    import os
+    from pathlib import Path
     
     try:
         metricas_resp = await obtener_metricas()
@@ -86,6 +90,31 @@ async def dashboard_page(request: Request):
         distribucion = []
         ultimos = []
     
+    # Obtener estadísticas de reportes
+    try:
+        stats_resp = await obtener_estadisticas()
+        stats = stats_resp["data"]
+    except:
+        stats = {
+            "total_estudiantes": 0,
+            "total_proyectos": 0,
+            "documentos_cargados": 0,
+            "acciones_bitacora": 0
+        }
+    
+    # Información de base de datos
+    config = get_config()
+    db_path = Path(config.paths.db_path)
+    db_modified = None
+    db_size = 0
+    
+    if db_path.exists():
+        stat = os.stat(db_path)
+        db_modified = datetime.fromtimestamp(stat.st_mtime).strftime("%d/%m/%Y %H:%M:%S")
+        db_size = stat.st_size / 1024  # KB
+    
+    fecha_actualizacion = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    
     return templates.TemplateResponse(
         "dashboard.html",
         {
@@ -93,7 +122,10 @@ async def dashboard_page(request: Request):
             "metricas": metricas,
             "distribucion": distribucion,
             "ultimos": ultimos,
-            "fecha_actualizacion": datetime.now().strftime("%d/%m/%Y %H:%M")
+            "fecha_actualizacion": fecha_actualizacion,
+            "stats": stats,
+            "db_modified": db_modified,
+            "db_size": db_size
         }
     )
 
@@ -268,39 +300,6 @@ async def operaciones_masivas_page(request: Request):
         {
             "request": request,
             "estudiantes": estudiantes_data
-        }
-    )
-
-
-@app.get("/reportes", response_class=HTMLResponse)
-async def reportes_page(request: Request):
-    """Página de reportes."""
-    from backend.api.routes.reportes import obtener_estadisticas
-    
-    try:
-        stats_resp = await obtener_estadisticas()
-        stats = stats_resp["data"]
-    except:
-        stats = {
-            "total_estudiantes": 0,
-            "total_proyectos": 0,
-            "documentos_cargados": 0,
-            "acciones_bitacora": 0
-        }
-    
-    config = get_config()
-    from pathlib import Path
-    db_path = Path(config.paths.db_path)
-    db_size = db_path.stat().st_size / 1024 if db_path.exists() else 0
-    db_modified = datetime.fromtimestamp(db_path.stat().st_mtime) if db_path.exists() else None
-    
-    return templates.TemplateResponse(
-        "reportes/lista.html",
-        {
-            "request": request,
-            "stats": stats,
-            "db_size": db_size,
-            "db_modified": db_modified.strftime("%d/%m/%Y %H:%M") if db_modified else None
         }
     )
 
