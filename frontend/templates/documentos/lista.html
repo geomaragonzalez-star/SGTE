@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block title %}Documentos Requeridos - SGTE{% endblock %}
+{% block page_title %}Documentos Requeridos para Apertura de Expediente{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Introducción -->
+    <div class="bg-gradient-to-r from-teal-500 to-teal-700 rounded-lg p-8 text-white">
+        <h2 class="text-3xl font-bold mb-4">Documentos Habilitantes</h2>
+        <p class="text-teal-50 text-lg">
+            Para solicitar la apertura de expediente en Registro Curricular, el estudiante debe contar con todos los documentos requeridos validados.
+        </p>
+    </div>
+
+    <!-- Documentos Requeridos -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-2xl font-semibold text-gray-800 mb-6">Documentos Requeridos</h3>
+        
+        <div class="space-y-6">
+            <!-- Bienestar Estudiantil -->
+            <div class="border-l-4 border-blue-500 pl-6 py-4 bg-blue-50 rounded-r-lg">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-2">
+                            <i class="fas fa-heart text-blue-500 mr-2"></i>Bienestar Estudiantil
+                        </h4>
+                        <p class="text-gray-700 mb-2">
+                            Constancia que certifica que el estudiante no tiene deudas pendientes con el área de Bienestar Estudiantil. 
+                            Este documento debe ser emitido por la unidad correspondiente y debe estar vigente.
+                        </p>
+                        <div class="text-sm text-gray-600">
+                            <strong>Requisito:</strong> Documento oficial en formato PDF, emitido por Bienestar Estudiantil.
+                        </div>
+                    </div>
+                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 ml-4">
+                        Requerido
+                    </span>
+                </div>
+            </div>
+
+            <!-- Finanzas -->
+            <div class="border-l-4 border-green-500 pl-6 py-4 bg-green-50 rounded-r-lg">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-2">
+                            <i class="fas fa-dollar-sign text-green-500 mr-2"></i>Finanzas
+                        </h4>
+                        <p class="text-gray-700 mb-2">
+                            Constancia de no adeudo financiero. El estudiante debe presentar <strong>uno de los siguientes</strong>:
+                        </p>
+                        <ul class="list-disc list-inside text-gray-700 mb-2 space-y-1 ml-4">
+                            <li><strong>Finanzas (Título):</strong> Para estudiantes que optan por el título profesional.</li>
+                            <li><strong>Finanzas (Licenciatura):</strong> Para estudiantes que optan por la licenciatura.</li>
+                        </ul>
+                        <div class="text-sm text-gray-600">
+                            <strong>Requisito:</strong> Documento oficial en formato PDF, emitido por la unidad de Finanzas.
+                        </div>
+                    </div>
+                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 ml-4">
+                        Requerido (Uno)
+                    </span>
+                </div>
+            </div>
+
+            <!-- Biblioteca -->
+            <div class="border-l-4 border-purple-500 pl-6 py-4 bg-purple-50 rounded-r-lg">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-2">
+                            <i class="fas fa-book text-purple-500 mr-2"></i>Biblioteca
+                        </h4>
+                        <p class="text-gray-700 mb-2">
+                            Constancia de devolución de materiales bibliográficos y ausencia de multas. 
+                            Este documento certifica que el estudiante ha cumplido con todas sus obligaciones con la biblioteca.
+                        </p>
+                        <div class="text-sm text-gray-600">
+                            <strong>Requisito:</strong> Documento oficial en formato PDF, emitido por la Biblioteca. 
+                            Puede procesarse masivamente mediante el módulo PDF Splitter.
+                        </div>
+                    </div>
+                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800 ml-4">
+                        Requerido
+                    </span>
+                </div>
+            </div>
+
+            <!-- SDT (Secretaría Docente) -->
+            <div class="border-l-4 border-orange-500 pl-6 py-4 bg-orange-50 rounded-r-lg">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-2">
+                            <i class="fas fa-file-alt text-orange-500 mr-2"></i>SDT (Secretaría Docente)
+                        </h4>
+                        <p class="text-gray-700 mb-2">
+                            Documento emitido por la Secretaría Docente que certifica el cumplimiento de requisitos académicos 
+                            y administrativos específicos del proceso de titulación.
+                        </p>
+                        <div class="text-sm text-gray-600">
+                            <strong>Requisito:</strong> Documento oficial en formato PDF, emitido por Secretaría Docente.
+                        </div>
+                    </div>
+                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-800 ml-4">
+                        Requerido
+                    </span>
+                </div>
+            </div>
+
+            <!-- Memorándum de Solicitud -->
+            <div class="border-l-4 border-teal-500 pl-6 py-4 bg-teal-50 rounded-r-lg">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-2">
+                            <i class="fas fa-file-signature text-teal-500 mr-2"></i>Memorándum de Solicitud
+                        </h4>
+                        <p class="text-gray-700 mb-2">
+                            Documento formal de solicitud de apertura de expediente dirigido a Registro Curricular. 
+                            Este documento es generado automáticamente por el sistema y debe ser firmado antes de su envío.
+                        </p>
+                        <div class="text-sm text-gray-600">
+                            <strong>Requisito:</strong> Generado automáticamente por el sistema. Puede generarse individual o masivamente 
+                            desde el módulo de Operaciones Masivas.
+                        </div>
+                    </div>
+                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-teal-100 text-teal-800 ml-4">
+                        Requerido
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Proceso de Validación -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Proceso de Validación</h3>
+        <div class="space-y-4">
+            <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center text-white font-bold">1</div>
+                <div>
+                    <h4 class="font-semibold text-gray-800 mb-1">Carga de Documentos</h4>
+                    <p class="text-gray-600">El estudiante o funcionario carga los documentos PDF en el sistema. Los archivos se almacenan en la carpeta del estudiante.</p>
+                </div>
+            </div>
+            <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center text-white font-bold">2</div>
+                <div>
+                    <h4 class="font-semibold text-gray-800 mb-1">Validación</h4>
+                    <p class="text-gray-600">Un funcionario autorizado revisa y valida cada documento. Solo los documentos validados cuentan para el checklist.</p>
+                </div>
+            </div>
+            <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center text-white font-bold">3</div>
+                <div>
+                    <h4 class="font-semibold text-gray-800 mb-1">Generación de Memorándum</h4>
+                    <p class="text-gray-600">Una vez validados todos los documentos, se genera el memorándum de solicitud automáticamente.</p>
+                </div>
+            </div>
+            <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center text-white font-bold">4</div>
+                <div>
+                    <h4 class="font-semibold text-gray-800 mb-1">Envío a Registro Curricular</h4>
+                    <p class="text-gray-600">El sistema envía automáticamente el correo con todos los documentos adjuntos a Registro Curricular.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información Adicional -->
+    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-lg">
+        <div class="flex items-start">
+            <i class="fas fa-info-circle text-yellow-600 text-2xl mr-4"></i>
+            <div>
+                <h4 class="font-semibold text-yellow-800 mb-2">Información Importante</h4>
+                <ul class="text-yellow-700 space-y-1 list-disc list-inside">
+                    <li>Los documentos deben estar en formato PDF.</li>
+                    <li>Los archivos se almacenan en el sistema de archivos local, no en la base de datos.</li>
+                    <li>La base de datos solo almacena referencias (rutas) a los archivos.</li>
+                    <li>Para gestionar documentos de un estudiante específico, use la opción "Ver" en la lista de estudiantes.</li>
+                    <li>El sistema bloquea el avance hasta que todos los documentos requeridos estén validados.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Acciones Rápidas -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">Acciones Rápidas</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <a href="/estudiantes" class="bg-teal-500 hover:bg-teal-600 text-white px-6 py-4 rounded-lg font-semibold text-center transition">
+                <i class="fas fa-users mr-2"></i>Ver Estudiantes
+            </a>
+            <a href="/operaciones-masivas" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-4 rounded-lg font-semibold text-center transition">
+                <i class="fas fa-bolt mr-2"></i>Operaciones Masivas
+            </a>
+            <a href="/pdf-splitter" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-4 rounded-lg font-semibold text-center transition">
+                <i class="fas fa-cut mr-2"></i>PDF Splitter
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

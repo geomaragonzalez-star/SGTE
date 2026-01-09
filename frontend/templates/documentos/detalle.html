@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Documentos - {{ estudiante.nombre_completo }} - SGTE{% endblock %}
+{% block page_title %}Documentos de {{ estudiante.nombre_completo }}{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Info del Estudiante -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="grid grid-cols-3 gap-4">
+            <div>
+                <div class="text-sm text-gray-600 mb-1">Estudiante</div>
+                <div class="font-semibold text-gray-800">{{ estudiante.nombre_completo }}</div>
+            </div>
+            <div>
+                <div class="text-sm text-gray-600 mb-1">Carrera</div>
+                <div class="font-semibold text-gray-800">{{ estudiante.carrera }}</div>
+            </div>
+            <div>
+                <div class="text-sm text-gray-600 mb-1">RUN</div>
+                <div class="font-semibold text-gray-800">{{ estudiante.run }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checklist de Documentos -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">Checklist de Documentos</h3>
+        <div id="documentos-checklist" class="space-y-3">
+            <!-- Se cargará dinámicamente con JavaScript -->
+        </div>
+    </div>
+
+    <!-- Upload de Documento -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4"><i class="fas fa-upload mr-2"></i>Subir Documento</h3>
+        <form id="upload-form" enctype="multipart/form-data" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de documento</label>
+                <select name="tipo" id="tipo-documento" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    <option value="bienestar">Bienestar Estudiantil</option>
+                    <option value="finanzas_titulo">Finanzas (Título)</option>
+                    <option value="finanzas_licencia">Finanzas (Licenciatura)</option>
+                    <option value="biblioteca">Biblioteca</option>
+                    <option value="sdt">SDT (Secretaría Docente)</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Archivo PDF</label>
+                <input type="file" name="archivo" accept=".pdf" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            </div>
+            <button type="submit" class="w-full bg-teal-500 hover:bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold">
+                Guardar Documento
+            </button>
+        </form>
+    </div>
+</div>
+
+{% block extra_scripts %}
+<script>
+const run = '{{ estudiante.run }}';
+
+// Cargar documentos al cargar la página
+async function cargarDocumentos() {
+    try {
+        const response = await api.get(`/documentos/estudiante/${run}`);
+        const documentos = response.data;
+        
+        const tipos = {
+            'bienestar': 'Bienestar Estudiantil',
+            'finanzas_titulo': 'Finanzas (Título)',
+            'finanzas_licencia': 'Finanzas (Licenciatura)',
+            'biblioteca': 'Biblioteca',
+            'sdt': 'SDT (Secretaría Docente)'
+        };
+        
+        const container = document.getElementById('documentos-checklist');
+        container.innerHTML = '';
+        
+        for (const [tipo, nombre] of Object.entries(tipos)) {
+            const doc = documentos[tipo];
+            const estado = doc ? (doc.validado ? 'validado' : 'pendiente') : 'faltante';
+            const icono = doc ? (doc.validado ? '<i class="fas fa-check-circle text-green-500"></i>' : '<i class="fas fa-paperclip text-blue-500"></i>') : '<i class="fas fa-circle text-gray-300"></i>';
+            
+            const div = document.createElement('div');
+            div.className = `p-4 rounded-lg border-2 ${estado === 'validado' ? 'bg-green-50 border-green-200' : estado === 'pendiente' ? 'bg-yellow-50 border-yellow-200' : 'bg-gray-50 border-gray-200'}`;
+            div.innerHTML = `
+                <div class="flex justify-between items-center">
+                    <div>
+                        <strong>${icono} ${nombre}</strong>
+                        <div class="text-sm text-gray-600 mt-1">${estado === 'validado' ? 'Validado' : estado === 'pendiente' ? 'Pendiente validación' : 'Faltante'}</div>
+                    </div>
+                    ${doc && !doc.validado ? `
+                        <button onclick="validarDocumento(${doc.id})" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg text-sm">
+                            Validar
+                        </button>
+                    ` : ''}
+                </div>
+            `;
+            container.appendChild(div);
+        }
+    } catch (error) {
+        console.error('Error cargando documentos:', error);
+    }
+}
+
+async function validarDocumento(docId) {
+    try {
+        await api.put(`/documentos/${docId}/validar`, { validado: true });
+        alert('Documento validado');
+        cargarDocumentos();
+    } catch (error) {
+        alert('Error validando documento');
+    }
+}
+
+// Manejar upload
+document.getElementById('upload-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    formData.append('run', run);
+    
+    try {
+        const response = await fetch('/api/documentos/upload', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        if (result.success) {
+            alert('Documento guardado correctamente');
+            e.target.reset();
+            cargarDocumentos();
+        } else {
+            alert('Error: ' + result.message);
+        }
+    } catch (error) {
+        alert('Error subiendo documento');
+    }
+});
+
+// Cargar al inicio
+cargarDocumentos();
+</script>
+{% endblock %}
+{% endblock %}

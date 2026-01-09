@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - SGTE{% endblock %}
+{% block page_title %}Sistema de Gestión de Titulaciones{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <!-- Hero Section -->
+    <div class="bg-gradient-to-r from-teal-500 to-teal-700 rounded-lg p-8 text-white">
+        <div class="flex items-center space-x-4 mb-4">
+            <i class="fas fa-graduation-cap text-6xl"></i>
+            <div>
+                <h1 class="text-4xl font-bold">SGTE</h1>
+                <p class="text-teal-100 text-lg">Sistema de Gestión de Titulaciones y Expedientes</p>
+            </div>
+        </div>
+        <p class="text-teal-50 max-w-2xl">
+            Gestione expedientes, documentos y procesos de titulación de forma eficiente
+        </p>
+    </div>
+
+    <!-- Accesos Rápidos -->
+    <div>
+        <h2 class="text-2xl font-bold text-gray-800 mb-4"><i class="fas fa-bolt mr-2"></i>Accesos Rápidos</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <a href="/estudiantes" class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
+                <i class="fas fa-user text-4xl mb-3 text-teal-500"></i>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Estudiantes</h3>
+                <p class="text-gray-600 text-sm">Gestione el registro y datos de estudiantes</p>
+            </a>
+            
+            <a href="/documentos" class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
+                <i class="fas fa-file-alt text-4xl mb-3 text-blue-500"></i>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Documentos</h3>
+                <p class="text-gray-600 text-sm">Valide y gestione documentos habilitantes</p>
+            </a>
+            
+            <a href="/operaciones-masivas" class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
+                <i class="fas fa-bolt text-4xl mb-3 text-purple-500"></i>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Operaciones</h3>
+                <p class="text-gray-600 text-sm">Procesos masivos y automatización</p>
+            </a>
+        </div>
+    </div>
+
+    <!-- Estado del Sistema -->
+    <div>
+        <h2 class="text-2xl font-bold text-gray-800 mb-4"><i class="fas fa-info-circle mr-2"></i>Estado del Sistema</h2>
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <h4 class="font-semibold text-gray-700 mb-2"><i class="fas fa-cog mr-2"></i>Configuración</h4>
+                    <div class="text-sm text-gray-600 space-y-1">
+                        <p>Base de datos: SQLite</p>
+                        <p>Versión: 2.0</p>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-700 mb-2"><i class="fas fa-database mr-2"></i>Base de Datos</h4>
+                    <div class="text-sm text-gray-600 space-y-1">
+                        <p>Estado: Conectado</p>
+                        <p>Modo: Producción</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

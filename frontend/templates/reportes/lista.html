@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Reportes - SGTE{% endblock %}
+{% block page_title %}Reportes y Exportación{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <h2 class="text-2xl font-bold text-gray-800">Reportes Disponibles</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Reporte Maestro -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <i class="fas fa-file-alt text-4xl mb-4 text-teal-500"></i>
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">Reporte Maestro</h3>
+            <p class="text-gray-600 text-sm mb-4">Todos los datos en formato institucional</p>
+            <a href="/api/reportes/maestro" class="block w-full bg-teal-500 hover:bg-teal-600 text-white px-6 py-2 rounded-lg font-semibold text-center transition">
+                Generar Reporte Maestro
+            </a>
+        </div>
+        
+        <!-- Lista de Estudiantes -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <i class="fas fa-users text-4xl mb-4 text-blue-500"></i>
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">Lista de Estudiantes</h3>
+            <p class="text-gray-600 text-sm mb-4">Directorio completo de estudiantes</p>
+            <a href="/api/reportes/estudiantes" class="block w-full bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold text-center transition">
+                Exportar Estudiantes
+            </a>
+        </div>
+        
+        <!-- Bitácora -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <i class="fas fa-scroll text-4xl mb-4 text-purple-500"></i>
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">Bitácora de Acciones</h3>
+            <p class="text-gray-600 text-sm mb-4">Historial de operaciones del sistema</p>
+            <a href="/api/reportes/bitacora" class="block w-full bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-lg font-semibold text-center transition">
+                Exportar Bitácora
+            </a>
+        </div>
+    </div>
+    
+    <!-- Respaldo de BD -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">Respaldo de Base de Datos</h3>
+        {% if db_modified %}
+        <div class="mb-4">
+            <p class="text-gray-600"><i class="fas fa-folder mr-2"></i>Base de datos: sgte.db ({{ "%.1f"|format(db_size) }} KB)</p>
+            <p class="text-sm text-gray-500">Última modificación: {{ db_modified }}</p>
+        </div>
+        <a href="/api/reportes/backup" class="inline-block bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-semibold">
+            <i class="fas fa-download mr-2"></i>Descargar Respaldo BD
+        </a>
+        {% else %}
+        <p class="text-gray-500">Base de datos no encontrada</p>
+        {% endif %}
+    </div>
+    
+    <!-- Estadísticas -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4"><i class="fas fa-chart-bar mr-2"></i>Estadísticas del Sistema</h3>
+        <div class="grid grid-cols-4 gap-4">
+            <div class="text-center">
+                <div class="text-3xl font-bold text-teal-500">{{ stats.total_estudiantes }}</div>
+                <div class="text-sm text-gray-600">Total Estudiantes</div>
+            </div>
+            <div class="text-center">
+                <div class="text-3xl font-bold text-blue-500">{{ stats.total_proyectos }}</div>
+                <div class="text-sm text-gray-600">Total Proyectos</div>
+            </div>
+            <div class="text-center">
+                <div class="text-3xl font-bold text-purple-500">{{ stats.documentos_cargados }}</div>
+                <div class="text-sm text-gray-600">Documentos Cargados</div>
+            </div>
+            <div class="text-center">
+                <div class="text-3xl font-bold text-green-500">{{ stats.acciones_bitacora }}</div>
+                <div class="text-sm text-gray-600">Acciones en Bitácora</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

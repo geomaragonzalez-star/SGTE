@@ -1,0 +1,563 @@
+{% extends "base.html" %}
+
+{% block title %}Estudiantes - SGTE{% endblock %}
+{% block page_title %}Gestión de Estudiantes{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header con acciones -->
+    <div class="flex justify-between items-center">
+        <div>
+            <h2 class="text-3xl font-bold text-gray-800">Estudiantes</h2>
+            <p class="text-gray-600 mt-1">Gestiona el registro y datos de estudiantes</p>
+        </div>
+        <a href="/estudiantes/nuevo" class="bg-teal-500 hover:bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold transition">
+            <i class="fas fa-plus mr-2"></i>Nuevo Estudiante
+        </a>
+    </div>
+    
+    <!-- Búsqueda y filtros -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <form method="GET" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="md:col-span-2">
+                    <input 
+                        type="text" 
+                        name="q" 
+                        value="{{ query or '' }}"
+                        placeholder="Buscar por RUN o nombre..." 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    >
+                </div>
+                <div>
+                    <select 
+                        name="carrera" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
+                    >
+                        <option value="">Todas las carreras</option>
+                        {% for carrera_item in carreras %}
+                        <option value="{{ carrera_item }}" {% if carrera_filter == carrera_item %}selected{% endif %}>
+                            {{ carrera_item }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <select 
+                        name="modalidad" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
+                    >
+                        <option value="">Todas las modalidades</option>
+                        <option value="Diurno" {% if modalidad_filter == 'Diurno' %}selected{% endif %}>Diurno</option>
+                        <option value="Vespertino" {% if modalidad_filter == 'Vespertino' %}selected{% endif %}>Vespertino</option>
+                        <option value="Online" {% if modalidad_filter == 'Online' %}selected{% endif %}>Online</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex gap-4">
+                <div class="flex items-center space-x-2">
+                    <input 
+                        type="checkbox" 
+                        id="filtro-listo" 
+                        name="listo" 
+                        value="true"
+                        {% if listo_filter == True %}checked{% endif %}
+                        class="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
+                    >
+                    <label for="filtro-listo" class="text-sm font-medium text-gray-700">
+                        Solo estudiantes listos para solicitar apertura
+                    </label>
+                </div>
+                <button type="submit" class="bg-gray-800 hover:bg-gray-900 text-white px-6 py-2 rounded-lg font-semibold transition">
+                    <i class="fas fa-search mr-2"></i>Buscar
+                </button>
+                <a href="/estudiantes" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg font-semibold transition">
+                    <i class="fas fa-times mr-2"></i>Limpiar
+                </a>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Tabla de estudiantes -->
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            RUN
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Nombre Completo
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Carrera
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Modalidad
+                        </th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Checklist
+                        </th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Acciones
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% if estudiantes %}
+                        {% for estudiante in estudiantes %}
+                        <tr class="hover:bg-gray-50 transition" id="row-{{ estudiante.run }}" data-run="{{ estudiante.run }}" data-nombre="{{ estudiante.nombre_completo }}">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">{{ estudiante.run }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900 estudiante-nombre">{{ estudiante.nombre_completo }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-500">{{ estudiante.carrera }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                    {{ estudiante.modalidad }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <div id="checklist-status-{{ estudiante.run }}" class="flex justify-center">
+                                    <div class="text-gray-400">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <button 
+                                    onclick="mostrarChecklist('{{ estudiante.run }}', '{{ estudiante.nombre_completo }}')" 
+                                    class="text-teal-600 hover:text-teal-900 mr-4"
+                                >
+                                    <i class="fas fa-eye"></i> Ver
+                                </button>
+                                <a href="/estudiantes/{{ estudiante.run }}/editar" class="text-blue-600 hover:text-blue-900">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                            </td>
+                        </tr>
+                        <!-- Fila expandible para checklist -->
+                        <tr id="checklist-{{ estudiante.run }}" class="hidden">
+                            <td colspan="6" class="px-6 py-4 bg-gray-50">
+                                <div id="checklist-content-{{ estudiante.run }}" class="p-4">
+                                    <div class="text-center text-gray-500">
+                                        <i class="fas fa-spinner fa-spin"></i> Cargando checklist...
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="px-6 py-12 text-center">
+                                <div class="text-gray-500">
+                                    <i class="fas fa-users text-4xl mb-4"></i>
+                                    <p class="text-lg font-semibold">No hay estudiantes registrados</p>
+                                    <p class="text-sm mt-2">Comienza agregando un nuevo estudiante</p>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Paginación (si es necesario) -->
+    {% if estudiantes|length >= 100 %}
+    <div class="flex justify-center items-center space-x-2">
+        <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <span class="px-4 py-2 text-gray-700">Página 1</span>
+        <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+    {% endif %}
+</div>
+
+{% block extra_scripts %}
+<script>
+// Variable global para almacenar nombres de estudiantes
+const estudiantesNombres = {};
+
+// Cargar estado de checklist para todos los estudiantes
+document.addEventListener('DOMContentLoaded', async () => {
+    const estudiantes = {{ estudiantes | tojson }};
+    // Guardar nombres en el objeto global
+    estudiantes.forEach(e => {
+        estudiantesNombres[e.run] = e.nombre_completo;
+    });
+    
+    const runs = estudiantes.map(e => e.run);
+    
+    if (runs.length > 0) {
+        try {
+            const response = await fetch(`/api/estudiantes/checklist-status?runs=${runs.join(',')}`);
+            const result = await response.json();
+            
+            if (result.success) {
+                const estados = result.data;
+                runs.forEach(run => {
+                    const estado = estados[run];
+                    const container = document.getElementById(`checklist-status-${run}`);
+                    
+                    if (estado && estado.listo) {
+                        container.innerHTML = `
+                            <span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                <i class="fas fa-check-circle mr-1"></i>Listo
+                            </span>
+                        `;
+                    } else {
+                        container.innerHTML = `
+                            <span class="px-3 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                <i class="fas fa-exclamation-circle mr-1"></i>Pendiente
+                            </span>
+                        `;
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Error cargando estados:', error);
+        }
+    }
+});
+
+async function mostrarChecklist(run, nombre, forceReload = false) {
+    // Obtener nombre del estudiante si no se proporciona
+    if (!nombre) {
+        const rowElement = document.getElementById(`row-${run}`);
+        if (rowElement) {
+            nombre = rowElement.getAttribute('data-nombre') || estudiantesNombres[run] || 'Estudiante';
+        } else {
+            nombre = estudiantesNombres[run] || 'Estudiante';
+        }
+    }
+    if (nombre) {
+        estudiantesNombres[run] = nombre; // Guardar para uso futuro
+    }
+    
+    const rowId = `checklist-${run}`;
+    const contentId = `checklist-content-${run}`;
+    const row = document.getElementById(rowId);
+    const content = document.getElementById(contentId);
+    
+    if (!row || !content) {
+        console.error('No se encontraron elementos del checklist para:', run);
+        return;
+    }
+    
+    // Si forceReload es true, siempre recargar aunque esté abierto
+    const isHidden = row.classList.contains('hidden');
+    
+    // Mostrar siempre (si está oculto) o recargar (si forceReload)
+    if (isHidden || forceReload) {
+        if (isHidden) {
+            row.classList.remove('hidden');
+        }
+        
+        // Mostrar loading
+        content.innerHTML = `
+            <div class="text-center text-gray-500 p-4">
+                <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                <p>Cargando checklist...</p>
+            </div>
+        `;
+        
+        // Cargar checklist
+        try {
+            const response = await api.get(`/documentos/checklist/${run}`);
+            const data = response.data;
+            
+            let html = `
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Checklist de Documentos - ${nombre}</h3>
+                        <button onclick="cerrarChecklist('${run}')" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div class="bg-white rounded-lg border p-4">
+                            <div class="text-sm text-gray-600 mb-1">Documentos Requeridos</div>
+                            <div class="text-2xl font-bold text-gray-800">${data.resumen.total_requeridos}</div>
+                        </div>
+                        <div class="bg-white rounded-lg border p-4">
+                            <div class="text-sm text-gray-600 mb-1">Documentos Validados</div>
+                            <div class="text-2xl font-bold ${data.resumen.documentos_validados === data.resumen.total_requeridos ? 'text-green-600' : 'text-yellow-600'}">
+                                ${data.resumen.documentos_validados}/${data.resumen.total_requeridos}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg border p-4">
+                        <h4 class="font-semibold text-gray-800 mb-3">Documentos Requeridos</h4>
+                        <div class="space-y-2">
+            `;
+            
+            data.checklist.filter(item => item.requerido).forEach(item => {
+                const icono = item.validado 
+                    ? '<i class="fas fa-check-circle text-green-500"></i>' 
+                    : item.tiene_documento 
+                        ? '<i class="fas fa-paperclip text-yellow-500"></i>' 
+                        : '<i class="fas fa-circle text-gray-300"></i>';
+                
+                const estado = item.validado 
+                    ? '<span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Validado</span>' 
+                    : item.tiene_documento 
+                        ? '<span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Pendiente Validación</span>' 
+                        : '<span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Faltante</span>';
+                
+                // Botón de subir solo si no está validado
+                const botonSubir = !item.validado ? `
+                    <label class="cursor-pointer">
+                        <input type="file" accept=".pdf" class="hidden" onchange="subirDocumento('${run}', '${item.tipo}', this)">
+                        <span class="bg-teal-500 hover:bg-teal-600 text-white px-3 py-1 rounded text-sm font-semibold">
+                            <i class="fas fa-upload mr-1"></i>${item.tiene_documento ? 'Reemplazar' : 'Subir'}
+                        </span>
+                    </label>
+                ` : '';
+                
+                // Botón de previsualizar solo si tiene documento
+                const botonPreview = item.tiene_documento && item.id ? `
+                    <button onclick="previsualizarDocumento(${item.id}, '${item.nombre}')" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm font-semibold">
+                        <i class="fas fa-eye mr-1"></i>Ver
+                    </button>
+                ` : '';
+                
+                html += `
+                    <div class="flex items-center justify-between p-3 border rounded-lg ${item.validado ? 'bg-green-50 border-green-200' : item.tiene_documento ? 'bg-yellow-50 border-yellow-200' : 'bg-red-50 border-red-200'}">
+                        <div class="flex items-center space-x-3 flex-1">
+                            ${icono}
+                            <span class="font-medium text-gray-800">${item.nombre}</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            ${estado}
+                            ${botonPreview}
+                            ${botonSubir}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 p-4 rounded-lg ${data.resumen.listo_para_solicitar ? 'bg-green-100 border-2 border-green-500' : 'bg-yellow-100 border-2 border-yellow-500'}">
+                        <div class="flex items-center space-x-3">
+                            ${data.resumen.listo_para_solicitar 
+                                ? '<i class="fas fa-check-circle text-green-600 text-2xl"></i>' 
+                                : '<i class="fas fa-exclamation-triangle text-yellow-600 text-2xl"></i>'}
+                            <div>
+                                <div class="font-semibold ${data.resumen.listo_para_solicitar ? 'text-green-800' : 'text-yellow-800'}">
+                                    ${data.resumen.listo_para_solicitar 
+                                        ? 'Listo para solicitar apertura de expediente en Registro Curricular' 
+                                        : `Faltan ${data.resumen.documentos_faltantes} documento(s) para estar listo`}
+                                </div>
+                                <div class="text-sm ${data.resumen.listo_para_solicitar ? 'text-green-700' : 'text-yellow-700'} mt-1">
+                                    Todos los documentos requeridos deben estar validados
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 flex gap-2">
+                        <a href="/documentos/${run}" class="flex-1 bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg font-semibold text-center">
+                            <i class="fas fa-folder-open mr-2"></i>Gestionar Documentos
+                        </a>
+                    </div>
+                </div>
+            `;
+            
+            content.innerHTML = html;
+        } catch (error) {
+            content.innerHTML = `
+                <div class="text-center text-red-600">
+                    <i class="fas fa-exclamation-circle mb-2"></i>
+                    <p>Error cargando checklist: ${error.message}</p>
+                </div>
+            `;
+        }
+    } else {
+        row.classList.add('hidden');
+    }
+}
+
+function cerrarChecklist(run) {
+    const row = document.getElementById(`checklist-${run}`);
+    row.classList.add('hidden');
+}
+
+async function subirDocumento(run, tipo, input) {
+    const file = input.files[0];
+    if (!file) return;
+    
+    if (!file.name.endsWith('.pdf')) {
+        alert('Solo se aceptan archivos PDF');
+        input.value = '';
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('archivo', file);
+    formData.append('run', run);
+    formData.append('tipo', tipo);
+    
+    // Mostrar indicador de carga
+    const botonOriginal = input.parentElement;
+    const textoOriginal = botonOriginal.innerHTML;
+    botonOriginal.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>Subiendo...';
+    botonOriginal.style.pointerEvents = 'none';
+    
+    try {
+        const response = await fetch('/api/documentos/upload', {
+            method: 'POST',
+            body: formData
+        });
+        
+        let result;
+        try {
+            result = await response.json();
+        } catch (e) {
+            // Si no es JSON, puede ser un error de servidor
+            const text = await response.text();
+            throw new Error(`Error del servidor: ${response.status} - ${text}`);
+        }
+        
+        // Verificar respuesta HTTP
+        if (!response.ok) {
+            throw new Error(result.detail || result.message || `Error ${response.status}: Error subiendo documento`);
+        }
+        
+        // Verificar resultado
+        if (!result.success) {
+            throw new Error(result.message || 'Error subiendo documento');
+        }
+        
+        // Si llegamos aquí, el documento se subió correctamente
+        // Obtener nombre del estudiante usando getElementById (más seguro que querySelector con caracteres especiales)
+        const rowElement = document.getElementById(`row-${run}`);
+        let nombre = 'Estudiante';
+        if (rowElement) {
+            nombre = rowElement.getAttribute('data-nombre') || estudiantesNombres[run] || 'Estudiante';
+        } else {
+            nombre = estudiantesNombres[run] || 'Estudiante';
+        }
+        
+        // Verificar si el checklist está abierto
+        const rowId = `checklist-${run}`;
+        const row = document.getElementById(rowId);
+        const wasOpen = row && !row.classList.contains('hidden');
+        
+        // Pequeño delay para asegurar que la BD se actualice completamente
+        await new Promise(resolve => setTimeout(resolve, 400));
+        
+        // Actualizar estado en la columna de checklist PRIMERO
+        try {
+            await actualizarEstadoChecklist(run);
+        } catch (e) {
+            console.warn('Error actualizando estado:', e);
+        }
+        
+        // Si el checklist estaba abierto, recargarlo con los datos actualizados
+        if (wasOpen && row) {
+            // Recargar directamente forzando la recarga
+            try {
+                await mostrarChecklist(run, nombre, true);
+            } catch (e) {
+                console.error('Error recargando checklist:', e);
+            }
+        }
+        
+        // Restaurar botón
+        botonOriginal.innerHTML = textoOriginal;
+        botonOriginal.style.pointerEvents = '';
+        
+    } catch (error) {
+        console.error('Error subiendo documento:', error);
+        alert('Error: ' + error.message);
+        // Restaurar botón
+        botonOriginal.innerHTML = textoOriginal;
+        botonOriginal.style.pointerEvents = '';
+    } finally {
+        input.value = '';
+    }
+}
+
+// Función para actualizar el estado del checklist en la columna
+async function actualizarEstadoChecklist(run) {
+    try {
+        const response = await fetch(`/api/estudiantes/checklist-status?runs=${run}`);
+        const result = await response.json();
+        
+        if (result.success && result.data[run]) {
+            const estado = result.data[run];
+            const container = document.getElementById(`checklist-status-${run}`);
+            
+            if (estado.listo) {
+                container.innerHTML = `
+                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                        <i class="fas fa-check-circle mr-1"></i>Listo
+                    </span>
+                `;
+            } else {
+                container.innerHTML = `
+                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                        <i class="fas fa-exclamation-circle mr-1"></i>Pendiente
+                    </span>
+                `;
+            }
+        }
+    } catch (error) {
+        console.error('Error actualizando estado:', error);
+    }
+}
+
+// Modal de previsualización
+function previsualizarDocumento(docId, nombre) {
+    const modal = document.getElementById('pdf-preview-modal');
+    const iframe = document.getElementById('pdf-preview-iframe');
+    const modalTitle = document.getElementById('pdf-preview-title');
+    
+    modalTitle.textContent = nombre;
+    iframe.src = `/api/documentos/${docId}/preview`;
+    modal.classList.remove('hidden');
+}
+
+function cerrarPreview() {
+    const modal = document.getElementById('pdf-preview-modal');
+    const iframe = document.getElementById('pdf-preview-iframe');
+    
+    modal.classList.add('hidden');
+    iframe.src = '';
+}
+</script>
+
+<!-- Modal para previsualización de PDF -->
+<div id="pdf-preview-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-6xl h-full max-h-[90vh] flex flex-col">
+        <div class="flex items-center justify-between p-4 border-b">
+            <h3 id="pdf-preview-title" class="text-lg font-semibold text-gray-800">Previsualización de Documento</h3>
+            <button onclick="cerrarPreview()" class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        <div class="flex-1 p-4 overflow-hidden">
+            <iframe 
+                id="pdf-preview-iframe" 
+                class="w-full h-full border rounded"
+                style="min-height: 600px;"
+            ></iframe>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% endblock %}

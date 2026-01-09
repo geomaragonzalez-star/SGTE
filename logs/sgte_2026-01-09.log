@@ -13,3 +13,28 @@
 2026-01-09 00:52:46.033 | ERROR    | services.memo_generator:obtener_datos_estudiante:141 - Error obteniendo datos estudiante: type object 'Proyecto' has no attribute 'estudiante_run'
 2026-01-09 00:52:46.034 | INFO     | services.memo_generator:generar_memorandums_masivo:391 - ZIP generado con 0 memorándums
 2026-01-09 00:55:00.094 | DEBUG    | database.connection:_get_session_factory:166 - 📦 SessionLocal factory creado
+2026-01-09 10:43:42.839 | INFO     | database.connection:get_engine:87 - 🔌 Creando engine SQLite (CACHED): ./data/sgte.db
+2026-01-09 10:43:42.919 | DEBUG    | database.connection:set_sqlite_pragma:142 - ✅ SQLite PRAGMAs optimizados para red aplicados
+2026-01-09 10:43:42.924 | INFO     | database.connection:init_database:260 - ✅ Base de datos inicializada correctamente
+2026-01-09 10:43:42.924 | INFO     | __main__:init_app_cached:96 - ✅ Base de datos inicializada correctamente
+2026-01-09 10:43:51.821 | DEBUG    | database.connection:_get_session_factory:166 - 📦 SessionLocal factory creado
+2026-01-09 11:01:48.362 | DEBUG    | database.connection:_get_session_factory:166 - 📦 SessionLocal factory creado
+2026-01-09 11:13:22.478 | DEBUG    | database.connection:_get_session_factory:166 - 📦 SessionLocal factory creado
+2026-01-09 11:14:52.769 | DEBUG    | database.connection:_get_session_factory:166 - 📦 SessionLocal factory creado
+2026-01-09 11:15:47.040 | INFO     | database.connection:get_engine:87 - 🔌 Creando engine SQLite (CACHED): ./data/sgte.db
+2026-01-09 11:15:47.092 | DEBUG    | database.connection:set_sqlite_pragma:142 - ✅ SQLite PRAGMAs optimizados para red aplicados
+2026-01-09 11:15:47.095 | INFO     | database.connection:init_database:260 - ✅ Base de datos inicializada correctamente
+2026-01-09 11:15:47.095 | INFO     | __main__:init_app_cached:96 - ✅ Base de datos inicializada correctamente
+2026-01-09 11:15:53.375 | INFO     | database.connection:get_engine:87 - 🔌 Creando engine SQLite (CACHED): ./data/sgte.db
+2026-01-09 11:15:53.468 | DEBUG    | database.connection:set_sqlite_pragma:142 - ✅ SQLite PRAGMAs optimizados para red aplicados
+2026-01-09 11:15:53.468 | INFO     | database.connection:init_database:260 - ✅ Base de datos inicializada correctamente
+2026-01-09 11:15:53.468 | INFO     | __main__:init_app_cached:96 - ✅ Base de datos inicializada correctamente
+2026-01-09 11:16:05.462 | DEBUG    | database.connection:_get_session_factory:166 - 📦 SessionLocal factory creado
+2026-01-09 11:17:22.614 | DEBUG    | database.connection:_get_session_factory:166 - 📦 SessionLocal factory creado
+2026-01-09 11:23:29.319 | DEBUG    | database.connection:_get_session_factory:166 - 📦 SessionLocal factory creado
+2026-01-09 12:18:16.944 | ERROR    | database.connection:get_session_context:233 - Error en transacción, rollback ejecutado: 'Estudiante' object has no attribute 'email'
+2026-01-09 12:18:16.944 | ERROR    | services.excel_export:exportar_estudiantes:231 - Error exportando estudiantes: 'Estudiante' object has no attribute 'email'
+2026-01-09 12:44:16.380 | ERROR    | database.connection:get_session_context:233 - Error en transacción, rollback ejecutado: 404: No hay registros en la bitácora
+2026-01-09 12:55:55.278 | INFO     | database.connection:get_engine:87 - 🔌 Creando engine SQLite (CACHED): ./data/sgte.db
+2026-01-09 12:55:55.329 | DEBUG    | database.connection:_get_session_factory:166 - 📦 SessionLocal factory creado
+2026-01-09 12:55:55.394 | DEBUG    | database.connection:set_sqlite_pragma:142 - ✅ SQLite PRAGMAs optimizados para red aplicados

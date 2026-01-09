@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+
+{% block title %}Operaciones Masivas - SGTE{% endblock %}
+{% block page_title %}Operaciones Masivas{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">Seleccione estudiantes para operaciones masivas</h3>
+        
+        <!-- Filtros -->
+        <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <input 
+                type="text" 
+                id="filtro-busqueda" 
+                placeholder="Buscar por RUN o nombre..." 
+                class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
+            >
+            <select id="filtro-carrera" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
+                <option value="">Todas las carreras</option>
+            </select>
+            <button onclick="filtrarEstudiantes()" class="bg-teal-500 hover:bg-teal-600 text-white px-6 py-2 rounded-lg font-semibold">
+                Filtrar
+            </button>
+        </div>
+        
+        <!-- Tabla de estudiantes -->
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left">
+                            <input type="checkbox" id="select-all" onchange="toggleAll()">
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">RUN</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nombre</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Carrera</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-estudiantes" class="bg-white divide-y divide-gray-200">
+                    {% for estudiante in estudiantes %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4">
+                            <input type="checkbox" class="estudiante-checkbox" value="{{ estudiante.run }}" data-nombre="{{ estudiante.nombre_completo }}">
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-900">{{ estudiante.run }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-900">{{ estudiante.nombre_completo }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">{{ estudiante.carrera }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Contador y acciones -->
+        <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <span id="contador-seleccionados" class="font-semibold text-gray-800">0 seleccionados</span>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <button onclick="generarMemos()" id="btn-memos" disabled class="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg font-semibold text-sm">
+                    <i class="fas fa-file-alt mr-2"></i>Generar Memos
+                </button>
+                <button onclick="enviarCorreos()" id="btn-correos" disabled class="bg-green-500 hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg font-semibold text-sm">
+                    <i class="fas fa-envelope mr-2"></i>Enviar Correos
+                </button>
+                <button onclick="cambiarEstado()" id="btn-estado" disabled class="bg-purple-500 hover:bg-purple-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg font-semibold text-sm">
+                    <i class="fas fa-sync-alt mr-2"></i>Cambiar Estado
+                </button>
+                <button onclick="exportarLista()" id="btn-exportar" disabled class="bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg font-semibold text-sm">
+                    <i class="fas fa-download mr-2"></i>Exportar Lista
+                </button>
+                <button onclick="limpiarSeleccion()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold text-sm">
+                    <i class="fas fa-trash mr-2"></i>Limpiar
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para cambiar estado -->
+    <div id="modal-estado" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full">
+            <h3 class="text-xl font-semibold mb-4">Cambiar Estado</h3>
+            <select id="select-estado" class="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4">
+                <option value="pendiente">Pendiente</option>
+                <option value="en_proceso">En Proceso</option>
+                <option value="listo_envio">Listo para Envío</option>
+                <option value="enviado">Enviado</option>
+            </select>
+            <div class="flex gap-4">
+                <button onclick="confirmarCambioEstado()" class="flex-1 bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg font-semibold">
+                    Confirmar
+                </button>
+                <button onclick="cerrarModal()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_scripts %}
+<script>
+// Datos de estudiantes (desde el servidor)
+const estudiantes = {{ estudiantes | tojson }};
+
+// Funciones de selección
+function toggleAll() {
+    const selectAll = document.getElementById('select-all');
+    const checkboxes = document.querySelectorAll('.estudiante-checkbox');
+    checkboxes.forEach(cb => cb.checked = selectAll.checked);
+    actualizarContador();
+}
+
+function actualizarContador() {
+    const seleccionados = document.querySelectorAll('.estudiante-checkbox:checked');
+    const contador = document.getElementById('contador-seleccionados');
+    contador.textContent = `${seleccionados.length} seleccionados`;
+    
+    // Habilitar/deshabilitar botones
+    const botones = ['btn-memos', 'btn-correos', 'btn-estado', 'btn-exportar'];
+    botones.forEach(id => {
+        document.getElementById(id).disabled = seleccionados.length === 0;
+    });
+}
+
+function getSeleccionados() {
+    const checkboxes = document.querySelectorAll('.estudiante-checkbox:checked');
+    return Array.from(checkboxes).map(cb => cb.value);
+}
+
+// Event listeners
+document.querySelectorAll('.estudiante-checkbox').forEach(cb => {
+    cb.addEventListener('change', actualizarContador);
+});
+
+// Operaciones
+async function generarMemos() {
+    const runs = getSeleccionados();
+    if (runs.length === 0) return;
+    
+    try {
+        const response = await fetch('/api/operaciones/generar-memos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ runs })
+        });
+        
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `memorandums_${new Date().getTime()}.zip`;
+            a.click();
+            alert(`Memorándums generados: ${response.headers.get('X-Exitosos')} exitosos`);
+        } else {
+            const error = await response.json();
+            alert('Error: ' + error.detail);
+        }
+    } catch (error) {
+        alert('Error generando memorándums');
+    }
+}
+
+async function enviarCorreos() {
+    const runs = getSeleccionados();
+    if (runs.length === 0) return;
+    
+    if (!confirm(`¿Enviar correos a ${runs.length} estudiantes?`)) return;
+    
+    const soloBorrador = confirm('¿Solo guardar en borradores? (Cancelar = Enviar directamente)');
+    
+    try {
+        const response = await fetch('/api/operaciones/enviar-correos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ runs, solo_borrador: soloBorrador })
+        });
+        
+        const result = await response.json();
+        if (result.success) {
+            alert(`${result.data.exitosos} correos enviados, ${result.data.fallidos} fallidos`);
+        } else {
+            alert('Error: ' + result.message);
+        }
+    } catch (error) {
+        alert('Error enviando correos');
+    }
+}
+
+function cambiarEstado() {
+    const runs = getSeleccionados();
+    if (runs.length === 0) return;
+    
+    document.getElementById('modal-estado').classList.remove('hidden');
+}
+
+async function confirmarCambioEstado() {
+    const runs = getSeleccionados();
+    const estado = document.getElementById('select-estado').value;
+    
+    try {
+        const response = await fetch('/api/operaciones/cambiar-estado', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ runs, estado })
+        });
+        
+        const result = await response.json();
+        if (result.success) {
+            alert(`${result.actualizados} expedientes actualizados`);
+            cerrarModal();
+        } else {
+            alert('Error: ' + result.message);
+        }
+    } catch (error) {
+        alert('Error cambiando estado');
+    }
+}
+
+function cerrarModal() {
+    document.getElementById('modal-estado').classList.add('hidden');
+}
+
+function exportarLista() {
+    const runs = getSeleccionados();
+    if (runs.length === 0) return;
+    
+    const seleccionados = estudiantes.filter(e => runs.includes(e.run));
+    const csv = [
+        ['RUN', 'Nombre', 'Carrera'].join(','),
+        ...seleccionados.map(e => [e.run, e.nombre_completo, e.carrera].join(','))
+    ].join('\n');
+    
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `seleccion_${new Date().getTime()}.csv`;
+    a.click();
+}
+
+function limpiarSeleccion() {
+    document.querySelectorAll('.estudiante-checkbox').forEach(cb => cb.checked = false);
+    document.getElementById('select-all').checked = false;
+    actualizarContador();
+}
+
+function filtrarEstudiantes() {
+    // Implementación básica - se puede mejorar
+    const termino = document.getElementById('filtro-busqueda').value.toLowerCase();
+    const filas = document.querySelectorAll('#tabla-estudiantes tr');
+    
+    filas.forEach(fila => {
+        const texto = fila.textContent.toLowerCase();
+        fila.style.display = texto.includes(termino) ? '' : 'none';
+    });
+}
+</script>
+{% endblock %}
+{% endblock %}

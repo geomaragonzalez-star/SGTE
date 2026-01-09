@@ -1,0 +1,140 @@
+/* Custom CSS para SGTE */
+
+:root {
+    --primary: #17A499;
+    --primary-dark: #0E7F76;
+    --primary-light: #6FD1C8;
+    --sidebar-width: 256px; /* 64 * 4 = 256px (w-64) */
+    --sidebar-collapsed-width: 80px;
+}
+
+/* Sidebar expandido/colapsado */
+#sidebar {
+    width: var(--sidebar-width);
+}
+
+#sidebar.sidebar-collapsed {
+    width: var(--sidebar-collapsed-width);
+}
+
+#sidebar.sidebar-collapsed .sidebar-text {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+#sidebar.sidebar-collapsed .sidebar-nav-item {
+    justify-content: center;
+}
+
+#sidebar.sidebar-collapsed .sidebar-header {
+    justify-content: center;
+}
+
+#sidebar.sidebar-collapsed .sidebar-logo-container {
+    justify-content: center;
+}
+
+
+#sidebar.sidebar-collapsed .sidebar-footer-content {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#sidebar.sidebar-collapsed .sidebar-footer-icon {
+    display: flex;
+}
+
+#sidebar.sidebar-collapsed .sidebar-text-container {
+    display: none;
+}
+
+#sidebar.sidebar-collapsed .sidebar-toggle-btn i {
+    transform: rotate(180deg);
+}
+
+/* Main content ajuste */
+.main-content-expanded {
+    margin-left: var(--sidebar-width);
+}
+
+.main-content-collapsed {
+    margin-left: var(--sidebar-collapsed-width);
+}
+
+/* Transiciones suaves */
+#sidebar,
+#main-content,
+.sidebar-text {
+    transition: all 0.3s ease;
+}
+
+/* Sidebar toggle para móvil */
+@media (max-width: 1024px) {
+    #sidebar {
+        transform: translateX(-100%);
+        width: var(--sidebar-width) !important;
+    }
+    
+    #sidebar.open {
+        transform: translateX(0);
+    }
+    
+    .main-content-expanded,
+    .main-content-collapsed {
+        margin-left: 0;
+    }
+}
+
+/* Animaciones suaves */
+.transition {
+    transition: all 0.3s ease;
+}
+
+/* Tablas modernas */
+table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+/* Botones con hover mejorado */
+button, a.button {
+    transition: all 0.2s ease;
+}
+
+button:hover, a.button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Cards con sombra suave */
+.card {
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+}
+
+/* Inputs con focus mejorado */
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    ring: 2px;
+    ring-color: var(--primary);
+}
+
+/* Sidebar nav activo */
+.sidebar-nav-link.active {
+    background-color: rgba(20, 184, 166, 0.2);
+    border-left: 3px solid var(--primary);
+}
+
+.sidebar-nav-link.active i {
+    color: var(--primary);
+}
+
+.sidebar-nav-link.active .sidebar-text {
+    color: var(--primary-light);
+    font-weight: 600;
+}

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SGTE - Sistema de Gestión de Titulaciones{% endblock %}</title>
+    
+    <!-- TailwindCSS CDN (o puedes usar build local) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/main.css">
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-50">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed left-0 top-0 h-full bg-gray-900 text-white transform transition-all duration-300 z-50 sidebar-expanded">
+        <div class="p-6 h-full flex flex-col">
+            <!-- Logo y Toggle -->
+            <div class="flex items-center justify-between mb-8 sidebar-header">
+                <div class="flex items-center space-x-3 sidebar-logo-container">
+                    <span class="text-xl font-bold sidebar-text">SGTE</span>
+                </div>
+                <button id="sidebar-collapse-btn" class="text-gray-400 hover:text-white transition sidebar-toggle-btn">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+            
+            <!-- Navigation -->
+            <nav class="space-y-2 flex-1">
+                <a href="/" class="sidebar-nav-link flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition sidebar-nav-item" data-path="/">
+                    <i class="fas fa-home w-5"></i>
+                    <span class="sidebar-text">Inicio</span>
+                </a>
+                <a href="/dashboard" class="sidebar-nav-link flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition sidebar-nav-item" data-path="/dashboard">
+                    <i class="fas fa-chart-bar w-5"></i>
+                    <span class="sidebar-text">Dashboard</span>
+                </a>
+                <a href="/estudiantes" class="sidebar-nav-link flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition sidebar-nav-item" data-path="/estudiantes">
+                    <i class="fas fa-users w-5"></i>
+                    <span class="sidebar-text">Estudiantes</span>
+                </a>
+                <a href="/documentos" class="sidebar-nav-link flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition sidebar-nav-item" data-path="/documentos">
+                    <i class="fas fa-file-alt w-5"></i>
+                    <span class="sidebar-text">Documentos</span>
+                </a>
+                <a href="/operaciones-masivas" class="sidebar-nav-link flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition sidebar-nav-item" data-path="/operaciones-masivas">
+                    <i class="fas fa-bolt w-5"></i>
+                    <span class="sidebar-text">Operaciones Masivas</span>
+                </a>
+                <a href="/reportes" class="sidebar-nav-link flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition sidebar-nav-item" data-path="/reportes">
+                    <i class="fas fa-chart-line w-5"></i>
+                    <span class="sidebar-text">Reportes</span>
+                </a>
+                <a href="/pdf-splitter" class="sidebar-nav-link flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition sidebar-nav-item" data-path="/pdf-splitter">
+                    <i class="fas fa-cut w-5"></i>
+                    <span class="sidebar-text">PDF Splitter</span>
+                </a>
+            </nav>
+            
+            <!-- Footer -->
+            <div class="border-t border-gray-800 pt-4 sidebar-footer">
+                <div class="flex items-center space-x-3 sidebar-footer-content">
+                    <div class="w-10 h-10 bg-teal-500 rounded-full flex items-center justify-center flex-shrink-0 sidebar-footer-icon">
+                        <span class="text-xs font-semibold">SD</span>
+                    </div>
+                    <div class="sidebar-text-container">
+                        <div class="text-sm font-semibold sidebar-text">Secretaría Docente</div>
+                        <div class="text-xs text-gray-400 sidebar-text">Administrador</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <div id="main-content" class="min-h-screen transition-all duration-300 main-content-expanded">
+        <!-- Top Bar -->
+        <header class="bg-white shadow-sm sticky top-0 z-40">
+            <div class="px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <!-- Logo en esquina superior izquierda -->
+                    <img src="/assets/logo_departamento.png" alt="Logo Departamento" class="h-12">
+                    <h1 class="text-2xl font-bold text-gray-800">{% block page_title %}SGTE{% endblock %}</h1>
+                </div>
+                <button id="sidebar-toggle-mobile" class="lg:hidden text-gray-600">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </header>
+        
+        <!-- Page Content -->
+        <main class="p-6">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="/static/js/main.js"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

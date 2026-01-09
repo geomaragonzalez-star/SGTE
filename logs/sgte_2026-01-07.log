@@ -1,6 +1,0 @@
-2026-01-07 23:22:23.366 | INFO     | database.connection:init_database:229 - Base de datos inicializada correctamente
-2026-01-07 23:22:23.369 | INFO     | __main__:init_app:65 - Base de datos inicializada correctamente
-2026-01-07 23:24:31.037 | INFO     | database.connection:get_engine:85 - Conectando a base de datos: ./data/sgte.db
-2026-01-07 23:24:31.077 | DEBUG    | database.connection:set_sqlite_pragma:124 - SQLite PRAGMAs configurados (WAL mode, foreign keys, cache)
-2026-01-07 23:24:31.081 | INFO     | database.connection:init_database:229 - Base de datos inicializada correctamente
-2026-01-07 23:24:31.081 | INFO     | __main__:init_app:65 - Base de datos inicializada correctamente

@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Estudiante - SGTE{% endblock %}
+{% block page_title %}Editar Estudiante{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-lg shadow p-6">
+        <form id="form-editar" class="space-y-6">
+            <input type="hidden" name="run" value="{{ estudiante.run }}">
+            
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">RUN</label>
+                    <input type="text" value="{{ estudiante.run }}" disabled class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Carrera *</label>
+                    <input type="text" name="carrera" value="{{ estudiante.carrera }}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nombres *</label>
+                    <input type="text" name="nombres" value="{{ estudiante.nombres }}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Apellidos *</label>
+                    <input type="text" name="apellidos" value="{{ estudiante.apellidos }}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Modalidad *</label>
+                    <select name="modalidad" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
+                        <option value="Diurno" {% if estudiante.modalidad == 'Diurno' %}selected{% endif %}>Diurno</option>
+                        <option value="Vespertino" {% if estudiante.modalidad == 'Vespertino' %}selected{% endif %}>Vespertino</option>
+                        <option value="Online" {% if estudiante.modalidad == 'Online' %}selected{% endif %}>Online</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" name="email" value="{{ estudiante.email or '' }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
+                </div>
+            </div>
+            
+            <div class="flex gap-4">
+                <button type="submit" class="flex-1 bg-teal-500 hover:bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold">
+                    Guardar Cambios
+                </button>
+                <a href="/estudiantes/{{ estudiante.run }}" class="px-6 py-3 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50">
+                    Cancelar
+                </a>
+                <button type="button" onclick="eliminarEstudiante()" class="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold">
+                    Eliminar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% block extra_scripts %}
+<script>
+const run = '{{ estudiante.run }}';
+
+document.getElementById('form-editar').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData);
+    
+    // Excluir run del update
+    delete data.run;
+    
+    try {
+        const result = await api.put(`/estudiantes/${run}`, data);
+        if (result.success) {
+            alert('Estudiante actualizado correctamente');
+            window.location.href = `/estudiantes/${run}`;
+        } else {
+            alert('Error: ' + result.message);
+        }
+    } catch (error) {
+        alert('Error actualizando estudiante');
+    }
+});
+
+async function eliminarEstudiante() {
+    if (!confirm(`¿Está seguro de eliminar al estudiante ${run}?`)) return;
+    
+    try {
+        const result = await api.delete(`/estudiantes/${run}`);
+        if (result.success) {
+            alert('Estudiante eliminado correctamente');
+            window.location.href = '/estudiantes';
+        } else {
+            alert('Error: ' + result.message);
+        }
+    } catch (error) {
+        alert('Error eliminando estudiante');
+    }
+}
+</script>
+{% endblock %}
+{% endblock %}

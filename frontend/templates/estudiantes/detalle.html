@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}{{ estudiante.nombre_completo }} - SGTE{% endblock %}
+{% block page_title %}{{ estudiante.nombre_completo }}{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="grid grid-cols-2 gap-6">
+            <div>
+                <div class="text-sm text-gray-600 mb-1">RUN</div>
+                <div class="font-semibold text-gray-800">{{ estudiante.run }}</div>
+            </div>
+            <div>
+                <div class="text-sm text-gray-600 mb-1">Nombre Completo</div>
+                <div class="font-semibold text-gray-800">{{ estudiante.nombre_completo }}</div>
+            </div>
+            <div>
+                <div class="text-sm text-gray-600 mb-1">Carrera</div>
+                <div class="font-semibold text-gray-800">{{ estudiante.carrera }}</div>
+            </div>
+            <div>
+                <div class="text-sm text-gray-600 mb-1">Modalidad</div>
+                <div class="font-semibold text-gray-800">{{ estudiante.modalidad }}</div>
+            </div>
+        </div>
+        
+        <div class="mt-6 flex gap-4">
+            <a href="/estudiantes/{{ estudiante.run }}/editar" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold">
+                Editar
+            </a>
+            <a href="/documentos?q={{ estudiante.run }}" class="bg-teal-500 hover:bg-teal-600 text-white px-6 py-2 rounded-lg font-semibold">
+                Ver Documentos
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
