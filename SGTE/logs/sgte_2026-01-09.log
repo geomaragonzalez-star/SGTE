@@ -1,0 +1,15 @@
+2026-01-09 00:35:41.557 | INFO     | database.connection:get_engine:87 - 🔌 Creando engine SQLite (CACHED): ./data/sgte.db
+2026-01-09 00:35:41.654 | DEBUG    | database.connection:set_sqlite_pragma:142 - ✅ SQLite PRAGMAs optimizados para red aplicados
+2026-01-09 00:35:41.659 | INFO     | database.connection:init_database:260 - ✅ Base de datos inicializada correctamente
+2026-01-09 00:35:41.659 | INFO     | __main__:init_app_cached:96 - ✅ Base de datos inicializada correctamente
+2026-01-09 00:35:51.979 | DEBUG    | database.connection:_get_session_factory:166 - 📦 SessionLocal factory creado
+2026-01-09 00:49:50.768 | INFO     | database.connection:get_engine:87 - 🔌 Creando engine SQLite (CACHED): ./data/sgte.db
+2026-01-09 00:49:50.823 | DEBUG    | database.connection:set_sqlite_pragma:142 - ✅ SQLite PRAGMAs optimizados para red aplicados
+2026-01-09 00:49:50.828 | INFO     | database.connection:init_database:260 - ✅ Base de datos inicializada correctamente
+2026-01-09 00:49:50.828 | INFO     | __main__:init_app_cached:96 - ✅ Base de datos inicializada correctamente
+2026-01-09 00:49:53.741 | DEBUG    | database.connection:_get_session_factory:166 - 📦 SessionLocal factory creado
+2026-01-09 00:52:34.113 | DEBUG    | database.connection:_get_session_factory:166 - 📦 SessionLocal factory creado
+2026-01-09 00:52:46.032 | ERROR    | database.connection:get_session_context:233 - Error en transacción, rollback ejecutado: type object 'Proyecto' has no attribute 'estudiante_run'
+2026-01-09 00:52:46.033 | ERROR    | services.memo_generator:obtener_datos_estudiante:141 - Error obteniendo datos estudiante: type object 'Proyecto' has no attribute 'estudiante_run'
+2026-01-09 00:52:46.034 | INFO     | services.memo_generator:generar_memorandums_masivo:391 - ZIP generado con 0 memorándums
+2026-01-09 00:55:00.094 | DEBUG    | database.connection:_get_session_factory:166 - 📦 SessionLocal factory creado

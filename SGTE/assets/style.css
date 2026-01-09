@@ -1,0 +1,712 @@
+/* SGTE - Estilos Completos con Sidebar Moderno */
+
+/* ============================================ */
+/* IMPORTAR FUENTES */
+/* ============================================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ============================================ */
+/* VARIABLES CSS */
+/* ============================================ */
+:root {
+    /* Colores Principales */
+    --primary: #17A499;
+    --primary-dark: #0E7F76;
+    --primary-light: #6FD1C8;
+
+    /* Neutros */
+    --bg-main: #FFFFFF;
+    --bg-alt: #F5F7F7;
+    --border-soft: #E1E5E5;
+    --text-main: #2E2E2E;
+    --text-sec: #5F6B6A;
+
+    /* Acentos */
+    --accent-1: #F2994A;
+    --accent-2: #2F80ED;
+    --error: #C0392B;
+    --success: #27AE60;
+
+    /* Sidebar */
+    --sidebar-bg: #1a1d2e;
+    --sidebar-bg-alt: #252837;
+    --sidebar-text: rgba(255, 255, 255, 0.7);
+    --sidebar-text-hover: #ffffff;
+}
+
+/* ============================================ */
+/* RESET Y TIPOGRAFÍA GLOBAL */
+/* ============================================ */
+* {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+
+html,
+body,
+[class*="css"] {
+    font-family: 'Inter', sans-serif !important;
+    color: var(--text-main);
+}
+
+
+/* ============================================ */
+/* SIDEBAR - ESTILO MODERNO CLARO TIPO FLUTTER */
+/* ============================================ */
+
+/* Contenedor principal del sidebar */
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%) !important;
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.08) !important;
+    border-right: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+[data-testid="stSidebar"]>div:first-child {
+    background: transparent !important;
+    padding: 0 !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] {
+    color: #2E2E2E;
+}
+
+/* Ocultar elementos de Streamlit en sidebar */
+[data-testid="stSidebar"] .css-1544g2n {
+    padding: 1.5rem 1rem 0rem;
+}
+
+/* Títulos en sidebar */
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3 {
+    color: #1a1a1a !important;
+    font-weight: 700 !important;
+}
+
+/* Párrafos y texto en sidebar */
+[data-testid="stSidebar"] p {
+    color: #5F6B6A !important;
+}
+
+/* Botones en sidebar - Estilo moderno claro */
+[data-testid="stSidebar"] button {
+    background: transparent !important;
+    color: #5F6B6A !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 0.875rem 1.25rem !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    font-weight: 500 !important;
+    text-align: left !important;
+    margin: 0.25rem 0.75rem !important;
+    position: relative !important;
+}
+
+[data-testid="stSidebar"] button:hover {
+    background: rgba(23, 164, 153, 0.08) !important;
+    color: #17A499 !important;
+    transform: translateX(4px) !important;
+}
+
+[data-testid="stSidebar"] button[kind="primary"],
+[data-testid="stSidebar"] button:active {
+    background: linear-gradient(135deg, rgba(23, 164, 153, 0.12), rgba(14, 127, 118, 0.12)) !important;
+    color: #17A499 !important;
+    border-left: 3px solid #17A499 !important;
+    font-weight: 600 !important;
+}
+
+/* Separadores en sidebar */
+[data-testid="stSidebar"] hr {
+    border-color: rgba(0, 0, 0, 0.08) !important;
+    margin: 1.5rem 0 !important;
+}
+
+/* Alerts en sidebar */
+[data-testid="stSidebar"] [data-testid="stAlert"] {
+    background: rgba(23, 164, 153, 0.08) !important;
+    border: 1px solid rgba(23, 164, 153, 0.2) !important;
+    color: #2E2E2E !important;
+    border-radius: 10px !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stAlert"] [data-testid="stMarkdownContainer"] {
+    color: #2E2E2E !important;
+}
+
+/* ============================================ */
+/* SIDEBAR TOGGLE BUTTON */
+/* ============================================ */
+
+/* Botón de toggle del sidebar */
+.sidebar-toggle-container {
+    position: fixed;
+    bottom: 90px;
+    left: 15px;
+    z-index: 1000;
+    width: calc(100% - 30px);
+    max-width: 200px;
+}
+
+.sidebar-toggle-btn {
+    background: linear-gradient(135deg, #2E3440 0%, #3B4252 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    width: 100%;
+}
+
+.sidebar-toggle-btn:hover {
+    background: linear-gradient(135deg, #3B4252 0%, #434C5E 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.sidebar-toggle-btn:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.sidebar-toggle-icon {
+    font-size: 24px;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: bold;
+    transition: transform 0.3s ease;
+}
+
+/* Animación del icono */
+.sidebar-toggle-btn:hover .sidebar-toggle-icon {
+    transform: scale(1.1);
+}
+
+/* Estado colapsado del sidebar */
+[data-testid="stSidebar"][data-collapsed="true"] {
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    overflow: hidden !important;
+    transition: all 0.3s ease !important;
+}
+
+/* Botón de toggle cuando el sidebar está colapsado */
+.sidebar-collapsed-toggle {
+    position: fixed;
+    left: 15px;
+    bottom: 20px;
+    z-index: 9999;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(23, 164, 153, 0.4);
+    transition: all 0.3s ease;
+}
+
+.sidebar-collapsed-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(23, 164, 153, 0.5);
+}
+
+.sidebar-collapsed-toggle-icon {
+    font-size: 24px;
+    color: white;
+    font-weight: bold;
+}
+
+/* ============================================ */
+/* CONTENIDO PRINCIPAL */
+/* ============================================ */
+
+.stApp {
+    background-color: var(--bg-main);
+}
+
+.main .block-container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    max-width: 1200px;
+}
+
+/* ============================================ */
+/* HEADERS */
+/* ============================================ */
+
+h1,
+h2,
+h3 {
+    color: var(--primary) !important;
+    font-weight: 700 !important;
+}
+
+h1 {
+    font-size: 2.5rem !important;
+    margin-bottom: 1rem !important;
+}
+
+h2 {
+    font-size: 2rem !important;
+    margin-bottom: 0.875rem !important;
+}
+
+h3 {
+    font-size: 1.5rem !important;
+    margin-bottom: 0.75rem !important;
+}
+
+/* ============================================ */
+/* BOTONES */
+/* ============================================ */
+
+/* Botones primarios */
+.stButton>button[kind="primary"] {
+    background: var(--primary) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    padding: 0.5rem 1rem !important;
+    transition: all 0.3s ease !important;
+}
+
+.stButton>button[kind="primary"]:hover {
+    background: var(--primary-dark) !important;
+    box-shadow: 0 4px 12px rgba(23, 164, 153, 0.3) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Botones secundarios */
+.stButton>button {
+    background: white !important;
+    color: var(--text-main) !important;
+    border: 1px solid var(--border-soft) !important;
+    border-radius: 8px !important;
+    padding: 0.5rem 1rem !important;
+    transition: all 0.3s ease !important;
+}
+
+.stButton>button:hover {
+    background: var(--bg-alt) !important;
+    border-color: var(--primary) !important;
+    color: var(--primary) !important;
+}
+
+/* ============================================ */
+/* MÉTRICAS */
+/* ============================================ */
+
+[data-testid="stMetric"] {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-soft);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    transition: transform 0.2s ease;
+}
+
+[data-testid="stMetric"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+[data-testid="stMetricLabel"] {
+    color: var(--text-sec) !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+}
+
+[data-testid="stMetricValue"] {
+    color: var(--primary) !important;
+    font-weight: 700 !important;
+    font-size: 2rem !important;
+}
+
+/* ============================================ */
+/* INPUTS Y FORMULARIOS */
+/* ============================================ */
+
+.stTextInput input,
+.stNumberInput input,
+.stTextArea textarea {
+    background-color: var(--bg-main) !important;
+    border: 1px solid var(--border-soft) !important;
+    color: var(--text-main) !important;
+    border-radius: 6px !important;
+    padding: 0.5rem 0.75rem !important;
+}
+
+.stTextInput input:focus,
+.stNumberInput input:focus,
+.stTextArea textarea:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 1px var(--primary) !important;
+}
+
+.stSelectbox div[data-baseweb="select"]>div {
+    background-color: var(--bg-main) !important;
+    border: 1px solid var(--border-soft) !important;
+    border-radius: 6px !important;
+}
+
+/* ============================================ */
+/* TABLAS Y DATAFRAMES */
+/* ============================================ */
+
+.stDataFrame,
+[data-testid="stDataFrameResizable"] {
+    border: 1px solid var(--border-soft) !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+}
+
+/* ============================================ */
+/* TABS */
+/* ============================================ */
+
+.stTabs [data-baseweb="tab-list"] {
+    gap: 8px;
+    background-color: transparent;
+}
+
+.stTabs [data-baseweb="tab"] {
+    height: 50px;
+    background-color: var(--bg-alt);
+    border-radius: 8px 8px 0 0;
+    padding: 0 24px;
+    color: var(--text-sec);
+    font-weight: 500;
+    border: none;
+}
+
+.stTabs [aria-selected="true"] {
+    background-color: var(--primary) !important;
+    color: white !important;
+}
+
+/* ============================================ */
+/* ALERTS */
+/* ============================================ */
+
+.stAlert {
+    border-radius: 8px !important;
+    border-left-width: 4px !important;
+    padding: 1rem !important;
+}
+
+[data-baseweb="notification"][kind="success"] {
+    background-color: rgba(39, 174, 96, 0.1) !important;
+    border-left-color: var(--success) !important;
+}
+
+[data-baseweb="notification"][kind="error"] {
+    background-color: rgba(192, 57, 43, 0.1) !important;
+    border-left-color: var(--error) !important;
+}
+
+[data-baseweb="notification"][kind="warning"] {
+    background-color: rgba(242, 153, 74, 0.1) !important;
+    border-left-color: var(--accent-1) !important;
+}
+
+[data-baseweb="notification"][kind="info"] {
+    background-color: rgba(47, 128, 237, 0.1) !important;
+    border-left-color: var(--accent-2) !important;
+}
+
+/* ============================================ */
+/* PROGRESS BAR */
+/* ============================================ */
+
+.stProgress>div>div>div>div {
+    background-color: var(--primary) !important;
+}
+
+/* ============================================ */
+/* FILE UPLOADER */
+/* ============================================ */
+
+[data-testid="stFileUploader"] {
+    border: 2px dashed var(--primary) !important;
+    border-radius: 12px !important;
+    padding: 2rem !important;
+    background-color: var(--bg-alt) !important;
+}
+
+/* ============================================ */
+/* CLASES PERSONALIZADAS */
+/* ============================================ */
+
+.hero-container {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    padding: 3rem 2rem;
+    border-radius: 16px;
+    color: white;
+    text-align: center;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 20px rgba(14, 127, 118, 0.2);
+}
+
+.hero-container h1 {
+    color: white !important;
+    margin: 0;
+}
+
+.hero-container p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.2rem;
+    margin: 0.5rem 0 0 0;
+}
+
+.section-alt {
+    background-color: var(--bg-alt);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-soft);
+    margin: 1rem 0;
+}
+
+.status-success {
+    color: var(--success) !important;
+    font-weight: 600;
+}
+
+.status-error {
+    color: var(--error) !important;
+    font-weight: 600;
+}
+
+.status-warning {
+    color: var(--accent-1) !important;
+    font-weight: 600;
+}
+
+.status-info {
+    color: var(--accent-2) !important;
+    font-weight: 600;
+}
+
+.doc-card {
+    background-color: var(--bg-main);
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    border-left-width: 4px;
+    border-left-style: solid;
+}
+
+.doc-valid {
+    border-left-color: var(--success);
+}
+
+.doc-invalid {
+    border-left-color: var(--error);
+}
+
+.doc-pending {
+    border-left-color: var(--accent-1);
+}
+
+.counter-badge {
+    background: var(--primary);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.report-card {
+    background-color: var(--bg-alt);
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.report-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    border-color: var(--primary);
+}
+
+.report-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--primary);
+}
+
+.upload-zone {
+    border: 2px dashed var(--primary);
+    border-radius: 12px;
+    padding: 3rem;
+    text-align: center;
+    background-color: var(--bg-alt);
+    transition: all 0.3s ease;
+}
+
+.upload-zone:hover {
+    background-color: var(--bg-main);
+    border-color: var(--primary-dark);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.result-card {
+    background-color: var(--bg-main);
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 0.5rem 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.stat-success {
+    border-left: 4px solid var(--success);
+}
+
+.stat-warning {
+    border-left: 4px solid var(--accent-1);
+}
+
+.stat-error {
+    border-left: 4px solid var(--error);
+}
+
+/* ============================================ */
+/* SIDEBAR HEADER Y LOGO - ESTILO FLUTTER CLARO */
+/* ============================================ */
+
+.sidebar-header {
+    padding: 2rem 1.5rem 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    margin-bottom: 1rem;
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.sidebar-logo-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #17A499, #0E7F76);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 4px 12px rgba(23, 164, 153, 0.25);
+}
+
+.sidebar-logo-text {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a1a1a;
+    letter-spacing: -0.5px;
+}
+
+/* ============================================ */
+/* SIDEBAR CATEGORY - ESTILO FLUTTER CLARO */
+/* ============================================ */
+
+.sidebar-category {
+    color: rgba(0, 0, 0, 0.4);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 20px 1.25rem 10px;
+    margin-top: 0.5rem;
+}
+
+/* ============================================ */
+/* SIDEBAR FOOTER - ESTILO FLUTTER CLARO */
+/* ============================================ */
+
+.sidebar-footer {
+    padding: 1rem 1.25rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    margin-top: auto;
+}
+
+.sidebar-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.sidebar-profile-avatar {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.sidebar-profile-info {
+    flex: 1;
+}
+
+.sidebar-profile-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 2px;
+}
+
+.sidebar-profile-role {
+    font-size: 11px;
+    color: #5F6B6A;
+}
+
+/* ============================================ */
+/* OCULTAR ELEMENTOS DE STREAMLIT */
+/* ============================================ */
+
+#MainMenu {
+    visibility: hidden;
+}
+
+footer {
+    visibility: hidden;
+}
+
+header {
+    visibility: hidden;
+}
+
+/* ============================================ */
+/* RESPONSIVE */
+/* ============================================ */
+
+@media (max-width: 768px) {
+    .hero-container {
+        padding: 2rem 1rem;
+    }
+
+    h1 {
+        font-size: 2rem !important;
+    }
+}

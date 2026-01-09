@@ -1,0 +1,97 @@
+# ============================================
+# STREAMLIT CONFIG - OPTIMIZADO PARA RENDIMIENTO
+# ============================================
+# Aplicar renombrando a config.toml
+
+[server]
+# Modo headless para producción
+headless = true
+
+# Desactivar runOnSave (evita reruns innecesarios)
+runOnSave = false
+
+# Puerto por defecto
+port = 8501
+
+# Habilitar compresión gzip (reduce tamaño de transferencia)
+enableGzip = true
+
+# Habilitar CORS si es necesario
+enableCORS = false
+
+# Max upload size (200MB para PDFs grandes)
+maxUploadSize = 200
+
+# Habilitar XSS protection
+enableXsrfProtection = true
+
+[browser]
+# Deshabilitar recolección de métricas de uso
+gatherUsageStats = false
+
+# Timeout de conexión del servidor (30s)
+serverAddress = "localhost"
+serverPort = 8501
+
+[runner]
+# Modo de ejecución rápido
+magicEnabled = true
+
+# Habilitar fast reruns (evita recargar módulos innecesarios)
+fastReruns = true
+
+# Timeout de script (5 minutos para operaciones masivas)
+scriptTimeoutSeconds = 300
+
+# Enforce serializable session state
+enforceSerializableSessionState = false
+
+[client]
+# Mostrar barra de herramientas del desarrollador
+toolbarMode = "minimal"
+
+# Mostrar el botón de "Deploy"
+showErrorDetails = true
+
+[theme]
+# Colores del tema (mantener los actuales)
+primaryColor = "#17A499"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F5F7F7"
+textColor = "#2E2E2E"
+font = "sans serif"
+
+[logger]
+# Nivel de logging (WARNING en producción, DEBUG en desarrollo)
+level = "WARNING"
+
+# Formato de mensajes
+messageFormat = "%(asctime)s %(levelname)s: %(message)s"
+
+[deprecation]
+# Ocultar warnings de deprecación
+showPyplotGlobalUse = false
+
+# ============================================
+# OPTIMIZACIONES CLAVE EXPLICADAS:
+# ============================================
+# 
+# 1. enableGzip = true
+#    → Comprime respuestas HTTP (reduce latencia en red)
+#
+# 2. fastReruns = true
+#    → No recarga módulos Python en cada rerun (CRÍTICO para velocidad)
+#
+# 3. maxUploadSize = 200
+#    → Permite PDFs grandes sin timeout
+#
+# 4. scriptTimeoutSeconds = 300
+#    → 5 minutos para operaciones masivas (OCR, splits)
+#
+# 5. enforceSerializableSessionState = false
+#    → Permite objetos complejos en session_state (más rápido)
+#
+# 6. logger.level = "WARNING"
+#    → Reduce overhead de logging en producción
+#
+# ============================================
