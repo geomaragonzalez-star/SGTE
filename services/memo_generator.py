@@ -29,16 +29,33 @@ from database import get_session_context, Estudiante, Proyecto, Comision
 # CONFIGURACIÓN DE TOKENS
 # ============================================
 
+# Tokens soportados - formato con llaves simples {TOKEN} y dobles {{TOKEN}}
 TOKENS = {
+    # Formato con llaves simples (plantilla del usuario)
+    "{NUM_MEMO}": "numero_memo",
+    "{ANIO_ACTUAL}": "anio_actual",
+    "{FECHA HOY}": "fecha_actual",
+    "{FECHA_HOY}": "fecha_actual",
+    "{NOMBRE_ESTUDIANTE}": "nombre_completo",
+    "{RUT}": "run",
+    "{CARRERA}": "carrera",
+    "{MODALIDAD}": "modalidad",
+    "{SEMESTRE_ACTUAL}": "semestre_actual",
+    "{SEMESTRE}": "semestre",
+    # Formato con llaves dobles (compatibilidad)
     "{{FECHA}}": "fecha_actual",
     "{{NUMERO_MEMO}}": "numero_memo",
+    "{{NUM_MEMO}}": "numero_memo",
     "{{RUN}}": "run",
+    "{{RUT}}": "run",
     "{{NOMBRES}}": "nombres",
     "{{APELLIDOS}}": "apellidos",
     "{{NOMBRE_COMPLETO}}": "nombre_completo",
+    "{{NOMBRE_ESTUDIANTE}}": "nombre_completo",
     "{{CARRERA}}": "carrera",
     "{{EMAIL}}": "email",
     "{{SEMESTRE}}": "semestre",
+    "{{SEMESTRE_ACTUAL}}": "semestre_actual",
     "{{MODALIDAD}}": "modalidad",
     "{{TITULO_PROYECTO}}": "titulo_proyecto",
     "{{PROFESOR_GUIA}}": "profesor_guia",
@@ -69,8 +86,22 @@ class DatosMemorando:
         return f"{self.nombres} {self.apellidos}"
     
     def to_dict(self) -> Dict:
+        # Obtener año actual
+        anio_actual = datetime.now().strftime("%Y")
+        
+        # Formatear fecha en español
+        fecha_formateada = self.fecha or datetime.now().strftime("%d de %B de %Y")
+        fecha_formateada = fecha_formateada.replace(
+            "January", "Enero").replace("February", "Febrero").replace(
+            "March", "Marzo").replace("April", "Abril").replace(
+            "May", "Mayo").replace("June", "Junio").replace(
+            "July", "Julio").replace("August", "Agosto").replace(
+            "September", "Septiembre").replace("October", "Octubre").replace(
+            "November", "Noviembre").replace("December", "Diciembre")
+        
         return {
-            "fecha_actual": self.fecha or datetime.now().strftime("%d de %B de %Y"),
+            "fecha_actual": fecha_formateada,
+            "anio_actual": anio_actual,
             "numero_memo": self.numero_memo,
             "run": self.run,
             "nombres": self.nombres,
@@ -79,6 +110,7 @@ class DatosMemorando:
             "carrera": self.carrera,
             "email": self.email or "",
             "semestre": self.semestre or "",
+            "semestre_actual": self.semestre or "",
             "modalidad": self.modalidad or "",
             "titulo_proyecto": self.titulo_proyecto or "",
             "profesor_guia": self.profesor_guia or "",
@@ -157,21 +189,87 @@ def crear_documento_desde_plantilla(
     doc = Document(str(plantilla_path))
     datos_dict = datos.to_dict()
     
-    # Reemplazar en párrafos
-    for paragraph in doc.paragraphs:
+    logger.info(f"Reemplazando tokens en plantilla: {plantilla_path.name}")
+    logger.info(f"Datos disponibles: {list(datos_dict.keys())}")
+    logger.info(f"Valores: NUM_MEMO={datos_dict.get('numero_memo')}, NOMBRE={datos_dict.get('nombre_completo')}, RUT={datos_dict.get('run')}, CARRERA={datos_dict.get('carrera')}, MODALIDAD={datos_dict.get('modalidad')}, SEMESTRE={datos_dict.get('semestre_actual')}, ANIO={datos_dict.get('anio_actual')}, FECHA={datos_dict.get('fecha_actual')}")
+    
+    def reemplazar_en_texto(texto: str) -> str:
+        """Reemplaza todos los tokens en un texto."""
+        resultado = texto
+        tokens_encontrados = []
         for token, campo in TOKENS.items():
-            if token in paragraph.text:
-                paragraph.text = paragraph.text.replace(token, datos_dict.get(campo, ""))
+            if token in resultado:
+                valor = datos_dict.get(campo, "")
+                resultado = resultado.replace(token, str(valor) if valor else "")
+                tokens_encontrados.append(f"{token} -> {valor if valor else '(vacío)'}")
+        if tokens_encontrados:
+            logger.info(f"Tokens reemplazados en texto: {', '.join(tokens_encontrados)}")
+        return resultado
+    
+    # Función para reemplazar en párrafo completo (maneja tokens divididos entre runs)
+    def reemplazar_en_parrafo(paragraph):
+        """Reemplaza tokens en un párrafo, incluso si están divididos entre runs."""
+        texto_completo = paragraph.text
+        if any(token in texto_completo for token in TOKENS.keys()):
+            # Reemplazar en el texto completo
+            texto_reemplazado = reemplazar_en_texto(texto_completo)
+            
+            # Si el texto cambió, reemplazar todo el párrafo
+            if texto_reemplazado != texto_completo:
+                # Limpiar todo el párrafo y agregar el texto reemplazado
+                # Esto es necesario cuando los tokens están divididos entre runs
+                if paragraph.runs:
+                    # Guardar el formato del primer run
+                    primer_run = paragraph.runs[0]
+                    formato_bold = primer_run.bold
+                    formato_italic = primer_run.italic
+                    
+                    # Limpiar todo el párrafo
+                    paragraph.clear()
+                    
+                    # Agregar el texto reemplazado con el formato original
+                    nuevo_run = paragraph.add_run(texto_reemplazado)
+                    nuevo_run.bold = formato_bold
+                    nuevo_run.italic = formato_italic
+                else:
+                    paragraph.add_run(texto_reemplazado)
+    
+    # Reemplazar en párrafos principales
+    for paragraph in doc.paragraphs:
+        reemplazar_en_parrafo(paragraph)
     
     # Reemplazar en tablas
     for table in doc.tables:
         for row in table.rows:
             for cell in row.cells:
                 for paragraph in cell.paragraphs:
-                    for token, campo in TOKENS.items():
-                        if token in paragraph.text:
-                            paragraph.text = paragraph.text.replace(token, datos_dict.get(campo, ""))
+                    reemplazar_en_parrafo(paragraph)
     
+    # Reemplazar en headers y footers
+    for section in doc.sections:
+        # Header
+        if section.header:
+            for paragraph in section.header.paragraphs:
+                reemplazar_en_parrafo(paragraph)
+            # Headers en tablas
+            for table in section.header.tables:
+                for row in table.rows:
+                    for cell in row.cells:
+                        for paragraph in cell.paragraphs:
+                            reemplazar_en_parrafo(paragraph)
+        
+        # Footer
+        if section.footer:
+            for paragraph in section.footer.paragraphs:
+                reemplazar_en_parrafo(paragraph)
+            # Footers en tablas
+            for table in section.footer.tables:
+                for row in table.rows:
+                    for cell in row.cells:
+                        for paragraph in cell.paragraphs:
+                            reemplazar_en_parrafo(paragraph)
+    
+    logger.debug(f"Tokens reemplazados en plantilla: {plantilla_path.name}")
     return doc
 
 
@@ -317,42 +415,55 @@ def generar_memorandum(
         datos.numero_memo = numero_memo
         datos.fecha = datetime.now().strftime("%d/%m/%Y")
         
-        # Buscar plantilla en múltiples ubicaciones
+        # Buscar plantilla en múltiples ubicaciones (prioridad: plantilla del usuario)
         config = get_config()
         plantilla = None
+        
+        # Ruta exacta de la plantilla del usuario
+        plantilla_usuario = Path(r"C:\Users\YomiT\Downloads\Plantilla_Memo_Grado.docx")
         
         if plantilla_path:
             # Si se especifica una ruta, usarla directamente
             plantilla = Path(plantilla_path)
+        elif plantilla_usuario.exists():
+            # Usar plantilla del usuario si existe
+            plantilla = plantilla_usuario
+            logger.info(f"✓ Usando plantilla del usuario: {plantilla}")
         else:
-            # Buscar en varias ubicaciones posibles (en orden de prioridad)
+            # Buscar en otras ubicaciones posibles (en orden de prioridad)
             posibles_rutas = [
-                Path("C:/Users/YomiT/Downloads/Plantilla_Memo_Grado.docx"),  # Plantilla del usuario
+                Path(r"C:\Users\YomiT\Downloads\Plantilla_Memo_Grado.docx"),  # Plantilla del usuario (PRIORIDAD)
                 Path(config.paths.templates_path) / "Plantilla_Memo_Grado.docx",  # En carpeta de templates configurada
                 Path(config.paths.templates_path) / "memo_template.docx",  # Nombre alternativo
                 Path("./templates") / "Plantilla_Memo_Grado.docx",  # Relativo a raíz
                 Path("./templates") / "memo_template.docx",  # Nombre alternativo
                 Path(".") / "Plantilla_Memo_Grado.docx",  # En raíz del proyecto
                 Path(".") / "memo_template.docx",  # Nombre alternativo en raíz
-                Path(__file__).parent.parent / "templates" / "Plantilla_Memo_Grado.docx",  # Relativo al código
             ]
             
             for ruta in posibles_rutas:
-                ruta_absoluta = ruta.resolve() if ruta.is_absolute() else Path.cwd() / ruta
-                if ruta_absoluta.exists():
-                    plantilla = ruta_absoluta
-                    logger.info(f"✓ Plantilla encontrada en: {plantilla}")
-                    break
+                try:
+                    ruta_absoluta = ruta.resolve() if ruta.is_absolute() else Path.cwd() / ruta
+                    if ruta_absoluta.exists() and ruta_absoluta.is_file():
+                        plantilla = ruta_absoluta
+                        logger.info(f"✓ Plantilla encontrada en: {plantilla}")
+                        break
+                except Exception as e:
+                    logger.debug(f"No se pudo verificar ruta {ruta}: {e}")
+                    continue
         
         try:
             if plantilla and plantilla.exists():
-                logger.info(f"Usando plantilla: {plantilla.absolute()}")
+                logger.info(f"✓ Usando plantilla: {plantilla.absolute()}")
+                logger.info(f"  Datos del estudiante: {datos.nombre_completo} ({datos.run}), Carrera: {datos.carrera}, Modalidad: {datos.modalidad}")
                 doc = crear_documento_desde_plantilla(plantilla, datos)
             else:
                 if plantilla:
                     logger.warning(f"⚠ Plantilla especificada no encontrada: {plantilla}")
-                logger.warning(f"⚠ No se encontró plantilla. Buscando en: {[str(p) for p in posibles_rutas]}")
-                logger.info("Usando formato por defecto (sin plantilla)")
+                logger.error(f"❌ No se encontró plantilla en: C:\\Users\\YomiT\\Downloads\\Plantilla_Memo_Grado.docx")
+                logger.error(f"   Verificando existencia de plantilla_usuario: {plantilla_usuario.exists()}")
+                logger.error(f"   Ruta completa verificada: {plantilla_usuario.absolute()}")
+                logger.warning("⚠ Usando formato por defecto (sin plantilla)")
                 doc = crear_documento_por_defecto(datos)
         except Exception as e:
             logger.error(f"Error creando documento para {run}: {e}", exc_info=True)

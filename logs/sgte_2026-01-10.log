@@ -1,0 +1,48 @@
+2026-01-10 14:12:56.527 | INFO     | services.memo_generator:generar_memorandums_masivo:507 - Iniciando generación de 1 memorándums
+2026-01-10 14:12:56.586 | DEBUG    | services.memo_generator:generar_memorandums_masivo:514 - Generando memo 1/1 para 19.669.221-5 (número: 001)
+2026-01-10 14:12:56.810 | INFO     | services.memo_generator:generar_memorandum:435 - ✓ Plantilla encontrada en: C:\Users\YomiT\Downloads\Plantilla_Memo_Grado.docx
+2026-01-10 14:12:56.810 | INFO     | services.memo_generator:generar_memorandum:443 - Usando plantilla: C:\Users\YomiT\Downloads\Plantilla_Memo_Grado.docx
+2026-01-10 14:12:57.058 | INFO     | services.memo_generator:crear_documento_desde_plantilla:192 - Reemplazando tokens en plantilla. Datos disponibles: ['fecha_actual', 'anio_actual', 'numero_memo', 'run', 'nombres', 'apellidos', 'nombre_completo', 'carrera', 'email', 'semestre', 'semestre_actual', 'modalidad', 'titulo_proyecto', 'profesor_guia', 'corrector_1', 'corrector_2']
+2026-01-10 14:12:57.080 | DEBUG    | services.memo_generator:reemplazar_en_texto:207 - Tokens reemplazados en texto: {NUM_MEMO} -> 001, {ANIO_ACTUAL} -> 2026
+2026-01-10 14:12:57.093 | DEBUG    | services.memo_generator:reemplazar_en_texto:207 - Tokens reemplazados en texto: {FECHA HOY} -> 10/01/2026
+2026-01-10 14:12:57.098 | DEBUG    | services.memo_generator:reemplazar_en_texto:207 - Tokens reemplazados en texto: {NOMBRE_ESTUDIANTE} -> Julio Abad Castro, {RUT} -> 19.669.221-5, {CARRERA} -> 1354 - Ingeniería de Ejecución Industrial, {MODALIDAD} -> Trabajo de Titulación, {SEMESTRE_ACTUAL} -> 2024-1
+2026-01-10 14:12:57.128 | DEBUG    | services.memo_generator:crear_documento_desde_plantilla:264 - Tokens reemplazados en plantilla: Plantilla_Memo_Grado.docx
+2026-01-10 14:12:57.214 | INFO     | services.memo_generator:generar_memorandum:467 - Memorándum generado exitosamente para 19.669.221-5: Memo_Apertura_196692215_20260110.docx (611547 bytes)
+2026-01-10 14:12:57.216 | DEBUG    | services.memo_generator:generar_memorandums_masivo:526 - ✓ Memorándum generado para 19.669.221-5
+2026-01-10 14:12:57.255 | INFO     | services.memo_generator:generar_memorandums_masivo:551 - ✓ ZIP generado exitosamente: 1/1 memorándums generados (609795 bytes)
+2026-01-10 14:13:58.082 | INFO     | services.memo_generator:generar_memorandums_masivo:507 - Iniciando generación de 1 memorándums
+2026-01-10 14:13:58.084 | DEBUG    | services.memo_generator:generar_memorandums_masivo:514 - Generando memo 1/1 para 19.669.221-5 (número: 001)
+2026-01-10 14:13:58.084 | INFO     | services.memo_generator:generar_memorandum:435 - ✓ Plantilla encontrada en: C:\Users\YomiT\Downloads\Plantilla_Memo_Grado.docx
+2026-01-10 14:13:58.095 | INFO     | services.memo_generator:generar_memorandum:443 - Usando plantilla: C:\Users\YomiT\Downloads\Plantilla_Memo_Grado.docx
+2026-01-10 14:13:58.127 | INFO     | services.memo_generator:crear_documento_desde_plantilla:192 - Reemplazando tokens en plantilla. Datos disponibles: ['fecha_actual', 'anio_actual', 'numero_memo', 'run', 'nombres', 'apellidos', 'nombre_completo', 'carrera', 'email', 'semestre', 'semestre_actual', 'modalidad', 'titulo_proyecto', 'profesor_guia', 'corrector_1', 'corrector_2']
+2026-01-10 14:13:58.135 | DEBUG    | services.memo_generator:reemplazar_en_texto:207 - Tokens reemplazados en texto: {NUM_MEMO} -> 001, {ANIO_ACTUAL} -> 2026
+2026-01-10 14:13:58.135 | DEBUG    | services.memo_generator:reemplazar_en_texto:207 - Tokens reemplazados en texto: {FECHA HOY} -> 10/01/2026
+2026-01-10 14:13:58.143 | DEBUG    | services.memo_generator:reemplazar_en_texto:207 - Tokens reemplazados en texto: {NOMBRE_ESTUDIANTE} -> Julio Abad Castro, {RUT} -> 19.669.221-5, {CARRERA} -> 1354 - Ingeniería de Ejecución Industrial, {MODALIDAD} -> Trabajo de Titulación, {SEMESTRE_ACTUAL} -> 2024-1
+2026-01-10 14:13:58.162 | DEBUG    | services.memo_generator:crear_documento_desde_plantilla:264 - Tokens reemplazados en plantilla: Plantilla_Memo_Grado.docx
+2026-01-10 14:13:58.226 | INFO     | services.memo_generator:generar_memorandum:467 - Memorándum generado exitosamente para 19.669.221-5: Memo_Apertura_196692215_20260110.docx (611547 bytes)
+2026-01-10 14:13:58.226 | DEBUG    | services.memo_generator:generar_memorandums_masivo:526 - ✓ Memorándum generado para 19.669.221-5
+2026-01-10 14:13:58.270 | INFO     | services.memo_generator:generar_memorandums_masivo:551 - ✓ ZIP generado exitosamente: 1/1 memorándums generados (609795 bytes)
+2026-01-10 14:22:51.459 | INFO     | services.memo_generator:generar_memorandums_masivo:507 - Iniciando generación de 1 memorándums
+2026-01-10 14:22:51.459 | DEBUG    | services.memo_generator:generar_memorandums_masivo:514 - Generando memo 1/1 para 19.669.221-5 (número: 001)
+2026-01-10 14:22:51.474 | INFO     | services.memo_generator:generar_memorandum:435 - ✓ Plantilla encontrada en: C:\Users\YomiT\Downloads\Plantilla_Memo_Grado.docx
+2026-01-10 14:22:51.476 | INFO     | services.memo_generator:generar_memorandum:443 - Usando plantilla: C:\Users\YomiT\Downloads\Plantilla_Memo_Grado.docx
+2026-01-10 14:22:51.567 | INFO     | services.memo_generator:crear_documento_desde_plantilla:192 - Reemplazando tokens en plantilla. Datos disponibles: ['fecha_actual', 'anio_actual', 'numero_memo', 'run', 'nombres', 'apellidos', 'nombre_completo', 'carrera', 'email', 'semestre', 'semestre_actual', 'modalidad', 'titulo_proyecto', 'profesor_guia', 'corrector_1', 'corrector_2']
+2026-01-10 14:22:51.576 | DEBUG    | services.memo_generator:reemplazar_en_texto:207 - Tokens reemplazados en texto: {NUM_MEMO} -> 001, {ANIO_ACTUAL} -> 2026
+2026-01-10 14:22:51.576 | DEBUG    | services.memo_generator:reemplazar_en_texto:207 - Tokens reemplazados en texto: {FECHA HOY} -> 10/01/2026
+2026-01-10 14:22:51.583 | DEBUG    | services.memo_generator:reemplazar_en_texto:207 - Tokens reemplazados en texto: {NOMBRE_ESTUDIANTE} -> Julio Abad Castro, {RUT} -> 19.669.221-5, {CARRERA} -> 1354 - Ingeniería de Ejecución Industrial, {MODALIDAD} -> Trabajo de Titulación, {SEMESTRE_ACTUAL} -> 2024-1
+2026-01-10 14:22:51.583 | DEBUG    | services.memo_generator:crear_documento_desde_plantilla:264 - Tokens reemplazados en plantilla: Plantilla_Memo_Grado.docx
+2026-01-10 14:22:51.640 | INFO     | services.memo_generator:generar_memorandum:467 - Memorándum generado exitosamente para 19.669.221-5: Memo_Apertura_196692215_20260110.docx (611547 bytes)
+2026-01-10 14:22:51.640 | DEBUG    | services.memo_generator:generar_memorandums_masivo:526 - ✓ Memorándum generado para 19.669.221-5
+2026-01-10 14:22:51.679 | INFO     | services.memo_generator:generar_memorandums_masivo:551 - ✓ ZIP generado exitosamente: 1/1 memorándums generados (609795 bytes)
+2026-01-10 14:31:49.630 | INFO     | services.memo_generator:generar_memorandums_masivo:507 - Iniciando generación de 1 memorándums
+2026-01-10 14:31:49.634 | DEBUG    | services.memo_generator:generar_memorandums_masivo:514 - Generando memo 1/1 para 19.669.221-5 (número: 001)
+2026-01-10 14:31:49.653 | INFO     | services.memo_generator:generar_memorandum:435 - ✓ Plantilla encontrada en: C:\Users\YomiT\Downloads\Plantilla_Memo_Grado.docx
+2026-01-10 14:31:49.662 | INFO     | services.memo_generator:generar_memorandum:443 - Usando plantilla: C:\Users\YomiT\Downloads\Plantilla_Memo_Grado.docx
+2026-01-10 14:31:49.709 | INFO     | services.memo_generator:crear_documento_desde_plantilla:192 - Reemplazando tokens en plantilla. Datos disponibles: ['fecha_actual', 'anio_actual', 'numero_memo', 'run', 'nombres', 'apellidos', 'nombre_completo', 'carrera', 'email', 'semestre', 'semestre_actual', 'modalidad', 'titulo_proyecto', 'profesor_guia', 'corrector_1', 'corrector_2']
+2026-01-10 14:31:49.718 | DEBUG    | services.memo_generator:reemplazar_en_texto:207 - Tokens reemplazados en texto: {NUM_MEMO} -> 001, {ANIO_ACTUAL} -> 2026
+2026-01-10 14:31:49.718 | DEBUG    | services.memo_generator:reemplazar_en_texto:207 - Tokens reemplazados en texto: {FECHA HOY} -> 10/01/2026
+2026-01-10 14:31:49.725 | DEBUG    | services.memo_generator:reemplazar_en_texto:207 - Tokens reemplazados en texto: {NOMBRE_ESTUDIANTE} -> Julio Abad Castro, {RUT} -> 19.669.221-5, {CARRERA} -> 1354 - Ingeniería de Ejecución Industrial, {MODALIDAD} -> Trabajo de Titulación, {SEMESTRE_ACTUAL} -> 2024-1
+2026-01-10 14:31:49.743 | DEBUG    | services.memo_generator:crear_documento_desde_plantilla:264 - Tokens reemplazados en plantilla: Plantilla_Memo_Grado.docx
+2026-01-10 14:31:49.809 | INFO     | services.memo_generator:generar_memorandum:467 - Memorándum generado exitosamente para 19.669.221-5: Memo_Apertura_196692215_20260110.docx (611547 bytes)
+2026-01-10 14:31:49.809 | DEBUG    | services.memo_generator:generar_memorandums_masivo:526 - ✓ Memorándum generado para 19.669.221-5
+2026-01-10 14:31:49.854 | INFO     | services.memo_generator:generar_memorandums_masivo:551 - ✓ ZIP generado exitosamente: 1/1 memorándums generados (609795 bytes)

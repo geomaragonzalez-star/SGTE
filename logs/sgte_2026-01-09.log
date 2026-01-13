@@ -77,3 +77,17 @@
 2026-01-09 15:00:25.146 | INFO     | services.memo_generator:generar_memorandum:347 - Memorándum generado exitosamente para 19.669.221-5: Memo_Apertura_196692215_20260109.docx (37051 bytes)
 2026-01-09 15:00:25.147 | DEBUG    | services.memo_generator:generar_memorandums_masivo:406 - ✓ Memorándum generado para 19.669.221-5
 2026-01-09 15:00:25.147 | INFO     | services.memo_generator:generar_memorandums_masivo:431 - ✓ ZIP generado exitosamente: 1/1 memorándums generados (34763 bytes)
+2026-01-09 15:10:46.718 | INFO     | services.memo_generator:generar_memorandum:389 - ✓ Plantilla encontrada en: C:\Users\YomiT\Downloads\Plantilla_Memo_Grado.docx
+2026-01-09 15:10:46.720 | INFO     | services.memo_generator:generar_memorandum:397 - Usando plantilla: C:\Users\YomiT\Downloads\Plantilla_Memo_Grado.docx
+2026-01-09 15:10:46.836 | DEBUG    | services.memo_generator:crear_documento_desde_plantilla:218 - Tokens reemplazados en plantilla: Plantilla_Memo_Grado.docx
+2026-01-09 15:10:46.869 | INFO     | services.memo_generator:generar_memorandum:421 - Memorándum generado exitosamente para 19.669.221-5: Memo_Apertura_196692215_20260109.docx (611615 bytes)
+2026-01-09 15:10:46.869 | DEBUG    | services.memo_generator:generar_memorandums_masivo:480 - ✓ Memorándum generado para 19.669.221-5
+2026-01-09 15:10:46.895 | INFO     | services.memo_generator:generar_memorandums_masivo:505 - ✓ ZIP generado exitosamente: 1/1 memorándums generados (609868 bytes)
+2026-01-09 15:14:50.742 | INFO     | services.memo_generator:generar_memorandums_masivo:461 - Iniciando generación de 1 memorándums
+2026-01-09 15:14:50.747 | DEBUG    | services.memo_generator:generar_memorandums_masivo:468 - Generando memo 1/1 para 20.089.261-5 (número: 001)
+2026-01-09 15:14:50.790 | INFO     | services.memo_generator:generar_memorandum:389 - ✓ Plantilla encontrada en: C:\Users\YomiT\Downloads\Plantilla_Memo_Grado.docx
+2026-01-09 15:14:50.791 | INFO     | services.memo_generator:generar_memorandum:397 - Usando plantilla: C:\Users\YomiT\Downloads\Plantilla_Memo_Grado.docx
+2026-01-09 15:14:50.950 | DEBUG    | services.memo_generator:crear_documento_desde_plantilla:218 - Tokens reemplazados en plantilla: Plantilla_Memo_Grado.docx
+2026-01-09 15:14:50.996 | INFO     | services.memo_generator:generar_memorandum:421 - Memorándum generado exitosamente para 20.089.261-5: Memo_Apertura_200892615_20260109.docx (611615 bytes)
+2026-01-09 15:14:50.997 | DEBUG    | services.memo_generator:generar_memorandums_masivo:480 - ✓ Memorándum generado para 20.089.261-5
+2026-01-09 15:14:51.021 | INFO     | services.memo_generator:generar_memorandums_masivo:505 - ✓ ZIP generado exitosamente: 1/1 memorándums generados (609868 bytes)

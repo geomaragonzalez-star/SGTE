@@ -140,29 +140,112 @@ document.querySelectorAll('.estudiante-checkbox').forEach(cb => {
 // Operaciones
 async function generarMemos() {
     const runs = getSeleccionados();
-    if (runs.length === 0) return;
+    if (runs.length === 0) {
+        alert('Debe seleccionar al menos un estudiante');
+        return;
+    }
     
+    // Si son múltiples estudiantes, descargar uno por uno
+    if (runs.length > 1) {
+        if (!confirm(`Se descargarán ${runs.length} memorándums uno por uno. ¿Continuar?`)) {
+            return;
+        }
+        
+        for (let i = 0; i < runs.length; i++) {
+            const run = runs[i];
+            try {
+                await descargarMemoIndividual(run, i + 1, runs.length);
+                // Pequeña pausa entre descargas para evitar problemas
+                if (i < runs.length - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+            } catch (error) {
+                console.error(`Error descargando memo para ${run}:`, error);
+                alert(`Error descargando memorándum para ${run}`);
+            }
+        }
+        alert(`Se descargaron ${runs.length} memorándums`);
+        return;
+    }
+    
+    // Si es un solo estudiante, descargar directamente
     try {
-        const response = await fetch('/api/operaciones/generar-memos', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ runs })
+        await descargarMemoIndividual(runs[0], 1, 1);
+    } catch (error) {
+        console.error('Error generando memorándum:', error);
+        alert('Error generando memorándum');
+    }
+}
+
+async function descargarMemoIndividual(run, numero, total) {
+    const response = await fetch('/api/operaciones/generar-memos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ runs: [run] })
+    });
+    
+    if (response.ok) {
+        // Obtener el contenido como array buffer para mantener los bytes originales
+        const arrayBuffer = await response.arrayBuffer();
+        
+        // Crear blob con tipo MIME explícito para Word (NO ZIP)
+        const wordBlob = new Blob([arrayBuffer], { 
+            type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' 
         });
         
-        if (response.ok) {
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `memorandums_${new Date().getTime()}.zip`;
-            a.click();
-            alert(`Memorándums generados: ${response.headers.get('X-Exitosos')} exitosos`);
-        } else {
-            const error = await response.json();
-            alert('Error: ' + error.detail);
+        const url = window.URL.createObjectURL(wordBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.style.display = 'none';
+        
+        // Obtener el nombre del archivo del header o generar uno
+        const contentDisposition = response.headers.get('Content-Disposition');
+        let filename = `Memo_Apertura_${run}_${new Date().getTime()}.docx`;
+        
+        if (contentDisposition) {
+            // Intentar extraer el filename (puede estar en formato simple o RFC 5987)
+            let filenameMatch = contentDisposition.match(/filename\*?=['"]?([^'";]+)['"]?/i);
+            if (!filenameMatch) {
+                filenameMatch = contentDisposition.match(/filename\*=UTF-8''(.+)/i);
+            }
+            
+            if (filenameMatch) {
+                filename = decodeURIComponent(filenameMatch[1]);
+                // Asegurar que termine en .docx
+                if (!filename.toLowerCase().endsWith('.docx')) {
+                    filename = filename.replace(/\.[^.]+$/, '') + '.docx';
+                }
+            }
         }
-    } catch (error) {
-        alert('Error generando memorándums');
+        
+        // Asegurar que el nombre del archivo termine en .docx
+        if (!filename.toLowerCase().endsWith('.docx')) {
+            filename = filename.replace(/\.[^.]+$/, '') + '.docx';
+        }
+        
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        
+        // Limpiar después de un breve delay
+        setTimeout(() => {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }, 100);
+        
+        if (total > 1) {
+            console.log(`Memorándum ${numero}/${total} descargado: ${filename}`);
+        }
+    } else {
+        const errorText = await response.text();
+        let errorMessage = 'Error generando memorándum';
+        try {
+            const errorJson = JSON.parse(errorText);
+            errorMessage = errorJson.detail || errorMessage;
+        } catch (e) {
+            errorMessage = errorText || errorMessage;
+        }
+        throw new Error(errorMessage);
     }
 }
 

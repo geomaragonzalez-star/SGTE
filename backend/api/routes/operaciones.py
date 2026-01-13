@@ -27,41 +27,52 @@ class OperacionMasivaRequest(BaseModel):
 
 @router.post("/generar-memos")
 async def generar_memos_masivo(request: OperacionMasivaRequest):
-    """Genera memorándums masivos para los estudiantes seleccionados."""
+    """Genera memorándum para un estudiante y descarga Word directamente (sin ZIP)."""
     try:
-        if not request.runs:
+        if not request.runs or len(request.runs) == 0:
             raise HTTPException(status_code=400, detail="Debe seleccionar al menos un estudiante")
         
-        # Generar memorándums
-        zip_bytes, resultados_list = generar_memorandums_masivo(
-            request.runs,
-            numero_memo_inicio=1,
-            callback=None
-        )
+        # Siempre trabajar con el primer estudiante (el frontend maneja múltiples llamadas)
+        from services.memo_generator import generar_memorandum
         
-        exitosos = sum(1 for r in resultados_list if r.exito)
-        fallidos = len(resultados_list) - exitosos
+        run = request.runs[0]
         
-        # Si no se generó ningún memorándum, devolver error con detalles
-        if exitosos == 0:
-            errores = [f"{r.run}: {r.error}" for r in resultados_list if r.error]
-            mensaje = f"No se pudo generar ningún memorándum. Errores: {'; '.join(errores[:5])}"
-            if len(errores) > 5:
-                mensaje += f" ... y {len(errores) - 5} más"
-            raise HTTPException(status_code=400, detail=mensaje)
+        # Generar número de memo (001, 002, etc.)
+        numero_memo = "001"
+        if len(request.runs) > 1:
+            # Si hay más de uno, el frontend debe pasar el índice
+            numero_memo = str(len(request.runs)).zfill(3)
         
-        filename = f"memorandums_{datetime.now().strftime('%Y%m%d_%H%M%S')}.zip"
+        exito, doc_bytes, nombre_archivo = generar_memorandum(run, numero_memo=numero_memo)
+        
+        if not exito:
+            raise HTTPException(status_code=400, detail=f"Error generando memorándum para {run}: {nombre_archivo}")
+        
+        if not doc_bytes:
+            raise HTTPException(status_code=500, detail=f"El documento generado está vacío para {run}")
+        
+        # Asegurar que el nombre del archivo termine en .docx
+        if not nombre_archivo.lower().endswith('.docx'):
+            nombre_archivo = nombre_archivo.rsplit('.', 1)[0] + '.docx'
+        
+        # Codificar el nombre del archivo para Content-Disposition (RFC 5987)
+        import urllib.parse
+        nombre_archivo_encoded = urllib.parse.quote(nombre_archivo.encode('utf-8'))
+        
+        # Crear respuesta con tipo MIME correcto para Word
+        headers = {
+            "Content-Disposition": f'attachment; filename="{nombre_archivo}"; filename*=UTF-8\'\'{nombre_archivo_encoded}',
+            "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "Content-Length": str(len(doc_bytes)),
+            "X-Content-Type-Options": "nosniff"  # Evitar que el navegador detecte el tipo automáticamente
+        }
         
         return StreamingResponse(
-            BytesIO(zip_bytes),
-            media_type="application/zip",
-            headers={
-                "Content-Disposition": f"attachment; filename={filename}",
-                "X-Exitosos": str(exitosos),
-                "X-Fallidos": str(fallidos),
-                "X-Total": str(len(request.runs))
-            }
+            BytesIO(doc_bytes),
+            media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            headers=headers
         )
+        
     except HTTPException:
         raise
     except Exception as e:
