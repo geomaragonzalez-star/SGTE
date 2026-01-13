@@ -34,6 +34,13 @@ class EmailConfig:
 
 
 @dataclass
+class ExcelConfig:
+    """Configuración para sincronización desde Excel."""
+    ruta_archivo: str
+    hojas: list
+
+
+@dataclass
 class AppConfig:
     debug_mode: bool
     log_level: str
@@ -81,6 +88,14 @@ class Config:
             log_level=self._get_secret("app", "log_level", "DEBUG"),
             app_name=self._get_secret("app", "app_name", "SGTE"),
             version=self._get_secret("app", "version", "2.0.0")
+        )
+        self.excel = ExcelConfig(
+            ruta_archivo=self._get_secret("excel", "ruta_archivo", r"G:\Mi unidad\SGTE\alumnos.xlsx"),
+            hojas=self._get_secret("excel", "hojas", [
+                "2025-2", "2025-1", "2024-2", "2024-1",
+                "Carga Consolidada 2025-2", "Carga Consolidada 2025-1",
+                "Carga Consolidada 2024-2", "Carga Consolidada 2024-1"
+            ])
         )
         self._setup_logging()
     

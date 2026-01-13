@@ -78,25 +78,77 @@ async function cargarDocumentos() {
         container.innerHTML = '';
         
         for (const [tipo, nombre] of Object.entries(tipos)) {
-            const doc = documentos[tipo];
-            const estado = doc ? (doc.validado ? 'validado' : 'pendiente') : 'faltante';
-            const icono = doc ? (doc.validado ? '<i class="fas fa-check-circle text-green-500"></i>' : '<i class="fas fa-paperclip text-blue-500"></i>') : '<i class="fas fa-circle text-gray-300"></i>';
+            const docsList = documentos[tipo] || [];
+            const hasDocs = docsList.length > 0;
             
+            // Determinar estado visual del contenedor
+            let containerClass = 'bg-gray-50 border-gray-200';
+            if (hasDocs) {
+                if (docsList.some(d => d.validado)) {
+                    containerClass = 'bg-green-50 border-green-200';
+                } else {
+                    containerClass = 'bg-yellow-50 border-yellow-200';
+                }
+            }
+
             const div = document.createElement('div');
-            div.className = `p-4 rounded-lg border-2 ${estado === 'validado' ? 'bg-green-50 border-green-200' : estado === 'pendiente' ? 'bg-yellow-50 border-yellow-200' : 'bg-gray-50 border-gray-200'}`;
-            div.innerHTML = `
-                <div class="flex justify-between items-center">
-                    <div>
-                        <strong>${icono} ${nombre}</strong>
-                        <div class="text-sm text-gray-600 mt-1">${estado === 'validado' ? 'Validado' : estado === 'pendiente' ? 'Pendiente validación' : 'Faltante'}</div>
-                    </div>
-                    ${doc && !doc.validado ? `
-                        <button onclick="validarDocumento(${doc.id})" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg text-sm">
-                            Validar
-                        </button>
-                    ` : ''}
+            div.className = `p-4 rounded-lg border-2 ${containerClass}`;
+            
+            let htmlContent = `
+                <div class="mb-2 flex justify-between items-center">
+                    <strong>${nombre}</strong>
+                    <span class="text-xs font-semibold px-2 py-1 rounded bg-white border">
+                        ${docsList.length} documento(s)
+                    </span>
                 </div>
             `;
+            
+            if (!hasDocs) {
+                htmlContent += `
+                    <div class="text-sm text-gray-500 italic">
+                        <i class="fas fa-exclamation-circle mr-1"></i> No se han subido documentos
+                    </div>
+                `;
+            } else {
+                htmlContent += `<div class="space-y-2 mt-3">`;
+                
+                docsList.forEach((doc, index) => {
+                    htmlContent += `
+                        <div class="bg-white p-3 rounded border shadow-sm flex justify-between items-center">
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-file-pdf text-red-500"></i>
+                                    <span class="font-medium text-sm">Documento ${index + 1}</span>
+                                    ${doc.validado ? 
+                                        '<span class="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded">Validado</span>' : 
+                                        '<span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded">Pendiente</span>'
+                                    }
+                                </div>
+                                <div class="text-xs text-gray-500 mt-1 ml-6">
+                                    Subido: ${new Date(doc.uploaded_at).toLocaleDateString()} ${new Date(doc.uploaded_at).toLocaleTimeString()}
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <a href="/api/documentos/${doc.id}/preview" target="_blank" class="p-2 text-blue-600 hover:bg-blue-50 rounded" title="Ver documento">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                ${!doc.validado ? `
+                                    <button onclick="validarDocumento(${doc.id})" class="p-2 text-teal-600 hover:bg-teal-50 rounded" title="Validar">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                ` : ''}
+                                <button onclick="eliminarDocumento(${doc.id})" class="p-2 text-red-600 hover:bg-red-50 rounded" title="Eliminar">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                htmlContent += `</div>`;
+            }
+            
+            div.innerHTML = htmlContent;
             container.appendChild(div);
         }
     } catch (error) {
@@ -105,12 +157,24 @@ async function cargarDocumentos() {
 }
 
 async function validarDocumento(docId) {
+    if (!confirm('¿Confirmar validación de este documento?')) return;
     try {
         await api.put(`/documentos/${docId}/validar`, { validado: true });
         alert('Documento validado');
         cargarDocumentos();
     } catch (error) {
         alert('Error validando documento');
+    }
+}
+
+async function eliminarDocumento(docId) {
+    if (!confirm('¿Estás seguro de eliminar este documento?')) return;
+    try {
+        await api.delete(`/documentos/${docId}`);
+        alert('Documento eliminado');
+        cargarDocumentos();
+    } catch (error) {
+        alert('Error eliminando documento');
     }
 }
 

@@ -7,23 +7,21 @@
 <div class="space-y-6">
     <div class="bg-white rounded-lg shadow p-6">
         <h3 class="text-xl font-semibold text-gray-800 mb-4">Seleccione estudiantes para operaciones masivas</h3>
-        
+
         <!-- Filtros -->
         <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <input 
-                type="text" 
-                id="filtro-busqueda" 
-                placeholder="Buscar por RUN o nombre..." 
-                class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
-            >
-            <select id="filtro-carrera" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
+            <input type="text" id="filtro-busqueda" placeholder="Buscar por RUN o nombre..."
+                class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
+            <select id="filtro-carrera"
+                class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
                 <option value="">Todas las carreras</option>
             </select>
-            <button onclick="filtrarEstudiantes()" class="bg-teal-500 hover:bg-teal-600 text-white px-6 py-2 rounded-lg font-semibold">
+            <button onclick="filtrarEstudiantes()"
+                class="bg-teal-500 hover:bg-teal-600 text-white px-6 py-2 rounded-lg font-semibold">
                 Filtrar
             </button>
         </div>
-        
+
         <!-- Tabla de estudiantes -->
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
@@ -39,48 +37,50 @@
                 </thead>
                 <tbody id="tabla-estudiantes" class="bg-white divide-y divide-gray-200">
                     {% if estudiantes %}
-                        {% for estudiante in estudiantes %}
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4">
-                                <input type="checkbox" class="estudiante-checkbox" value="{{ estudiante.run }}" data-nombre="{{ estudiante.nombre_completo }}">
-                            </td>
-                            <td class="px-6 py-4 text-sm text-gray-900">{{ estudiante.run }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-900">{{ estudiante.nombre_completo }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-500">{{ estudiante.carrera }}</td>
-                        </tr>
-                        {% endfor %}
+                    {% for estudiante in estudiantes %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4">
+                            <input type="checkbox" class="estudiante-checkbox" value="{{ estudiante.run }}"
+                                data-nombre="{{ estudiante.nombre_completo }}">
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-900">{{ estudiante.run }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-900">{{ estudiante.nombre_completo }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">{{ estudiante.carrera }}</td>
+                    </tr>
+                    {% endfor %}
                     {% else %}
-                        <tr>
-                            <td colspan="4" class="px-6 py-8 text-center text-gray-500">
-                                <i class="fas fa-spinner fa-spin mr-2"></i>Cargando estudiantes...
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="4" class="px-6 py-8 text-center text-gray-500">
+                            <i class="fas fa-spinner fa-spin mr-2"></i>Cargando estudiantes...
+                        </td>
+                    </tr>
                     {% endif %}
                 </tbody>
             </table>
         </div>
-        
+
         <!-- Controles de Paginación -->
         <div class="mt-4 flex flex-col sm:flex-row justify-between items-center gap-4">
             <div class="flex items-center space-x-2">
                 <label class="text-sm text-gray-700">Filas por página:</label>
-                <select id="filas-por-pagina" onchange="cambiarFilasPorPagina()" class="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500">
+                <select id="filas-por-pagina" onchange="cambiarFilasPorPagina()"
+                    class="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500">
                     <option value="10" selected>10</option>
                     <option value="20">20</option>
                     <option value="30">30</option>
                     <option value="40">40</option>
                 </select>
             </div>
-            
+
             <div class="flex items-center space-x-2">
                 <span id="info-paginacion" class="text-sm text-gray-700">Mostrando 0 - 0 de 0</span>
             </div>
-            
+
             <div class="flex items-center space-x-1" id="navegacion-paginas">
                 <!-- Los botones de navegación se generarán dinámicamente -->
             </div>
         </div>
-        
+
         <!-- Contador y acciones -->
         <div class="mt-6 p-4 bg-gray-50 rounded-lg">
             <div class="flex justify-between items-center mb-4">
@@ -88,27 +88,32 @@
                     <span id="contador-seleccionados" class="font-semibold text-gray-800">0 seleccionados</span>
                 </div>
             </div>
-            
+
             <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-                <button onclick="generarMemos()" id="btn-memos" disabled class="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg font-semibold text-sm">
+                <button onclick="generarMemos()" id="btn-memos" disabled
+                    class="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg font-semibold text-sm">
                     <i class="fas fa-file-alt mr-2"></i>Generar Memos
                 </button>
-                <button onclick="enviarCorreos()" id="btn-correos" disabled class="bg-green-500 hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg font-semibold text-sm">
+                <button onclick="enviarCorreos()" id="btn-correos" disabled
+                    class="bg-green-500 hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg font-semibold text-sm">
                     <i class="fas fa-envelope mr-2"></i>Enviar Correos
                 </button>
-                <button onclick="cambiarEstado()" id="btn-estado" disabled class="bg-purple-500 hover:bg-purple-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg font-semibold text-sm">
+                <button onclick="cambiarEstado()" id="btn-estado" disabled
+                    class="bg-purple-500 hover:bg-purple-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg font-semibold text-sm">
                     <i class="fas fa-sync-alt mr-2"></i>Cambiar Estado
                 </button>
-                <button onclick="exportarLista()" id="btn-exportar" disabled class="bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg font-semibold text-sm">
+                <button onclick="exportarLista()" id="btn-exportar" disabled
+                    class="bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg font-semibold text-sm">
                     <i class="fas fa-download mr-2"></i>Exportar Lista
                 </button>
-                <button onclick="limpiarSeleccion()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold text-sm">
+                <button onclick="limpiarSeleccion()"
+                    class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold text-sm">
                     <i class="fas fa-trash mr-2"></i>Limpiar
                 </button>
             </div>
         </div>
     </div>
-    
+
     <!-- Modal para cambiar estado -->
     <div id="modal-estado" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
         <div class="bg-white rounded-lg p-6 max-w-md w-full">
@@ -120,16 +125,74 @@
                 <option value="enviado">Enviado</option>
             </select>
             <div class="flex gap-4">
-                <button onclick="confirmarCambioEstado()" class="flex-1 bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg font-semibold">
+                <button onclick="confirmarCambioEstado()"
+                    class="flex-1 bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg font-semibold">
                     Confirmar
                 </button>
-                <button onclick="cerrarModal()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold">
+                <button onclick="cerrarModal()"
+                    class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold">
                     Cancelar
                 </button>
             </div>
         </div>
     </div>
-    
+
+    <!-- Sección Sincronización Excel -->
+    <div class="bg-white rounded-lg shadow p-6 mt-6">
+        <div class="flex items-center space-x-4 mb-4">
+            <i class="fas fa-file-excel text-3xl text-green-600"></i>
+            <div>
+                <h3 class="text-xl font-semibold text-gray-800">Sincronización de Datos</h3>
+                <p class="text-sm text-gray-600">Sincroniza la base de datos con el archivo Excel maestro</p>
+            </div>
+        </div>
+
+        <!-- Info del archivo -->
+        <div class="mb-4 p-4 bg-gray-50 rounded-lg">
+            <div class="flex items-start space-x-2">
+                <i class="fas fa-info-circle text-blue-500 mt-1"></i>
+                <div>
+                    <p class="text-sm text-gray-700"><strong>Archivo:</strong> <code
+                            class="bg-gray-200 px-2 py-1 rounded text-xs">G:\Mi unidad\SGTE\alumnos.xlsx</code></p>
+                    <p class="text-sm text-gray-600 mt-1">Hojas procesadas: 2025-2, 2025-1, 2024-2, 2024-1 y Cargas
+                        Consolidadas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advertencia -->
+        <div class="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+            <div class="flex items-start space-x-2">
+                <i class="fas fa-exclamation-triangle text-amber-500 mt-1"></i>
+                <div>
+                    <p class="text-sm text-amber-800"><strong>Importante:</strong> Esta operación actualizará los datos
+                        existentes e insertará nuevos registros.</p>
+                    <ul class="list-disc list-inside text-sm text-amber-700 mt-1 ml-2">
+                        <li>Se actualizarán: Estudiantes, Proyectos, Comisiones y Expedientes</li>
+                        <li>No se eliminarán registros existentes</li>
+                        <li>Asegúrese de que el archivo Excel esté cerrado</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botón de sincronización -->
+        <button id="btn-sync-excel" onclick="sincronizarDesdeExcel()"
+            class="w-full bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white px-6 py-4 rounded-lg font-semibold text-lg transition-all duration-200 shadow-md hover:shadow-lg">
+            <span id="btn-sync-content">
+                <i class="fas fa-sync-alt mr-2"></i>🔄 Sincronizar con Planilla Maestra
+            </span>
+            <span id="btn-sync-loading" class="hidden">
+                <i class="fas fa-spinner fa-spin mr-2"></i>Procesando... Por favor espere
+            </span>
+        </button>
+
+        <!-- Área de resultados -->
+        <div id="sync-results" class="hidden mt-6 p-4 rounded-lg border">
+            <div id="sync-results-content"></div>
+        </div>
+    </div>
+
     <!-- Sección PDF Splitter -->
     <div class="bg-white rounded-lg shadow p-6 mt-6">
         <div class="flex items-center space-x-4 mb-4">
@@ -139,12 +202,12 @@
                 <p class="text-sm text-gray-600">Divide PDFs escaneados masivamente por estudiante usando OCR</p>
             </div>
         </div>
-        
+
         <!-- Verificación de dependencias -->
         <div id="verificacion-deps" class="mb-4 p-4 bg-gray-50 rounded-lg">
             <p class="text-sm text-gray-600">Verificando dependencias...</p>
         </div>
-        
+
         <!-- Instrucciones -->
         <div class="mb-4 p-4 bg-blue-50 rounded-lg">
             <h4 class="font-semibold text-gray-800 mb-2"><i class="fas fa-info-circle mr-2"></i>Instrucciones</h4>
@@ -155,21 +218,24 @@
                 <li>El sistema detectará automáticamente los RUNs usando OCR</li>
             </ul>
         </div>
-        
+
         <!-- Upload de PDF -->
         <form id="upload-pdf-form" enctype="multipart/form-data" class="space-y-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Seleccionar archivo PDF</label>
-                <input type="file" name="pdf" id="pdf-file" accept=".pdf" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                <input type="file" name="pdf" id="pdf-file" accept=".pdf" required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg">
             </div>
-            <button type="submit" id="btn-procesar-pdf" class="w-full bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold">
+            <button type="submit" id="btn-procesar-pdf"
+                class="w-full bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold">
                 <i class="fas fa-play mr-2"></i>Procesar PDF
             </button>
         </form>
-        
+
         <!-- Resultados -->
         <div id="resultados-pdf" class="hidden mt-6 p-4 bg-white border border-gray-200 rounded-lg">
-            <h4 class="text-lg font-semibold text-gray-800 mb-4"><i class="fas fa-chart-bar mr-2"></i>Resultados del Procesamiento</h4>
+            <h4 class="text-lg font-semibold text-gray-800 mb-4"><i class="fas fa-chart-bar mr-2"></i>Resultados del
+                Procesamiento</h4>
             <div id="resultados-pdf-contenido"></div>
         </div>
     </div>
@@ -177,78 +243,78 @@
 
 {% block extra_scripts %}
 <script>
-// ============================================
-// VARIABLES GLOBALES DE PAGINACIÓN
-// ============================================
-// Verificar que las variables no estén ya declaradas (por si hay código duplicado)
-if (typeof paginaActual === 'undefined') {
-    var paginaActual = 1;
-    var filasPorPagina = 10; // Valor por defecto cambiado a 10
-    var totalRegistros = 0;
-    var totalPaginas = 1;
-    var terminoBusqueda = '';
-    var carreraFiltro = '';
-    var estudiantesCache = {}; // Cache para mantener selecciones entre páginas
-}
+    // ============================================
+    // VARIABLES GLOBALES DE PAGINACIÓN
+    // ============================================
+    // Verificar que las variables no estén ya declaradas (por si hay código duplicado)
+    if (typeof paginaActual === 'undefined') {
+        var paginaActual = 1;
+        var filasPorPagina = 10; // Valor por defecto cambiado a 10
+        var totalRegistros = 0;
+        var totalPaginas = 1;
+        var terminoBusqueda = '';
+        var carreraFiltro = '';
+        var estudiantesCache = {}; // Cache para mantener selecciones entre páginas
+    }
 
-// ============================================
-// FUNCIONES DE PAGINACIÓN
-// ============================================
+    // ============================================
+    // FUNCIONES DE PAGINACIÓN
+    // ============================================
 
-async function cargarEstudiantes() {
-    const tbody = document.getElementById('tabla-estudiantes');
-    tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando estudiantes...</td></tr>';
-    
-    try {
-        const params = new URLSearchParams({
-            pagina: paginaActual,
-            filas_por_pagina: filasPorPagina
-        });
-        
-        if (terminoBusqueda) {
-            params.append('termino', terminoBusqueda);
-        }
-        if (carreraFiltro) {
-            params.append('carrera', carreraFiltro);
-        }
-        
-        const url = `/api/operaciones/estudiantes?${params}`;
-        console.log('Cargando estudiantes desde:', url);
-        
-        const response = await fetch(url);
-        
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Error HTTP:', response.status, errorText);
-            throw new Error(`Error ${response.status}: ${errorText}`);
-        }
-        
-        const result = await response.json();
-        console.log('Respuesta recibida:', result);
-        
-        if (result.success && result.data) {
-            const { estudiantes, paginacion } = result.data;
-            
-            // Actualizar variables globales
-            totalRegistros = paginacion.total_registros;
-            totalPaginas = paginacion.total_paginas;
-            paginaActual = paginacion.pagina_actual;
-            
-            // Renderizar tabla
-            renderizarTabla(estudiantes);
-            
-            // Actualizar controles de paginación
-            actualizarControlesPaginacion(paginacion);
-            
-            // Restaurar selecciones del cache
-            restaurarSelecciones();
-        } else {
-            throw new Error(result.message || result.detail || 'Error cargando estudiantes');
-        }
-    } catch (error) {
-        console.error('Error cargando estudiantes:', error);
-        const errorMsg = error.message || 'Error desconocido';
-        tbody.innerHTML = `
+    async function cargarEstudiantes() {
+        const tbody = document.getElementById('tabla-estudiantes');
+        tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando estudiantes...</td></tr>';
+
+        try {
+            const params = new URLSearchParams({
+                pagina: paginaActual,
+                filas_por_pagina: filasPorPagina
+            });
+
+            if (terminoBusqueda) {
+                params.append('termino', terminoBusqueda);
+            }
+            if (carreraFiltro) {
+                params.append('carrera', carreraFiltro);
+            }
+
+            const url = `/api/operaciones/estudiantes?${params}`;
+            console.log('Cargando estudiantes desde:', url);
+
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Error HTTP:', response.status, errorText);
+                throw new Error(`Error ${response.status}: ${errorText}`);
+            }
+
+            const result = await response.json();
+            console.log('Respuesta recibida:', result);
+
+            if (result.success && result.data) {
+                const { estudiantes, paginacion } = result.data;
+
+                // Actualizar variables globales
+                totalRegistros = paginacion.total_registros;
+                totalPaginas = paginacion.total_paginas;
+                paginaActual = paginacion.pagina_actual;
+
+                // Renderizar tabla
+                renderizarTabla(estudiantes);
+
+                // Actualizar controles de paginación
+                actualizarControlesPaginacion(paginacion);
+
+                // Restaurar selecciones del cache
+                restaurarSelecciones();
+            } else {
+                throw new Error(result.message || result.detail || 'Error cargando estudiantes');
+            }
+        } catch (error) {
+            console.error('Error cargando estudiantes:', error);
+            const errorMsg = error.message || 'Error desconocido';
+            tbody.innerHTML = `
             <tr>
                 <td colspan="4" class="px-6 py-8 text-center text-red-500">
                     <i class="fas fa-exclamation-triangle mr-2"></i>
@@ -260,20 +326,20 @@ async function cargarEstudiantes() {
                 </td>
             </tr>
         `;
+        }
     }
-}
 
-function renderizarTabla(estudiantes) {
-    const tbody = document.getElementById('tabla-estudiantes');
-    
-    if (estudiantes.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">No se encontraron estudiantes</td></tr>';
-        return;
-    }
-    
-    tbody.innerHTML = estudiantes.map(estudiante => {
-        const estaSeleccionado = estudiantesCache[estudiante.run] || false;
-        return `
+    function renderizarTabla(estudiantes) {
+        const tbody = document.getElementById('tabla-estudiantes');
+
+        if (estudiantes.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">No se encontraron estudiantes</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = estudiantes.map(estudiante => {
+            const estaSeleccionado = estudiantesCache[estudiante.run] || false;
+            return `
             <tr class="hover:bg-gray-50">
                 <td class="px-6 py-4">
                     <input type="checkbox" class="estudiante-checkbox" value="${estudiante.run}" 
@@ -286,450 +352,449 @@ function renderizarTabla(estudiantes) {
                 <td class="px-6 py-4 text-sm text-gray-500">${estudiante.carrera}</td>
             </tr>
         `;
-    }).join('');
-    
-    // Actualizar checkbox "seleccionar todos"
-    const todosSeleccionados = estudiantes.every(e => estudiantesCache[e.run]);
-    document.getElementById('select-all').checked = todosSeleccionados && estudiantes.length > 0;
-}
+        }).join('');
 
-function actualizarControlesPaginacion(paginacion) {
-    // Actualizar información de paginación
-    const inicio = (paginaActual - 1) * filasPorPagina + 1;
-    const fin = Math.min(paginaActual * filasPorPagina, totalRegistros);
-    document.getElementById('info-paginacion').textContent = 
-        `Mostrando ${inicio} - ${fin} de ${totalRegistros}`;
-    
-    // Generar botones de navegación
-    const nav = document.getElementById('navegacion-paginas');
-    let html = '';
-    
-    // Botón Anterior
-    html += `
+        // Actualizar checkbox "seleccionar todos"
+        const todosSeleccionados = estudiantes.every(e => estudiantesCache[e.run]);
+        document.getElementById('select-all').checked = todosSeleccionados && estudiantes.length > 0;
+    }
+
+    function actualizarControlesPaginacion(paginacion) {
+        // Actualizar información de paginación
+        const inicio = (paginaActual - 1) * filasPorPagina + 1;
+        const fin = Math.min(paginaActual * filasPorPagina, totalRegistros);
+        document.getElementById('info-paginacion').textContent =
+            `Mostrando ${inicio} - ${fin} de ${totalRegistros}`;
+
+        // Generar botones de navegación
+        const nav = document.getElementById('navegacion-paginas');
+        let html = '';
+
+        // Botón Anterior
+        html += `
         <button onclick="irAPagina(${paginaActual - 1})" 
                 ${!paginacion.tiene_anterior ? 'disabled' : ''}
                 class="px-3 py-1 border border-gray-300 rounded-lg text-sm ${paginacion.tiene_anterior ? 'hover:bg-gray-50' : 'opacity-50 cursor-not-allowed'}">
             <i class="fas fa-chevron-left"></i>
         </button>
     `;
-    
-    // Botones de páginas
-    const maxBotones = 5;
-    let inicioPaginas = Math.max(1, paginaActual - Math.floor(maxBotones / 2));
-    let finPaginas = Math.min(totalPaginas, inicioPaginas + maxBotones - 1);
-    
-    if (finPaginas - inicioPaginas < maxBotones - 1) {
-        inicioPaginas = Math.max(1, finPaginas - maxBotones + 1);
-    }
-    
-    if (inicioPaginas > 1) {
-        html += `<button onclick="irAPagina(1)" class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">1</button>`;
-        if (inicioPaginas > 2) {
-            html += `<span class="px-2 text-gray-500">...</span>`;
+
+        // Botones de páginas
+        const maxBotones = 5;
+        let inicioPaginas = Math.max(1, paginaActual - Math.floor(maxBotones / 2));
+        let finPaginas = Math.min(totalPaginas, inicioPaginas + maxBotones - 1);
+
+        if (finPaginas - inicioPaginas < maxBotones - 1) {
+            inicioPaginas = Math.max(1, finPaginas - maxBotones + 1);
         }
-    }
-    
-    for (let i = inicioPaginas; i <= finPaginas; i++) {
-        html += `
+
+        if (inicioPaginas > 1) {
+            html += `<button onclick="irAPagina(1)" class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">1</button>`;
+            if (inicioPaginas > 2) {
+                html += `<span class="px-2 text-gray-500">...</span>`;
+            }
+        }
+
+        for (let i = inicioPaginas; i <= finPaginas; i++) {
+            html += `
             <button onclick="irAPagina(${i})" 
-                    class="px-3 py-1 border border-gray-300 rounded-lg text-sm ${
-                        i === paginaActual 
-                            ? 'bg-teal-500 text-white border-teal-500' 
-                            : 'hover:bg-gray-50'
-                    }">
+                    class="px-3 py-1 border border-gray-300 rounded-lg text-sm ${i === paginaActual
+                    ? 'bg-teal-500 text-white border-teal-500'
+                    : 'hover:bg-gray-50'
+                }">
                 ${i}
             </button>
         `;
-    }
-    
-    if (finPaginas < totalPaginas) {
-        if (finPaginas < totalPaginas - 1) {
-            html += `<span class="px-2 text-gray-500">...</span>`;
         }
-        html += `<button onclick="irAPagina(${totalPaginas})" class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">${totalPaginas}</button>`;
-    }
-    
-    // Botón Siguiente
-    html += `
+
+        if (finPaginas < totalPaginas) {
+            if (finPaginas < totalPaginas - 1) {
+                html += `<span class="px-2 text-gray-500">...</span>`;
+            }
+            html += `<button onclick="irAPagina(${totalPaginas})" class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">${totalPaginas}</button>`;
+        }
+
+        // Botón Siguiente
+        html += `
         <button onclick="irAPagina(${paginaActual + 1})" 
                 ${!paginacion.tiene_siguiente ? 'disabled' : ''}
                 class="px-3 py-1 border border-gray-300 rounded-lg text-sm ${paginacion.tiene_siguiente ? 'hover:bg-gray-50' : 'opacity-50 cursor-not-allowed'}">
             <i class="fas fa-chevron-right"></i>
         </button>
     `;
-    
-    nav.innerHTML = html;
-}
 
-function irAPagina(pagina) {
-    if (pagina < 1 || pagina > totalPaginas || pagina === paginaActual) {
-        return;
+        nav.innerHTML = html;
     }
-    
-    // Guardar selecciones actuales antes de cambiar de página
-    guardarSelecciones();
-    
-    paginaActual = pagina;
-    cargarEstudiantes();
-}
 
-function cambiarFilasPorPagina() {
-    const select = document.getElementById('filas-por-pagina');
-    filasPorPagina = parseInt(select.value);
-    paginaActual = 1; // Volver a la primera página
-    guardarSelecciones();
-    cargarEstudiantes();
-}
-
-function guardarSelecciones() {
-    const checkboxes = document.querySelectorAll('.estudiante-checkbox');
-    checkboxes.forEach(cb => {
-        estudiantesCache[cb.value] = cb.checked;
-    });
-}
-
-function restaurarSelecciones() {
-    const checkboxes = document.querySelectorAll('.estudiante-checkbox');
-    checkboxes.forEach(cb => {
-        if (estudiantesCache[cb.value]) {
-            cb.checked = true;
-        }
-    });
-    actualizarContador();
-}
-
-// ============================================
-// FUNCIONES DE SELECCIÓN
-// ============================================
-
-function manejarCambioCheckbox(checkbox) {
-    // Actualizar el cache cuando se cambia un checkbox
-    estudiantesCache[checkbox.value] = checkbox.checked;
-    // Actualizar el contador y habilitar/deshabilitar botones
-    actualizarContador();
-}
-
-function toggleAll() {
-    const selectAll = document.getElementById('select-all');
-    const checkboxes = document.querySelectorAll('.estudiante-checkbox');
-    checkboxes.forEach(cb => {
-        cb.checked = selectAll.checked;
-        estudiantesCache[cb.value] = selectAll.checked;
-    });
-    actualizarContador();
-}
-
-function actualizarContador() {
-    // Contar todos los seleccionados (incluyendo los de otras páginas)
-    const totalSeleccionados = Object.values(estudiantesCache).filter(v => v === true).length;
-    const contador = document.getElementById('contador-seleccionados');
-    contador.textContent = `${totalSeleccionados} seleccionados`;
-    
-    // Habilitar/deshabilitar botones
-    const botones = ['btn-memos', 'btn-correos', 'btn-estado', 'btn-exportar'];
-    botones.forEach(id => {
-        document.getElementById(id).disabled = totalSeleccionados === 0;
-    });
-}
-
-function getSeleccionados() {
-    // Retornar todos los RUNs seleccionados (de todas las páginas)
-    return Object.keys(estudiantesCache).filter(run => estudiantesCache[run] === true);
-}
-
-// ============================================
-// FILTROS
-// ============================================
-
-async function cargarCarreras() {
-    try {
-        const response = await fetch('/api/operaciones/carreras');
-        const result = await response.json();
-        
-        if (result.success) {
-            const select = document.getElementById('filtro-carrera');
-            select.innerHTML = '<option value="">Todas las carreras</option>';
-            result.data.forEach(carrera => {
-                const option = document.createElement('option');
-                option.value = carrera;
-                option.textContent = carrera;
-                select.appendChild(option);
-            });
-        }
-    } catch (error) {
-        console.error('Error cargando carreras:', error);
-    }
-}
-
-function filtrarEstudiantes() {
-    terminoBusqueda = document.getElementById('filtro-busqueda').value.trim();
-    carreraFiltro = document.getElementById('filtro-carrera').value;
-    paginaActual = 1; // Volver a la primera página al filtrar
-    cargarEstudiantes();
-}
-
-// Operaciones
-async function generarMemos() {
-    const runs = getSeleccionados();
-    if (runs.length === 0) {
-        alert('Debe seleccionar al menos un estudiante');
-        return;
-    }
-    
-    // Si son múltiples estudiantes, descargar uno por uno
-    if (runs.length > 1) {
-        if (!confirm(`Se descargarán ${runs.length} memorándums uno por uno. ¿Continuar?`)) {
+    function irAPagina(pagina) {
+        if (pagina < 1 || pagina > totalPaginas || pagina === paginaActual) {
             return;
         }
-        
-        for (let i = 0; i < runs.length; i++) {
-            const run = runs[i];
-            try {
-                await descargarMemoIndividual(run, i + 1, runs.length);
-                // Pequeña pausa entre descargas para evitar problemas
-                if (i < runs.length - 1) {
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                }
-            } catch (error) {
-                console.error(`Error descargando memo para ${run}:`, error);
-                alert(`Error descargando memorándum para ${run}`);
-            }
-        }
-        alert(`Se descargaron ${runs.length} memorándums`);
-        return;
-    }
-    
-    // Si es un solo estudiante, descargar directamente
-    try {
-        await descargarMemoIndividual(runs[0], 1, 1);
-    } catch (error) {
-        console.error('Error generando memorándum:', error);
-        alert('Error generando memorándum');
-    }
-}
 
-async function descargarMemoIndividual(run, numero, total) {
-    const response = await fetch('/api/operaciones/generar-memos', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ runs: [run] })
-    });
-    
-    if (response.ok) {
-        // Obtener el contenido como array buffer para mantener los bytes originales
-        const arrayBuffer = await response.arrayBuffer();
-        
-        // Crear blob con tipo MIME explícito para Word (NO ZIP)
-        const wordBlob = new Blob([arrayBuffer], { 
-            type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' 
+        // Guardar selecciones actuales antes de cambiar de página
+        guardarSelecciones();
+
+        paginaActual = pagina;
+        cargarEstudiantes();
+    }
+
+    function cambiarFilasPorPagina() {
+        const select = document.getElementById('filas-por-pagina');
+        filasPorPagina = parseInt(select.value);
+        paginaActual = 1; // Volver a la primera página
+        guardarSelecciones();
+        cargarEstudiantes();
+    }
+
+    function guardarSelecciones() {
+        const checkboxes = document.querySelectorAll('.estudiante-checkbox');
+        checkboxes.forEach(cb => {
+            estudiantesCache[cb.value] = cb.checked;
         });
-        
-        const url = window.URL.createObjectURL(wordBlob);
+    }
+
+    function restaurarSelecciones() {
+        const checkboxes = document.querySelectorAll('.estudiante-checkbox');
+        checkboxes.forEach(cb => {
+            if (estudiantesCache[cb.value]) {
+                cb.checked = true;
+            }
+        });
+        actualizarContador();
+    }
+
+    // ============================================
+    // FUNCIONES DE SELECCIÓN
+    // ============================================
+
+    function manejarCambioCheckbox(checkbox) {
+        // Actualizar el cache cuando se cambia un checkbox
+        estudiantesCache[checkbox.value] = checkbox.checked;
+        // Actualizar el contador y habilitar/deshabilitar botones
+        actualizarContador();
+    }
+
+    function toggleAll() {
+        const selectAll = document.getElementById('select-all');
+        const checkboxes = document.querySelectorAll('.estudiante-checkbox');
+        checkboxes.forEach(cb => {
+            cb.checked = selectAll.checked;
+            estudiantesCache[cb.value] = selectAll.checked;
+        });
+        actualizarContador();
+    }
+
+    function actualizarContador() {
+        // Contar todos los seleccionados (incluyendo los de otras páginas)
+        const totalSeleccionados = Object.values(estudiantesCache).filter(v => v === true).length;
+        const contador = document.getElementById('contador-seleccionados');
+        contador.textContent = `${totalSeleccionados} seleccionados`;
+
+        // Habilitar/deshabilitar botones
+        const botones = ['btn-memos', 'btn-correos', 'btn-estado', 'btn-exportar'];
+        botones.forEach(id => {
+            document.getElementById(id).disabled = totalSeleccionados === 0;
+        });
+    }
+
+    function getSeleccionados() {
+        // Retornar todos los RUNs seleccionados (de todas las páginas)
+        return Object.keys(estudiantesCache).filter(run => estudiantesCache[run] === true);
+    }
+
+    // ============================================
+    // FILTROS
+    // ============================================
+
+    async function cargarCarreras() {
+        try {
+            const response = await fetch('/api/operaciones/carreras');
+            const result = await response.json();
+
+            if (result.success) {
+                const select = document.getElementById('filtro-carrera');
+                select.innerHTML = '<option value="">Todas las carreras</option>';
+                result.data.forEach(carrera => {
+                    const option = document.createElement('option');
+                    option.value = carrera;
+                    option.textContent = carrera;
+                    select.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error('Error cargando carreras:', error);
+        }
+    }
+
+    function filtrarEstudiantes() {
+        terminoBusqueda = document.getElementById('filtro-busqueda').value.trim();
+        carreraFiltro = document.getElementById('filtro-carrera').value;
+        paginaActual = 1; // Volver a la primera página al filtrar
+        cargarEstudiantes();
+    }
+
+    // Operaciones
+    async function generarMemos() {
+        const runs = getSeleccionados();
+        if (runs.length === 0) {
+            alert('Debe seleccionar al menos un estudiante');
+            return;
+        }
+
+        // Si son múltiples estudiantes, descargar uno por uno
+        if (runs.length > 1) {
+            if (!confirm(`Se descargarán ${runs.length} memorándums uno por uno. ¿Continuar?`)) {
+                return;
+            }
+
+            for (let i = 0; i < runs.length; i++) {
+                const run = runs[i];
+                try {
+                    await descargarMemoIndividual(run, i + 1, runs.length);
+                    // Pequeña pausa entre descargas para evitar problemas
+                    if (i < runs.length - 1) {
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                    }
+                } catch (error) {
+                    console.error(`Error descargando memo para ${run}:`, error);
+                    alert(`Error descargando memorándum para ${run}`);
+                }
+            }
+            alert(`Se descargaron ${runs.length} memorándums`);
+            return;
+        }
+
+        // Si es un solo estudiante, descargar directamente
+        try {
+            await descargarMemoIndividual(runs[0], 1, 1);
+        } catch (error) {
+            console.error('Error generando memorándum:', error);
+            alert('Error generando memorándum');
+        }
+    }
+
+    async function descargarMemoIndividual(run, numero, total) {
+        const response = await fetch('/api/operaciones/generar-memos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ runs: [run] })
+        });
+
+        if (response.ok) {
+            // Obtener el contenido como array buffer para mantener los bytes originales
+            const arrayBuffer = await response.arrayBuffer();
+
+            // Crear blob con tipo MIME explícito para Word (NO ZIP)
+            const wordBlob = new Blob([arrayBuffer], {
+                type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            });
+
+            const url = window.URL.createObjectURL(wordBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.style.display = 'none';
+
+            // Obtener el nombre del archivo del header o generar uno
+            const contentDisposition = response.headers.get('Content-Disposition');
+            let filename = `Memo_Apertura_${run}_${new Date().getTime()}.docx`;
+
+            if (contentDisposition) {
+                // Intentar extraer el filename (puede estar en formato simple o RFC 5987)
+                let filenameMatch = contentDisposition.match(/filename\*?=['"]?([^'";]+)['"]?/i);
+                if (!filenameMatch) {
+                    filenameMatch = contentDisposition.match(/filename\*=UTF-8''(.+)/i);
+                }
+
+                if (filenameMatch) {
+                    filename = decodeURIComponent(filenameMatch[1]);
+                    // Asegurar que termine en .docx
+                    if (!filename.toLowerCase().endsWith('.docx')) {
+                        filename = filename.replace(/\.[^.]+$/, '') + '.docx';
+                    }
+                }
+            }
+
+            // Asegurar que el nombre del archivo termine en .docx
+            if (!filename.toLowerCase().endsWith('.docx')) {
+                filename = filename.replace(/\.[^.]+$/, '') + '.docx';
+            }
+
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+
+            // Limpiar después de un breve delay
+            setTimeout(() => {
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            }, 100);
+
+            if (total > 1) {
+                console.log(`Memorándum ${numero}/${total} descargado: ${filename}`);
+            }
+        } else {
+            const errorText = await response.text();
+            let errorMessage = 'Error generando memorándum';
+            try {
+                const errorJson = JSON.parse(errorText);
+                errorMessage = errorJson.detail || errorMessage;
+            } catch (e) {
+                errorMessage = errorText || errorMessage;
+            }
+            throw new Error(errorMessage);
+        }
+    }
+
+    async function enviarCorreos() {
+        const runs = getSeleccionados();
+        if (runs.length === 0) return;
+
+        if (!confirm(`¿Enviar correos a ${runs.length} estudiantes?`)) return;
+
+        const soloBorrador = confirm('¿Solo guardar en borradores? (Cancelar = Enviar directamente)');
+
+        try {
+            const response = await fetch('/api/operaciones/enviar-correos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ runs, solo_borrador: soloBorrador })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                alert(`${result.data.exitosos} correos enviados, ${result.data.fallidos} fallidos`);
+            } else {
+                alert('Error: ' + result.message);
+            }
+        } catch (error) {
+            alert('Error enviando correos');
+        }
+    }
+
+    function cambiarEstado() {
+        const runs = getSeleccionados();
+        if (runs.length === 0) return;
+
+        document.getElementById('modal-estado').classList.remove('hidden');
+    }
+
+    async function confirmarCambioEstado() {
+        const runs = getSeleccionados();
+        const estado = document.getElementById('select-estado').value;
+
+        try {
+            const response = await fetch('/api/operaciones/cambiar-estado', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ runs, estado })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                alert(`${result.actualizados} expedientes actualizados`);
+                cerrarModal();
+            } else {
+                alert('Error: ' + result.message);
+            }
+        } catch (error) {
+            alert('Error cambiando estado');
+        }
+    }
+
+    function cerrarModal() {
+        document.getElementById('modal-estado').classList.add('hidden');
+    }
+
+    function exportarLista() {
+        const runs = getSeleccionados();
+        if (runs.length === 0) return;
+
+        // Obtener nombres de los estudiantes seleccionados desde los checkboxes
+        const seleccionados = [];
+        runs.forEach(run => {
+            const checkbox = document.querySelector(`.estudiante-checkbox[value="${run}"]`);
+            if (checkbox) {
+                const nombre = checkbox.getAttribute('data-nombre');
+                const fila = checkbox.closest('tr');
+                const carrera = fila ? fila.querySelector('td:nth-child(4)')?.textContent.trim() : '';
+                seleccionados.push({
+                    run: run,
+                    nombre_completo: nombre || run,
+                    carrera: carrera
+                });
+            }
+        });
+
+        const csv = [
+            ['RUN', 'Nombre', 'Carrera'].join(','),
+            ...seleccionados.map(e => [e.run, e.nombre_completo, e.carrera].join(','))
+        ].join('\n');
+
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.style.display = 'none';
-        
-        // Obtener el nombre del archivo del header o generar uno
-        const contentDisposition = response.headers.get('Content-Disposition');
-        let filename = `Memo_Apertura_${run}_${new Date().getTime()}.docx`;
-        
-        if (contentDisposition) {
-            // Intentar extraer el filename (puede estar en formato simple o RFC 5987)
-            let filenameMatch = contentDisposition.match(/filename\*?=['"]?([^'";]+)['"]?/i);
-            if (!filenameMatch) {
-                filenameMatch = contentDisposition.match(/filename\*=UTF-8''(.+)/i);
-            }
-            
-            if (filenameMatch) {
-                filename = decodeURIComponent(filenameMatch[1]);
-                // Asegurar que termine en .docx
-                if (!filename.toLowerCase().endsWith('.docx')) {
-                    filename = filename.replace(/\.[^.]+$/, '') + '.docx';
-                }
-            }
-        }
-        
-        // Asegurar que el nombre del archivo termine en .docx
-        if (!filename.toLowerCase().endsWith('.docx')) {
-            filename = filename.replace(/\.[^.]+$/, '') + '.docx';
-        }
-        
-        a.download = filename;
-        document.body.appendChild(a);
+        a.download = `seleccion_${new Date().getTime()}.csv`;
         a.click();
-        
-        // Limpiar después de un breve delay
-        setTimeout(() => {
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-        }, 100);
-        
-        if (total > 1) {
-            console.log(`Memorándum ${numero}/${total} descargado: ${filename}`);
-        }
-    } else {
-        const errorText = await response.text();
-        let errorMessage = 'Error generando memorándum';
-        try {
-            const errorJson = JSON.parse(errorText);
-            errorMessage = errorJson.detail || errorMessage;
-        } catch (e) {
-            errorMessage = errorText || errorMessage;
-        }
-        throw new Error(errorMessage);
+        window.URL.revokeObjectURL(url);
     }
-}
 
-async function enviarCorreos() {
-    const runs = getSeleccionados();
-    if (runs.length === 0) return;
-    
-    if (!confirm(`¿Enviar correos a ${runs.length} estudiantes?`)) return;
-    
-    const soloBorrador = confirm('¿Solo guardar en borradores? (Cancelar = Enviar directamente)');
-    
-    try {
-        const response = await fetch('/api/operaciones/enviar-correos', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ runs, solo_borrador: soloBorrador })
-        });
-        
-        const result = await response.json();
-        if (result.success) {
-            alert(`${result.data.exitosos} correos enviados, ${result.data.fallidos} fallidos`);
-        } else {
-            alert('Error: ' + result.message);
-        }
-    } catch (error) {
-        alert('Error enviando correos');
+    function limpiarSeleccion() {
+        estudiantesCache = {}; // Limpiar cache
+        document.querySelectorAll('.estudiante-checkbox').forEach(cb => cb.checked = false);
+        document.getElementById('select-all').checked = false;
+        actualizarContador();
     }
-}
 
-function cambiarEstado() {
-    const runs = getSeleccionados();
-    if (runs.length === 0) return;
-    
-    document.getElementById('modal-estado').classList.remove('hidden');
-}
+    // ============================================
+    // INICIALIZACIÓN
+    // ============================================
 
-async function confirmarCambioEstado() {
-    const runs = getSeleccionados();
-    const estado = document.getElementById('select-estado').value;
-    
-    try {
-        const response = await fetch('/api/operaciones/cambiar-estado', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ runs, estado })
-        });
-        
-        const result = await response.json();
-        if (result.success) {
-            alert(`${result.actualizados} expedientes actualizados`);
-            cerrarModal();
-        } else {
-            alert('Error: ' + result.message);
+    // Cargar datos al iniciar
+    document.addEventListener('DOMContentLoaded', () => {
+        // Si ya hay estudiantes renderizados desde el servidor, limpiar y cargar con paginación
+        const tbody = document.getElementById('tabla-estudiantes');
+        const filasExistentes = tbody.querySelectorAll('tr');
+
+        // Si hay filas renderizadas desde el servidor, limpiarlas y cargar con paginación
+        if (filasExistentes.length > 0) {
+            // Limpiar tabla para cargar con paginación
+            tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando estudiantes...</td></tr>';
         }
-    } catch (error) {
-        alert('Error cambiando estado');
-    }
-}
 
-function cerrarModal() {
-    document.getElementById('modal-estado').classList.add('hidden');
-}
+        cargarCarreras();
+        cargarEstudiantes();
 
-function exportarLista() {
-    const runs = getSeleccionados();
-    if (runs.length === 0) return;
-    
-    // Obtener nombres de los estudiantes seleccionados desde los checkboxes
-    const seleccionados = [];
-    runs.forEach(run => {
-        const checkbox = document.querySelector(`.estudiante-checkbox[value="${run}"]`);
-        if (checkbox) {
-            const nombre = checkbox.getAttribute('data-nombre');
-            const fila = checkbox.closest('tr');
-            const carrera = fila ? fila.querySelector('td:nth-child(4)')?.textContent.trim() : '';
-            seleccionados.push({
-                run: run,
-                nombre_completo: nombre || run,
-                carrera: carrera
+        // Agregar listener para Enter en el campo de búsqueda
+        const filtroBusqueda = document.getElementById('filtro-busqueda');
+        if (filtroBusqueda) {
+            filtroBusqueda.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    filtrarEstudiantes();
+                }
             });
         }
     });
-    
-    const csv = [
-        ['RUN', 'Nombre', 'Carrera'].join(','),
-        ...seleccionados.map(e => [e.run, e.nombre_completo, e.carrera].join(','))
-    ].join('\n');
-    
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `seleccion_${new Date().getTime()}.csv`;
-    a.click();
-    window.URL.revokeObjectURL(url);
-}
 
-function limpiarSeleccion() {
-    estudiantesCache = {}; // Limpiar cache
-    document.querySelectorAll('.estudiante-checkbox').forEach(cb => cb.checked = false);
-    document.getElementById('select-all').checked = false;
-    actualizarContador();
-}
+    // ============================================
+    // PDF SPLITTER
+    // ============================================
 
-// ============================================
-// INICIALIZACIÓN
-// ============================================
+    // Verificar dependencias al cargar
+    async function verificarDependenciasPDF() {
+        try {
+            const response = await fetch('/api/operaciones/verificar-pdf-splitter').then(r => r.json());
+            const container = document.getElementById('verificacion-deps');
 
-// Cargar datos al iniciar
-document.addEventListener('DOMContentLoaded', () => {
-    // Si ya hay estudiantes renderizados desde el servidor, limpiar y cargar con paginación
-    const tbody = document.getElementById('tabla-estudiantes');
-    const filasExistentes = tbody.querySelectorAll('tr');
-    
-    // Si hay filas renderizadas desde el servidor, limpiarlas y cargar con paginación
-    if (filasExistentes.length > 0) {
-        // Limpiar tabla para cargar con paginación
-        tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando estudiantes...</td></tr>';
-    }
-    
-    cargarCarreras();
-    cargarEstudiantes();
-    
-    // Agregar listener para Enter en el campo de búsqueda
-    const filtroBusqueda = document.getElementById('filtro-busqueda');
-    if (filtroBusqueda) {
-        filtroBusqueda.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                filtrarEstudiantes();
-            }
-        });
-    }
-});
-
-// ============================================
-// PDF SPLITTER
-// ============================================
-
-// Verificar dependencias al cargar
-async function verificarDependenciasPDF() {
-    try {
-        const response = await fetch('/api/operaciones/verificar-pdf-splitter').then(r => r.json());
-        const container = document.getElementById('verificacion-deps');
-        
-        if (response.disponible) {
-            container.innerHTML = `
+            if (response.disponible) {
+                container.innerHTML = `
                 <div class="flex items-center space-x-2 text-green-600">
                     <i class="fas fa-check-circle text-xl"></i>
                     <span class="font-semibold">PyMuPDF disponible - Listo para procesar PDFs</span>
                 </div>
             `;
-        } else {
-            container.innerHTML = `
+            } else {
+                container.innerHTML = `
                 <div class="flex items-center space-x-2 text-red-600">
                     <i class="fas fa-exclamation-circle text-xl"></i>
                     <div>
@@ -738,62 +803,62 @@ async function verificarDependenciasPDF() {
                     </div>
                 </div>
             `;
-            document.getElementById('btn-procesar-pdf').disabled = true;
+                document.getElementById('btn-procesar-pdf').disabled = true;
+            }
+        } catch (error) {
+            console.error('Error verificando dependencias:', error);
         }
-    } catch (error) {
-        console.error('Error verificando dependencias:', error);
     }
-}
 
-// Procesar PDF
-document.getElementById('upload-pdf-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const fileInput = document.getElementById('pdf-file');
-    const file = fileInput.files[0];
-    
-    if (!file) {
-        alert('Seleccione un archivo PDF');
-        return;
-    }
-    
-    const formData = new FormData();
-    formData.append('pdf', file);
-    
-    const btn = document.getElementById('btn-procesar-pdf');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Procesando...';
-    
-    try {
-        const response = await fetch('/api/operaciones/procesar-pdf', {
-            method: 'POST',
-            body: formData
-        });
-        
-        const result = await response.json();
-        
-        if (!response.ok) {
-            throw new Error(result.detail || result.message || 'Error procesando PDF');
-        }
-        
-        if (result.success) {
-            mostrarResultadosPDF(result.data);
-        } else {
-            alert('Error: ' + (result.message || 'Error desconocido'));
-        }
-    } catch (error) {
-        console.error('Error procesando PDF:', error);
-        alert('Error procesando PDF: ' + error.message);
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-play mr-2"></i>Procesar PDF';
-    }
-});
+    // Procesar PDF
+    document.getElementById('upload-pdf-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fileInput = document.getElementById('pdf-file');
+        const file = fileInput.files[0];
 
-function mostrarResultadosPDF(data) {
-    const container = document.getElementById('resultados-pdf-contenido');
-    const resultadosDiv = document.getElementById('resultados-pdf');
-    
-    container.innerHTML = `
+        if (!file) {
+            alert('Seleccione un archivo PDF');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('pdf', file);
+
+        const btn = document.getElementById('btn-procesar-pdf');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Procesando...';
+
+        try {
+            const response = await fetch('/api/operaciones/procesar-pdf', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.detail || result.message || 'Error procesando PDF');
+            }
+
+            if (result.success) {
+                mostrarResultadosPDF(result.data);
+            } else {
+                alert('Error: ' + (result.message || 'Error desconocido'));
+            }
+        } catch (error) {
+            console.error('Error procesando PDF:', error);
+            alert('Error procesando PDF: ' + error.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-play mr-2"></i>Procesar PDF';
+        }
+    });
+
+    function mostrarResultadosPDF(data) {
+        const container = document.getElementById('resultados-pdf-contenido');
+        const resultadosDiv = document.getElementById('resultados-pdf');
+
+        container.innerHTML = `
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <div class="text-center p-4 bg-blue-50 rounded-lg">
                 <div class="text-2xl font-bold text-blue-600">${data.total_paginas}</div>
@@ -837,13 +902,144 @@ function mostrarResultadosPDF(data) {
             </table>
         </div>
     `;
-    
-    resultadosDiv.classList.remove('hidden');
-    resultadosDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
 
-// Verificar dependencias al cargar la página
-verificarDependenciasPDF();
+        resultadosDiv.classList.remove('hidden');
+        resultadosDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // ============================================
+    // SINCRONIZACIÓN EXCEL
+    // ============================================
+
+    async function sincronizarDesdeExcel() {
+        const btn = document.getElementById('btn-sync-excel');
+        const contentSpan = document.getElementById('btn-sync-content');
+        const loadingSpan = document.getElementById('btn-sync-loading');
+        const resultsDiv = document.getElementById('sync-results');
+        const resultsContent = document.getElementById('sync-results-content');
+
+        // Confirmar antes de sincronizar
+        if (!confirm('¿Está seguro de sincronizar los datos desde el archivo Excel?\n\nEsto actualizará los registros existentes y agregará nuevos estudiantes.')) {
+            return;
+        }
+
+        // Mostrar estado de carga
+        btn.disabled = true;
+        contentSpan.classList.add('hidden');
+        loadingSpan.classList.remove('hidden');
+        resultsDiv.classList.add('hidden');
+
+        try {
+            const response = await fetch('/api/operaciones/sincronizar-excel', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.detail || 'Error en la sincronización');
+            }
+
+            if (result.success) {
+                mostrarResultadosSincronizacion(result.data, true);
+
+                // Recargar la lista de estudiantes para ver los cambios
+                if (typeof cargarEstudiantes === 'function') {
+                    setTimeout(() => {
+                        cargarEstudiantes();
+                    }, 1000);
+                }
+            } else {
+                mostrarResultadosSincronizacion(result.data || { mensaje: 'Error desconocido' }, false);
+            }
+        } catch (error) {
+            console.error('Error sincronizando:', error);
+            mostrarResultadosSincronizacion({
+                mensaje: error.message || 'Error de conexión con el servidor',
+                procesadas: 0,
+                errores: 0,
+                total_filas: 0
+            }, false);
+        } finally {
+            // Restaurar botón
+            btn.disabled = false;
+            contentSpan.classList.remove('hidden');
+            loadingSpan.classList.add('hidden');
+        }
+    }
+
+    function mostrarResultadosSincronizacion(data, success) {
+        const resultsDiv = document.getElementById('sync-results');
+        const resultsContent = document.getElementById('sync-results-content');
+
+        if (success) {
+            resultsDiv.className = 'mt-6 p-4 rounded-lg border border-green-200 bg-green-50';
+            resultsContent.innerHTML = `
+            <div class="flex items-start space-x-3">
+                <i class="fas fa-check-circle text-green-500 text-2xl mt-1"></i>
+                <div class="flex-1">
+                    <h4 class="font-semibold text-green-800 text-lg">Sincronización Completada</h4>
+                    <p class="text-green-700 mt-1">${data.mensaje || 'Operación exitosa'}</p>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                        <div class="text-center p-3 bg-white rounded-lg shadow-sm">
+                            <div class="text-2xl font-bold text-blue-600">${data.hojas_procesadas || 0}</div>
+                            <div class="text-xs text-gray-600">Hojas</div>
+                        </div>
+                        <div class="text-center p-3 bg-white rounded-lg shadow-sm">
+                            <div class="text-2xl font-bold text-gray-700">${data.total_filas || 0}</div>
+                            <div class="text-xs text-gray-600">Total Filas</div>
+                        </div>
+                        <div class="text-center p-3 bg-white rounded-lg shadow-sm">
+                            <div class="text-2xl font-bold text-green-600">${data.procesadas || 0}</div>
+                            <div class="text-xs text-gray-600">Procesadas</div>
+                        </div>
+                        <div class="text-center p-3 bg-white rounded-lg shadow-sm">
+                            <div class="text-2xl font-bold text-red-600">${data.errores || 0}</div>
+                            <div class="text-xs text-gray-600">Errores</div>
+                        </div>
+                    </div>
+                    
+                    ${data.detalles && data.detalles.por_hoja ? `
+                        <details class="mt-4">
+                            <summary class="cursor-pointer text-sm text-green-700 hover:text-green-900">Ver detalles por hoja</summary>
+                            <div class="mt-2 space-y-2">
+                                ${Object.entries(data.detalles.por_hoja).map(([hoja, info]) => `
+                                    <div class="p-2 bg-white rounded-lg text-sm">
+                                        <span class="font-semibold">${hoja}:</span> 
+                                        ${info.procesadas || 0} procesadas, ${info.errores || 0} errores
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </details>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+        } else {
+            resultsDiv.className = 'mt-6 p-4 rounded-lg border border-red-200 bg-red-50';
+            resultsContent.innerHTML = `
+            <div class="flex items-start space-x-3">
+                <i class="fas fa-times-circle text-red-500 text-2xl mt-1"></i>
+                <div class="flex-1">
+                    <h4 class="font-semibold text-red-800 text-lg">Error en Sincronización</h4>
+                    <p class="text-red-700 mt-1">${data.mensaje || 'Ocurrió un error durante la sincronización'}</p>
+                    <p class="text-sm text-red-600 mt-2">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Verifique que el archivo Excel exista y esté cerrado
+                    </p>
+                </div>
+            </div>
+        `;
+        }
+
+        resultsDiv.classList.remove('hidden');
+        resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // Verificar dependencias al cargar la página
+    verificarDependenciasPDF();
 </script>
 {% endblock %}
 {% endblock %}

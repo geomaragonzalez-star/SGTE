@@ -11,71 +11,63 @@
             <h2 class="text-3xl font-bold text-gray-800">Estudiantes</h2>
             <p class="text-gray-600 mt-1">Gestiona el registro y datos de estudiantes</p>
         </div>
-        <a href="/estudiantes/nuevo" class="bg-teal-500 hover:bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold transition">
+        <a href="/estudiantes/nuevo"
+            class="bg-teal-500 hover:bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold transition">
             <i class="fas fa-plus mr-2"></i>Nuevo Estudiante
         </a>
     </div>
-    
+
     <!-- Búsqueda y filtros -->
     <div class="bg-white rounded-lg shadow p-6">
         <div class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div class="md:col-span-2">
-                    <input 
-                        type="text" 
-                        id="filtro-busqueda"
-                        value="{{ query or '' }}"
-                        placeholder="Buscar por RUN o nombre..." 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                    >
+                    <input type="text" id="filtro-busqueda" value="{{ query or '' }}"
+                        placeholder="Buscar por RUN o nombre..."
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
                 </div>
                 <div>
-                    <select 
-                        id="filtro-carrera"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
-                    >
+                    <select id="filtro-carrera"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
                         <option value="">Todas las carreras</option>
                         {% for carrera_item in carreras %}
-                        <option value="{{ carrera_item }}" {% if carrera_filter == carrera_item %}selected{% endif %}>
+                        <option value="{{ carrera_item }}" {% if carrera_filter==carrera_item %}selected{% endif %}>
                             {{ carrera_item }}
                         </option>
                         {% endfor %}
                     </select>
                 </div>
                 <div>
-                    <select 
-                        id="filtro-modalidad"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
-                    >
+                    <select id="filtro-modalidad"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
                         <option value="">Todas las modalidades</option>
-                        <option value="Diurno" {% if modalidad_filter == 'Diurno' %}selected{% endif %}>Diurno</option>
-                        <option value="Vespertino" {% if modalidad_filter == 'Vespertino' %}selected{% endif %}>Vespertino</option>
-                        <option value="Online" {% if modalidad_filter == 'Online' %}selected{% endif %}>Online</option>
+                        <option value="Diurno" {% if modalidad_filter=='Diurno' %}selected{% endif %}>Diurno</option>
+                        <option value="Vespertino" {% if modalidad_filter=='Vespertino' %}selected{% endif %}>Vespertino
+                        </option>
+                        <option value="Online" {% if modalidad_filter=='Online' %}selected{% endif %}>Online</option>
                     </select>
                 </div>
             </div>
             <div class="flex gap-4">
                 <div class="flex items-center space-x-2">
-                    <input 
-                        type="checkbox" 
-                        id="filtro-listo"
-                        {% if listo_filter == True %}checked{% endif %}
-                        class="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
-                    >
+                    <input type="checkbox" id="filtro-listo" {% if listo_filter==True %}checked{% endif %}
+                        class="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500">
                     <label for="filtro-listo" class="text-sm font-medium text-gray-700">
                         Solo estudiantes listos para solicitar apertura
                     </label>
                 </div>
-                <button onclick="filtrarEstudiantes()" class="bg-gray-800 hover:bg-gray-900 text-white px-6 py-2 rounded-lg font-semibold transition">
+                <button onclick="filtrarEstudiantes()"
+                    class="bg-gray-800 hover:bg-gray-900 text-white px-6 py-2 rounded-lg font-semibold transition">
                     <i class="fas fa-search mr-2"></i>Buscar
                 </button>
-                <a href="/estudiantes" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg font-semibold transition">
+                <a href="/estudiantes"
+                    class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg font-semibold transition">
                     <i class="fas fa-times mr-2"></i>Limpiar
                 </a>
             </div>
         </div>
     </div>
-    
+
     <!-- Tabla de estudiantes -->
     <div class="bg-white rounded-lg shadow overflow-hidden">
         <div class="overflow-x-auto">
@@ -111,23 +103,24 @@
                 </tbody>
             </table>
         </div>
-        
+
         <!-- Controles de Paginación -->
         <div class="mt-4 flex flex-col sm:flex-row justify-between items-center gap-4 px-6 pb-4">
             <div class="flex items-center space-x-2">
                 <label class="text-sm text-gray-700">Filas por página:</label>
-                <select id="filas-por-pagina" onchange="cambiarFilasPorPagina()" class="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500">
+                <select id="filas-por-pagina" onchange="cambiarFilasPorPagina()"
+                    class="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500">
                     <option value="10" selected>10</option>
                     <option value="20">20</option>
                     <option value="30">30</option>
                     <option value="40">40</option>
                 </select>
             </div>
-            
+
             <div class="flex items-center space-x-2">
                 <span id="info-paginacion" class="text-sm text-gray-700">Mostrando 0 - 0 de 0</span>
             </div>
-            
+
             <div class="flex items-center space-x-1" id="navegacion-paginas">
                 <!-- Los botones de navegación se generarán dinámicamente -->
             </div>
@@ -137,82 +130,82 @@
 
 {% block extra_scripts %}
 <script>
-// ============================================
-// VARIABLES GLOBALES DE PAGINACIÓN
-// ============================================
-var paginaActual = 1;
-var filasPorPagina = 10;
-var totalRegistros = 0;
-var totalPaginas = 1;
-var terminoBusqueda = '{{ query or "" }}';
-var carreraFiltro = '{{ carrera_filter or "" }}';
-var modalidadFiltro = '{{ modalidad_filter or "" }}';
-var listoFiltro = {{ 'true' if listo_filter == True else 'false' if listo_filter == False else 'null' }};
+    // ============================================
+    // VARIABLES GLOBALES DE PAGINACIÓN
+    // ============================================
+    var paginaActual = 1;
+    var filasPorPagina = 10;
+    var totalRegistros = 0;
+    var totalPaginas = 1;
+    var terminoBusqueda = '{{ query or "" }}';
+    var carreraFiltro = '{{ carrera_filter or "" }}';
+    var modalidadFiltro = '{{ modalidad_filter or "" }}';
+    var listoFiltro = {{ 'true' if listo_filter == True else 'false' if listo_filter == False else 'null' }};
 
-// Variable global para almacenar nombres de estudiantes
-const estudiantesNombres = {};
+    // Variable global para almacenar nombres de estudiantes
+    const estudiantesNombres = {};
 
-// ============================================
-// FUNCIONES DE PAGINACIÓN
-// ============================================
+    // ============================================
+    // FUNCIONES DE PAGINACIÓN
+    // ============================================
 
-async function cargarEstudiantes() {
-    const tbody = document.getElementById('tabla-estudiantes');
-    tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando estudiantes...</td></tr>';
-    
-    try {
-        const params = new URLSearchParams({
-            pagina: paginaActual,
-            filas_por_pagina: filasPorPagina
-        });
-        
-        if (terminoBusqueda) params.append('q', terminoBusqueda);
-        if (carreraFiltro) params.append('carrera', carreraFiltro);
-        if (modalidadFiltro) params.append('modalidad', modalidadFiltro);
-        if (listoFiltro !== null) params.append('listo', listoFiltro);
-        
-        const response = await fetch(`/api/estudiantes?${params}`);
-        const result = await response.json();
-        
-        if (result.success) {
-            // Manejar tanto la estructura antigua como la nueva
-            let estudiantes, paginacion;
-            
-            if (result.data && result.data.estudiantes && result.data.paginacion) {
-                // Nueva estructura con paginación
-                estudiantes = result.data.estudiantes;
-                paginacion = result.data.paginacion;
-            } else if (Array.isArray(result.data)) {
-                // Estructura antigua (sin paginación)
-                estudiantes = result.data;
-                totalRegistros = estudiantes.length;
-                totalPaginas = 1;
-                paginacion = {
-                    pagina_actual: 1,
-                    filas_por_pagina: filasPorPagina,
-                    total_registros: totalRegistros,
-                    total_paginas: 1,
-                    tiene_anterior: false,
-                    tiene_siguiente: false
-                };
-            } else {
-                throw new Error('Formato de respuesta no reconocido');
-            }
-            
-            totalRegistros = paginacion.total_registros;
-            totalPaginas = paginacion.total_paginas;
-            paginaActual = paginacion.pagina_actual;
-            
-            renderizarTabla(estudiantes);
-            actualizarControlesPaginacion(paginacion);
-            cargarEstadosChecklist(estudiantes);
-        } else {
-            throw new Error(result.message || 'Error cargando estudiantes');
-        }
-    } catch (error) {
-        console.error('Error cargando estudiantes:', error);
+    async function cargarEstudiantes() {
         const tbody = document.getElementById('tabla-estudiantes');
-        tbody.innerHTML = `
+        tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando estudiantes...</td></tr>';
+
+        try {
+            const params = new URLSearchParams({
+                pagina: paginaActual,
+                filas_por_pagina: filasPorPagina
+            });
+
+            if (terminoBusqueda) params.append('q', terminoBusqueda);
+            if (carreraFiltro) params.append('carrera', carreraFiltro);
+            if (modalidadFiltro) params.append('modalidad', modalidadFiltro);
+            if (listoFiltro !== null) params.append('listo', listoFiltro);
+
+            const response = await fetch(`/api/estudiantes?${params}`);
+            const result = await response.json();
+
+            if (result.success) {
+                // Manejar tanto la estructura antigua como la nueva
+                let estudiantes, paginacion;
+
+                if (result.data && result.data.estudiantes && result.data.paginacion) {
+                    // Nueva estructura con paginación
+                    estudiantes = result.data.estudiantes;
+                    paginacion = result.data.paginacion;
+                } else if (Array.isArray(result.data)) {
+                    // Estructura antigua (sin paginación)
+                    estudiantes = result.data;
+                    totalRegistros = estudiantes.length;
+                    totalPaginas = 1;
+                    paginacion = {
+                        pagina_actual: 1,
+                        filas_por_pagina: filasPorPagina,
+                        total_registros: totalRegistros,
+                        total_paginas: 1,
+                        tiene_anterior: false,
+                        tiene_siguiente: false
+                    };
+                } else {
+                    throw new Error('Formato de respuesta no reconocido');
+                }
+
+                totalRegistros = paginacion.total_registros;
+                totalPaginas = paginacion.total_paginas;
+                paginaActual = paginacion.pagina_actual;
+
+                renderizarTabla(estudiantes);
+                actualizarControlesPaginacion(paginacion);
+                cargarEstadosChecklist(estudiantes);
+            } else {
+                throw new Error(result.message || 'Error cargando estudiantes');
+            }
+        } catch (error) {
+            console.error('Error cargando estudiantes:', error);
+            const tbody = document.getElementById('tabla-estudiantes');
+            tbody.innerHTML = `
             <tr>
                 <td colspan="6" class="px-6 py-8 text-center text-red-500">
                     <i class="fas fa-exclamation-triangle mr-2"></i>
@@ -220,20 +213,20 @@ async function cargarEstudiantes() {
                 </td>
             </tr>
         `;
+        }
     }
-}
 
-function renderizarTabla(estudiantes) {
-    const tbody = document.getElementById('tabla-estudiantes');
-    
-    if (estudiantes.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-12 text-center text-gray-500"><i class="fas fa-users text-4xl mb-4"></i><p class="text-lg font-semibold">No hay estudiantes registrados</p></td></tr>';
-        return;
-    }
-    
-    tbody.innerHTML = estudiantes.map(estudiante => {
-        estudiantesNombres[estudiante.run] = estudiante.nombre_completo;
-        return `
+    function renderizarTabla(estudiantes) {
+        const tbody = document.getElementById('tabla-estudiantes');
+
+        if (estudiantes.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-12 text-center text-gray-500"><i class="fas fa-users text-4xl mb-4"></i><p class="text-lg font-semibold">No hay estudiantes registrados</p></td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = estudiantes.map(estudiante => {
+            estudiantesNombres[estudiante.run] = estudiante.nombre_completo;
+            return `
             <tr class="hover:bg-gray-50 transition" id="row-${estudiante.run}" data-run="${estudiante.run}" data-nombre="${estudiante.nombre_completo}">
                 <td class="px-6 py-4 whitespace-nowrap">
                     <div class="text-sm font-medium text-gray-900">${estudiante.run}</div>
@@ -275,157 +268,157 @@ function renderizarTabla(estudiantes) {
                 </td>
             </tr>
         `;
-    }).join('');
-}
-
-function actualizarControlesPaginacion(paginacion) {
-    const inicio = (paginaActual - 1) * filasPorPagina + 1;
-    const fin = Math.min(paginaActual * filasPorPagina, totalRegistros);
-    document.getElementById('info-paginacion').textContent = `Mostrando ${inicio} - ${fin} de ${totalRegistros}`;
-    
-    const nav = document.getElementById('navegacion-paginas');
-    let html = '';
-    
-    html += `<button onclick="irAPagina(${paginaActual - 1})" ${!paginacion.tiene_anterior ? 'disabled' : ''} class="px-3 py-1 border border-gray-300 rounded-lg text-sm ${paginacion.tiene_anterior ? 'hover:bg-gray-50' : 'opacity-50 cursor-not-allowed'}"><i class="fas fa-chevron-left"></i></button>`;
-    
-    const maxBotones = 5;
-    let inicioPaginas = Math.max(1, paginaActual - Math.floor(maxBotones / 2));
-    let finPaginas = Math.min(totalPaginas, inicioPaginas + maxBotones - 1);
-    
-    if (finPaginas - inicioPaginas < maxBotones - 1) {
-        inicioPaginas = Math.max(1, finPaginas - maxBotones + 1);
+        }).join('');
     }
-    
-    if (inicioPaginas > 1) {
-        html += `<button onclick="irAPagina(1)" class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">1</button>`;
-        if (inicioPaginas > 2) html += `<span class="px-2 text-gray-500">...</span>`;
-    }
-    
-    for (let i = inicioPaginas; i <= finPaginas; i++) {
-        html += `<button onclick="irAPagina(${i})" class="px-3 py-1 border border-gray-300 rounded-lg text-sm ${i === paginaActual ? 'bg-teal-500 text-white border-teal-500' : 'hover:bg-gray-50'}">${i}</button>`;
-    }
-    
-    if (finPaginas < totalPaginas) {
-        if (finPaginas < totalPaginas - 1) html += `<span class="px-2 text-gray-500">...</span>`;
-        html += `<button onclick="irAPagina(${totalPaginas})" class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">${totalPaginas}</button>`;
-    }
-    
-    html += `<button onclick="irAPagina(${paginaActual + 1})" ${!paginacion.tiene_siguiente ? 'disabled' : ''} class="px-3 py-1 border border-gray-300 rounded-lg text-sm ${paginacion.tiene_siguiente ? 'hover:bg-gray-50' : 'opacity-50 cursor-not-allowed'}"><i class="fas fa-chevron-right"></i></button>`;
-    
-    nav.innerHTML = html;
-}
 
-function irAPagina(pagina) {
-    if (pagina < 1 || pagina > totalPaginas || pagina === paginaActual) return;
-    paginaActual = pagina;
-    cargarEstudiantes();
-}
+    function actualizarControlesPaginacion(paginacion) {
+        const inicio = (paginaActual - 1) * filasPorPagina + 1;
+        const fin = Math.min(paginaActual * filasPorPagina, totalRegistros);
+        document.getElementById('info-paginacion').textContent = `Mostrando ${inicio} - ${fin} de ${totalRegistros}`;
 
-function cambiarFilasPorPagina() {
-    const select = document.getElementById('filas-por-pagina');
-    filasPorPagina = parseInt(select.value);
-    paginaActual = 1;
-    cargarEstudiantes();
-}
+        const nav = document.getElementById('navegacion-paginas');
+        let html = '';
 
-async function cargarEstadosChecklist(estudiantes) {
-    const runs = estudiantes.map(e => e.run);
-    if (runs.length === 0) return;
-    
-    try {
-        const response = await fetch(`/api/estudiantes/checklist-status?runs=${runs.join(',')}`);
-        const result = await response.json();
-        
-        if (result.success) {
-            const estados = result.data;
-            runs.forEach(run => {
-                const estado = estados[run];
-                const container = document.getElementById(`checklist-status-${run}`);
-                if (!container) return;
-                
-                if (estado && estado.listo) {
-                    container.innerHTML = `<span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i>Listo</span>`;
-                } else {
-                    container.innerHTML = `<span class="px-3 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800"><i class="fas fa-exclamation-circle mr-1"></i>Pendiente</span>`;
+        html += `<button onclick="irAPagina(${paginaActual - 1})" ${!paginacion.tiene_anterior ? 'disabled' : ''} class="px-3 py-1 border border-gray-300 rounded-lg text-sm ${paginacion.tiene_anterior ? 'hover:bg-gray-50' : 'opacity-50 cursor-not-allowed'}"><i class="fas fa-chevron-left"></i></button>`;
+
+        const maxBotones = 5;
+        let inicioPaginas = Math.max(1, paginaActual - Math.floor(maxBotones / 2));
+        let finPaginas = Math.min(totalPaginas, inicioPaginas + maxBotones - 1);
+
+        if (finPaginas - inicioPaginas < maxBotones - 1) {
+            inicioPaginas = Math.max(1, finPaginas - maxBotones + 1);
+        }
+
+        if (inicioPaginas > 1) {
+            html += `<button onclick="irAPagina(1)" class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">1</button>`;
+            if (inicioPaginas > 2) html += `<span class="px-2 text-gray-500">...</span>`;
+        }
+
+        for (let i = inicioPaginas; i <= finPaginas; i++) {
+            html += `<button onclick="irAPagina(${i})" class="px-3 py-1 border border-gray-300 rounded-lg text-sm ${i === paginaActual ? 'bg-teal-500 text-white border-teal-500' : 'hover:bg-gray-50'}">${i}</button>`;
+        }
+
+        if (finPaginas < totalPaginas) {
+            if (finPaginas < totalPaginas - 1) html += `<span class="px-2 text-gray-500">...</span>`;
+            html += `<button onclick="irAPagina(${totalPaginas})" class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">${totalPaginas}</button>`;
+        }
+
+        html += `<button onclick="irAPagina(${paginaActual + 1})" ${!paginacion.tiene_siguiente ? 'disabled' : ''} class="px-3 py-1 border border-gray-300 rounded-lg text-sm ${paginacion.tiene_siguiente ? 'hover:bg-gray-50' : 'opacity-50 cursor-not-allowed'}"><i class="fas fa-chevron-right"></i></button>`;
+
+        nav.innerHTML = html;
+    }
+
+    function irAPagina(pagina) {
+        if (pagina < 1 || pagina > totalPaginas || pagina === paginaActual) return;
+        paginaActual = pagina;
+        cargarEstudiantes();
+    }
+
+    function cambiarFilasPorPagina() {
+        const select = document.getElementById('filas-por-pagina');
+        filasPorPagina = parseInt(select.value);
+        paginaActual = 1;
+        cargarEstudiantes();
+    }
+
+    async function cargarEstadosChecklist(estudiantes) {
+        const runs = estudiantes.map(e => e.run);
+        if (runs.length === 0) return;
+
+        try {
+            const response = await fetch(`/api/estudiantes/checklist-status?runs=${runs.join(',')}`);
+            const result = await response.json();
+
+            if (result.success) {
+                const estados = result.data;
+                runs.forEach(run => {
+                    const estado = estados[run];
+                    const container = document.getElementById(`checklist-status-${run}`);
+                    if (!container) return;
+
+                    if (estado && estado.listo) {
+                        container.innerHTML = `<span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i>Listo</span>`;
+                    } else {
+                        container.innerHTML = `<span class="px-3 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800"><i class="fas fa-exclamation-circle mr-1"></i>Pendiente</span>`;
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Error cargando estados:', error);
+        }
+    }
+
+    // Cargar datos al iniciar
+    document.addEventListener('DOMContentLoaded', () => {
+        cargarEstudiantes();
+
+        // Agregar listener para Enter en el campo de búsqueda
+        const filtroBusqueda = document.getElementById('filtro-busqueda');
+        if (filtroBusqueda) {
+            filtroBusqueda.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    filtrarEstudiantes();
                 }
             });
         }
-    } catch (error) {
-        console.error('Error cargando estados:', error);
-    }
-}
+    });
 
-// Cargar datos al iniciar
-document.addEventListener('DOMContentLoaded', () => {
-    cargarEstudiantes();
-    
-    // Agregar listener para Enter en el campo de búsqueda
-    const filtroBusqueda = document.getElementById('filtro-busqueda');
-    if (filtroBusqueda) {
-        filtroBusqueda.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                filtrarEstudiantes();
+    function filtrarEstudiantes() {
+        terminoBusqueda = document.getElementById('filtro-busqueda').value.trim();
+        carreraFiltro = document.getElementById('filtro-carrera').value;
+        modalidadFiltro = document.getElementById('filtro-modalidad').value;
+        listoFiltro = document.getElementById('filtro-listo').checked ? true : null;
+        paginaActual = 1;
+        cargarEstudiantes();
+    }
+
+    async function mostrarChecklist(run, nombre, forceReload = false) {
+        // Obtener nombre del estudiante si no se proporciona
+        if (!nombre) {
+            const rowElement = document.getElementById(`row-${run}`);
+            if (rowElement) {
+                nombre = rowElement.getAttribute('data-nombre') || estudiantesNombres[run] || 'Estudiante';
+            } else {
+                nombre = estudiantesNombres[run] || 'Estudiante';
             }
-        });
-    }
-});
-
-function filtrarEstudiantes() {
-    terminoBusqueda = document.getElementById('filtro-busqueda').value.trim();
-    carreraFiltro = document.getElementById('filtro-carrera').value;
-    modalidadFiltro = document.getElementById('filtro-modalidad').value;
-    listoFiltro = document.getElementById('filtro-listo').checked ? true : null;
-    paginaActual = 1;
-    cargarEstudiantes();
-}
-
-async function mostrarChecklist(run, nombre, forceReload = false) {
-    // Obtener nombre del estudiante si no se proporciona
-    if (!nombre) {
-        const rowElement = document.getElementById(`row-${run}`);
-        if (rowElement) {
-            nombre = rowElement.getAttribute('data-nombre') || estudiantesNombres[run] || 'Estudiante';
-        } else {
-            nombre = estudiantesNombres[run] || 'Estudiante';
         }
-    }
-    if (nombre) {
-        estudiantesNombres[run] = nombre; // Guardar para uso futuro
-    }
-    
-    const rowId = `checklist-${run}`;
-    const contentId = `checklist-content-${run}`;
-    const row = document.getElementById(rowId);
-    const content = document.getElementById(contentId);
-    
-    if (!row || !content) {
-        console.error('No se encontraron elementos del checklist para:', run);
-        return;
-    }
-    
-    // Si forceReload es true, siempre recargar aunque esté abierto
-    const isHidden = row.classList.contains('hidden');
-    
-    // Mostrar siempre (si está oculto) o recargar (si forceReload)
-    if (isHidden || forceReload) {
-        if (isHidden) {
-            row.classList.remove('hidden');
+        if (nombre) {
+            estudiantesNombres[run] = nombre; // Guardar para uso futuro
         }
-        
-        // Mostrar loading
-        content.innerHTML = `
+
+        const rowId = `checklist-${run}`;
+        const contentId = `checklist-content-${run}`;
+        const row = document.getElementById(rowId);
+        const content = document.getElementById(contentId);
+
+        if (!row || !content) {
+            console.error('No se encontraron elementos del checklist para:', run);
+            return;
+        }
+
+        // Si forceReload es true, siempre recargar aunque esté abierto
+        const isHidden = row.classList.contains('hidden');
+
+        // Mostrar siempre (si está oculto) o recargar (si forceReload)
+        if (isHidden || forceReload) {
+            if (isHidden) {
+                row.classList.remove('hidden');
+            }
+
+            // Mostrar loading
+            content.innerHTML = `
             <div class="text-center text-gray-500 p-4">
                 <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
                 <p>Cargando checklist...</p>
             </div>
         `;
-        
-        // Cargar checklist
-        try {
-            const response = await api.get(`/documentos/checklist/${run}`);
-            const data = response.data;
-            
-            let html = `
+
+            // Cargar checklist
+            try {
+                const response = await api.get(`/documentos/checklist/${run}`);
+                const data = response.data;
+
+                let html = `
                 <div class="space-y-4">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-lg font-semibold text-gray-800">Checklist de Documentos - ${nombre}</h3>
@@ -451,74 +444,111 @@ async function mostrarChecklist(run, nombre, forceReload = false) {
                         <h4 class="font-semibold text-gray-800 mb-3">Documentos Requeridos</h4>
                         <div class="space-y-2">
             `;
-            
-            data.checklist.filter(item => item.requerido).forEach(item => {
-                const icono = item.validado 
-                    ? '<i class="fas fa-check-circle text-green-500"></i>' 
-                    : item.tiene_documento 
-                        ? '<i class="fas fa-paperclip text-yellow-500"></i>' 
-                        : '<i class="fas fa-circle text-gray-300"></i>';
-                
-                const estado = item.validado 
-                    ? '<span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Validado</span>' 
-                    : !item.tiene_documento 
-                        ? '<span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Faltante</span>'
-                        : '';
-                
-                // Botón de subir solo si no tiene documento o no está validado
-                const botonSubir = !item.validado ? `
+
+                data.checklist.filter(item => item.requerido).forEach(item => {
+                    const isFinanzas = item.tipo.startsWith('finanzas');
+                    const tieneDocs = item.documentos && item.documentos.length > 0;
+
+                    const icono = item.validado
+                        ? '<i class="fas fa-check-circle text-green-500"></i>'
+                        : tieneDocs
+                            ? '<i class="fas fa-paperclip text-yellow-500"></i>'
+                            : '<i class="fas fa-circle text-gray-300"></i>';
+
+                    const estado = item.validado
+                        ? '<span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Validado</span>'
+                        : !tieneDocs
+                            ? '<span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Faltante</span>'
+                            : '<span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Pendiente</span>';
+
+                    // Botón de subir:
+                    // - Si es Finanzas: Siempre mostrar "Subir" (o "Añadir") si no está validado (o incluso si está validado? Mejor bloquear si validado).
+                    // - Si no es Finanzas: "Subir" si no tiene, "Reemplazar" si tiene.
+                    let labelSubir = 'Subir';
+                    if (tieneDocs) {
+                        labelSubir = isFinanzas ? 'Añadir PDF' : 'Reemplazar';
+                    }
+
+                    // HTML para lista de documentos
+                    let docsHtml = '';
+                    if (tieneDocs) {
+                        docsHtml = `<div class="mt-3 pl-8 space-y-2 border-t pt-2 border-gray-200">`;
+                        item.documentos.forEach((doc, idx) => {
+                            docsHtml += `
+                                <div class="flex justify-between items-center text-sm bg-gray-50 p-2 rounded">
+                                    <span class="text-gray-600 truncate max-w-xs" title="${doc.nombre_archivo}">
+                                        <i class="fas fa-file-pdf text-red-500 mr-2"></i>${doc.nombre_archivo}
+                                    </span>
+                                    <div class="flex space-x-2">
+                                         <button onclick="previsualizarDocumento(${doc.id}, '${doc.nombre_archivo}')" class="text-blue-600 hover:text-blue-800" title="Ver">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        ${!doc.validado ? `
+                                        <button onclick="eliminarDocumento(${doc.id}, '${run}', '${doc.nombre_archivo}')" class="text-red-500 hover:text-red-700" title="Eliminar">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                             `;
+                        });
+                        docsHtml += `</div>`;
+                    }
+
+                    const botonSubir = !item.validado ? `
                     <label class="cursor-pointer">
-                        <input type="file" accept=".pdf" class="hidden" onchange="subirDocumento('${run}', '${item.tipo}', this)">
+                        <input type="file" accept=".pdf" class="hidden" onclick="this.value=null" onchange="subirDocumento('${run}', '${item.tipo}', this)">
                         <span class="bg-teal-500 hover:bg-teal-600 text-white px-3 py-1 rounded text-sm font-semibold">
-                            <i class="fas fa-upload mr-1"></i>${item.tiene_documento ? 'Reemplazar' : 'Subir'}
+                            <i class="fas fa-upload mr-1"></i>${labelSubir}
                         </span>
                     </label>
                 ` : '';
-                
-                // Botón de previsualizar solo si tiene documento
-                const botonPreview = item.tiene_documento && item.id ? `
+
+                    // Botón de previsualizar solo si tiene documento
+                    const botonPreview = item.tiene_documento && item.id ? `
                     <button onclick="previsualizarDocumento(${item.id}, '${item.nombre}')" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm font-semibold">
                         <i class="fas fa-eye mr-1"></i>Ver
                     </button>
                 ` : '';
-                
-                // Botón de eliminar solo si tiene documento y no está validado
-                const botonEliminar = item.tiene_documento && item.id && !item.validado ? `
+
+                    // Botón de eliminar solo si tiene documento y no está validado
+                    const botonEliminar = item.tiene_documento && item.id && !item.validado ? `
                     <button onclick="eliminarDocumento(${item.id}, '${run}', '${item.nombre}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-semibold">
                         <i class="fas fa-trash mr-1"></i>Eliminar
                     </button>
                 ` : '';
-                
-                html += `
-                    <div class="flex items-center justify-between p-3 border rounded-lg ${item.validado ? 'bg-green-50 border-green-200' : item.tiene_documento ? 'bg-yellow-50 border-yellow-200' : 'bg-red-50 border-red-200'}">
-                        <div class="flex items-center space-x-3 flex-1">
-                            ${icono}
-                            <span class="font-medium text-gray-800">${item.nombre}</span>
+
+                    html += `
+                    <div class="flex flex-col p-3 border rounded-lg ${item.validado ? 'bg-green-50 border-green-200' : tieneDocs ? 'bg-white border-yellow-200' : 'bg-red-50 border-red-200'}">
+                        <div class="flex items-center justify-between w-full">
+                            <div class="flex items-center space-x-3 flex-1">
+                                ${icono}
+                                <span class="font-medium text-gray-800">${item.nombre} ${tieneDocs && isFinanzas ? `<span class="text-xs text-gray-500">(${item.documentos.length})</span>` : ''}</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                ${estado}
+                                ${botonSubir}
+                            </div>
                         </div>
-                        <div class="flex items-center space-x-2">
-                            ${estado}
-                            ${botonPreview}
-                            ${botonEliminar}
-                            ${botonSubir}
-                        </div>
+                        ${docsHtml}
                     </div>
                 `;
-            });
-            
-            html += `
+                });
+
+                html += `
                         </div>
                     </div>
                     
                     <div class="mt-4 p-4 rounded-lg ${data.resumen.listo_para_solicitar ? 'bg-green-100 border-2 border-green-500' : 'bg-yellow-100 border-2 border-yellow-500'}">
                         <div class="flex items-center space-x-3">
-                            ${data.resumen.listo_para_solicitar 
-                                ? '<i class="fas fa-check-circle text-green-600 text-2xl"></i>' 
-                                : '<i class="fas fa-exclamation-triangle text-yellow-600 text-2xl"></i>'}
+                            ${data.resumen.listo_para_solicitar
+                        ? '<i class="fas fa-check-circle text-green-600 text-2xl"></i>'
+                        : '<i class="fas fa-exclamation-triangle text-yellow-600 text-2xl"></i>'}
                             <div>
                                 <div class="font-semibold ${data.resumen.listo_para_solicitar ? 'text-green-800' : 'text-yellow-800'}">
-                                    ${data.resumen.listo_para_solicitar 
-                                        ? 'Listo para solicitar apertura de expediente en Registro Curricular' 
-                                        : `Faltan ${data.resumen.documentos_faltantes} documento(s) para estar listo`}
+                                    ${data.resumen.listo_para_solicitar
+                        ? 'Listo para solicitar apertura de expediente en Registro Curricular'
+                        : `Faltan ${data.resumen.documentos_faltantes} documento(s) para estar listo`}
                                 </div>
                                 <div class="text-sm ${data.resumen.listo_para_solicitar ? 'text-green-700' : 'text-yellow-700'} mt-1">
                                     Todos los documentos requeridos deben estar validados
@@ -534,225 +564,201 @@ async function mostrarChecklist(run, nombre, forceReload = false) {
                     </div>
                 </div>
             `;
-            
-            content.innerHTML = html;
-        } catch (error) {
-            content.innerHTML = `
+
+                content.innerHTML = html;
+            } catch (error) {
+                content.innerHTML = `
                 <div class="text-center text-red-600">
                     <i class="fas fa-exclamation-circle mb-2"></i>
                     <p>Error cargando checklist: ${error.message}</p>
                 </div>
             `;
+            }
+        } else {
+            row.classList.add('hidden');
         }
-    } else {
+    }
+
+    function cerrarChecklist(run) {
+        const row = document.getElementById(`checklist-${run}`);
         row.classList.add('hidden');
     }
-}
 
-function cerrarChecklist(run) {
-    const row = document.getElementById(`checklist-${run}`);
-    row.classList.add('hidden');
-}
+    async function subirDocumento(run, tipo, input) {
+        console.log('Iniciando subida:', run, tipo);
+        const file = input.files[0];
+        if (!file) {
+            console.warn('No se seleccionó archivo');
+            return;
+        }
 
-async function subirDocumento(run, tipo, input) {
-    const file = input.files[0];
-    if (!file) return;
-    
-    if (!file.name.endsWith('.pdf')) {
-        alert('Solo se aceptan archivos PDF');
-        input.value = '';
-        return;
-    }
-    
-    const formData = new FormData();
-    formData.append('archivo', file);
-    formData.append('run', run);
-    formData.append('tipo', tipo);
-    
-    // Mostrar indicador de carga
-    const botonOriginal = input.parentElement;
-    const textoOriginal = botonOriginal.innerHTML;
-    botonOriginal.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>Subiendo...';
-    botonOriginal.style.pointerEvents = 'none';
-    
-    try {
-        const response = await fetch('/api/documentos/upload', {
-            method: 'POST',
-            body: formData
-        });
-        
-        let result;
+        if (!file.name.endsWith('.pdf')) {
+            alert('Solo se aceptan archivos PDF');
+            input.value = '';
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('archivo', file);
+        formData.append('run', run);
+        formData.append('tipo', tipo);
+
+        // UI Feedback
+        const label = input.closest('label');
+        const span = label.querySelector('span');
+        const originalText = span.innerHTML;
+        span.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>Subiendo...';
+        label.style.pointerEvents = 'none';
+
         try {
-            result = await response.json();
-        } catch (e) {
-            // Si no es JSON, puede ser un error de servidor
+            console.log('Enviando request...');
+            const response = await fetch('/api/documentos/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            console.log('Respuesta status:', response.status);
+
+            // Handle non-JSON responses
             const text = await response.text();
-            throw new Error(`Error del servidor: ${response.status} - ${text}`);
-        }
-        
-        // Verificar respuesta HTTP
-        if (!response.ok) {
-            throw new Error(result.detail || result.message || `Error ${response.status}: Error subiendo documento`);
-        }
-        
-        // Verificar resultado
-        if (!result.success) {
-            throw new Error(result.message || 'Error subiendo documento');
-        }
-        
-        // Si llegamos aquí, el documento se subió correctamente
-        // Obtener nombre del estudiante usando getElementById (más seguro que querySelector con caracteres especiales)
-        const rowElement = document.getElementById(`row-${run}`);
-        let nombre = 'Estudiante';
-        if (rowElement) {
-            nombre = rowElement.getAttribute('data-nombre') || estudiantesNombres[run] || 'Estudiante';
-        } else {
-            nombre = estudiantesNombres[run] || 'Estudiante';
-        }
-        
-        // Verificar si el checklist está abierto
-        const rowId = `checklist-${run}`;
-        const row = document.getElementById(rowId);
-        const wasOpen = row && !row.classList.contains('hidden');
-        
-        // Pequeño delay para asegurar que la BD se actualice completamente
-        await new Promise(resolve => setTimeout(resolve, 400));
-        
-        // Actualizar estado en la columna de checklist PRIMERO
-        try {
-            await actualizarEstadoChecklist(run);
-        } catch (e) {
-            console.warn('Error actualizando estado:', e);
-        }
-        
-        // Si el checklist estaba abierto, recargarlo con los datos actualizados
-        if (wasOpen && row) {
-            // Recargar directamente forzando la recarga
+            let result;
             try {
-                await mostrarChecklist(run, nombre, true);
+                result = JSON.parse(text);
             } catch (e) {
-                console.error('Error recargando checklist:', e);
+                console.error('Respuesta no es JSON:', text);
+                throw new Error(`Error del servidor (${response.status}): ${text.substring(0, 100)}...`);
             }
-        }
-        
-        // Restaurar botón
-        botonOriginal.innerHTML = textoOriginal;
-        botonOriginal.style.pointerEvents = '';
-        
-    } catch (error) {
-        console.error('Error subiendo documento:', error);
-        alert('Error: ' + error.message);
-        // Restaurar botón
-        botonOriginal.innerHTML = textoOriginal;
-        botonOriginal.style.pointerEvents = '';
-    } finally {
-        input.value = '';
-    }
-}
 
-// Función para actualizar el estado del checklist en la columna
-async function actualizarEstadoChecklist(run) {
-    try {
-        const response = await fetch(`/api/estudiantes/checklist-status?runs=${run}`);
-        const result = await response.json();
-        
-        if (result.success && result.data[run]) {
-            const estado = result.data[run];
-            const container = document.getElementById(`checklist-status-${run}`);
-            
-            if (estado.listo) {
-                container.innerHTML = `
+            if (!result.success) {
+                throw new Error(result.message || 'Error desconocido al subir');
+            }
+
+            console.log('Subida exitosa:', result);
+
+            // Update checklist immediately
+            await mostrarChecklist(run, null, true);
+
+            // Update status column
+            try {
+                await actualizarEstadoChecklist(run);
+            } catch (e) {
+                console.warn(e);
+            }
+
+        } catch (error) {
+            console.error('Error en subida:', error);
+            alert('Hubo un error al subir el documento:\n' + error.message);
+        } finally {
+            // Restore button state
+            if (span) span.innerHTML = originalText;
+            if (label) label.style.pointerEvents = 'auto';
+            input.value = ''; // Reset input to allow selecting same file again
+        }
+    }
+    // Función para actualizar el estado del checklist en la columna
+    async function actualizarEstadoChecklist(run) {
+        try {
+            const response = await fetch(`/api/estudiantes/checklist-status?runs=${run}`);
+            const result = await response.json();
+
+            if (result.success && result.data[run]) {
+                const estado = result.data[run];
+                const container = document.getElementById(`checklist-status-${run}`);
+
+                if (estado.listo) {
+                    container.innerHTML = `
                     <span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
                         <i class="fas fa-check-circle mr-1"></i>Listo
                     </span>
                 `;
-            } else {
-                container.innerHTML = `
+                } else {
+                    container.innerHTML = `
                     <span class="px-3 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
                         <i class="fas fa-exclamation-circle mr-1"></i>Pendiente
                     </span>
                 `;
+                }
             }
+        } catch (error) {
+            console.error('Error actualizando estado:', error);
         }
-    } catch (error) {
-        console.error('Error actualizando estado:', error);
     }
-}
 
-// Modal de previsualización
-function previsualizarDocumento(docId, nombre) {
-    const modal = document.getElementById('pdf-preview-modal');
-    const iframe = document.getElementById('pdf-preview-iframe');
-    const modalTitle = document.getElementById('pdf-preview-title');
-    
-    modalTitle.textContent = nombre;
-    iframe.src = `/api/documentos/${docId}/preview`;
-    modal.classList.remove('hidden');
-}
+    // Modal de previsualización
+    function previsualizarDocumento(docId, nombre) {
+        const modal = document.getElementById('pdf-preview-modal');
+        const iframe = document.getElementById('pdf-preview-iframe');
+        const modalTitle = document.getElementById('pdf-preview-title');
 
-function cerrarPreview() {
-    const modal = document.getElementById('pdf-preview-modal');
-    const iframe = document.getElementById('pdf-preview-iframe');
-    
-    modal.classList.add('hidden');
-    iframe.src = '';
-}
-
-async function eliminarDocumento(docId, run, nombre) {
-    if (!confirm(`¿Está seguro de eliminar el documento "${nombre}"?`)) {
-        return;
+        modalTitle.textContent = nombre;
+        iframe.src = `/api/documentos/${docId}/preview`;
+        modal.classList.remove('hidden');
     }
-    
-    try {
-        const response = await fetch(`/api/documentos/${docId}`, {
-            method: 'DELETE'
-        });
-        
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({ detail: 'Error desconocido' }));
-            throw new Error(errorData.detail || 'Error eliminando documento');
+
+    function cerrarPreview() {
+        const modal = document.getElementById('pdf-preview-modal');
+        const iframe = document.getElementById('pdf-preview-iframe');
+
+        modal.classList.add('hidden');
+        iframe.src = '';
+    }
+
+    async function eliminarDocumento(docId, run, nombre) {
+        if (!confirm(`¿Está seguro de eliminar el documento "${nombre}"?`)) {
+            return;
         }
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            // Obtener nombre del estudiante
-            const rowElement = document.getElementById(`row-${run}`);
-            let nombreEstudiante = 'Estudiante';
-            if (rowElement) {
-                nombreEstudiante = rowElement.getAttribute('data-nombre') || estudiantesNombres[run] || 'Estudiante';
+
+        try {
+            const response = await fetch(`/api/documentos/${docId}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ detail: 'Error desconocido' }));
+                throw new Error(errorData.detail || 'Error eliminando documento');
+            }
+
+            const result = await response.json();
+
+            if (result.success) {
+                // Obtener nombre del estudiante
+                const rowElement = document.getElementById(`row-${run}`);
+                let nombreEstudiante = 'Estudiante';
+                if (rowElement) {
+                    nombreEstudiante = rowElement.getAttribute('data-nombre') || estudiantesNombres[run] || 'Estudiante';
+                } else {
+                    nombreEstudiante = estudiantesNombres[run] || 'Estudiante';
+                }
+
+                // Pequeño delay para asegurar que la BD se actualice
+                await new Promise(resolve => setTimeout(resolve, 300));
+
+                // Actualizar estado en la columna de checklist
+                try {
+                    await actualizarEstadoChecklist(run);
+                } catch (e) {
+                    console.warn('Error actualizando estado:', e);
+                }
+
+                // Recargar checklist si está abierto
+                const rowId = `checklist-${run}`;
+                const row = document.getElementById(rowId);
+                if (row && !row.classList.contains('hidden')) {
+                    await mostrarChecklist(run, nombreEstudiante, true);
+                }
             } else {
-                nombreEstudiante = estudiantesNombres[run] || 'Estudiante';
+                throw new Error(result.message || 'Error eliminando documento');
             }
-            
-            // Pequeño delay para asegurar que la BD se actualice
-            await new Promise(resolve => setTimeout(resolve, 300));
-            
-            // Actualizar estado en la columna de checklist
-            try {
-                await actualizarEstadoChecklist(run);
-            } catch (e) {
-                console.warn('Error actualizando estado:', e);
-            }
-            
-            // Recargar checklist si está abierto
-            const rowId = `checklist-${run}`;
-            const row = document.getElementById(rowId);
-            if (row && !row.classList.contains('hidden')) {
-                await mostrarChecklist(run, nombreEstudiante, true);
-            }
-        } else {
-            throw new Error(result.message || 'Error eliminando documento');
+        } catch (error) {
+            console.error('Error eliminando documento:', error);
+            alert('Error: ' + error.message);
         }
-    } catch (error) {
-        console.error('Error eliminando documento:', error);
-        alert('Error: ' + error.message);
     }
-}
 </script>
 
 <!-- Modal para previsualización de PDF -->
-<div id="pdf-preview-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
+<div id="pdf-preview-modal"
+    class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-lg shadow-xl w-full max-w-6xl h-full max-h-[90vh] flex flex-col">
         <div class="flex items-center justify-between p-4 border-b">
             <h3 id="pdf-preview-title" class="text-lg font-semibold text-gray-800">Previsualización de Documento</h3>
@@ -761,11 +767,7 @@ async function eliminarDocumento(docId, run, nombre) {
             </button>
         </div>
         <div class="flex-1 p-4 overflow-hidden">
-            <iframe 
-                id="pdf-preview-iframe" 
-                class="w-full h-full border rounded"
-                style="min-height: 600px;"
-            ></iframe>
+            <iframe id="pdf-preview-iframe" class="w-full h-full border rounded" style="min-height: 600px;"></iframe>
         </div>
     </div>
 </div>

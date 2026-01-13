@@ -13,6 +13,7 @@ import sqlite3
 from pathlib import Path
 from contextlib import contextmanager
 from typing import Generator
+from functools import lru_cache
 
 from sqlalchemy import create_engine, event, text
 from sqlalchemy.orm import sessionmaker, Session
@@ -25,7 +26,14 @@ from tenacity import (
     before_sleep_log
 )
 from loguru import logger
-import streamlit as st
+
+# Importar streamlit de forma opcional (FastAPI no lo tiene)
+try:
+    import streamlit as st
+    HAS_STREAMLIT = True
+except ImportError:
+    HAS_STREAMLIT = False
+    st = None  # Evitar AttributeError cuando no hay streamlit
 
 from .models import Base
 
@@ -36,34 +44,47 @@ from .models import Base
 
 def _get_db_path() -> str:
     """Obtiene la ruta de la BD desde secrets o usa valor por defecto."""
-    try:
-        return st.secrets["paths"]["db_path"]
-    except (KeyError, FileNotFoundError):
-        # Fallback para desarrollo/testing
-        return "./data/sgte.db"
+    if HAS_STREAMLIT and st is not None:
+        try:
+            return st.secrets["paths"]["db_path"]
+        except (KeyError, FileNotFoundError, AttributeError):
+            pass
+    # Fallback para desarrollo/testing/FastAPI
+    return "./data/sgte.db"
 
 
 def _get_timeout() -> int:
     """Obtiene el timeout desde secrets o usa valor por defecto."""
-    try:
-        return st.secrets["database"]["timeout_seconds"]
-    except (KeyError, FileNotFoundError):
-        return 30
+    if HAS_STREAMLIT and st is not None:
+        try:
+            return st.secrets["database"]["timeout_seconds"]
+        except (KeyError, FileNotFoundError, AttributeError):
+            pass
+    return 30
 
 
 def _get_max_retries() -> int:
     """Obtiene número máximo de reintentos desde secrets."""
-    try:
-        return st.secrets["database"]["max_retries"]
-    except (KeyError, FileNotFoundError):
-        return 5
+    if HAS_STREAMLIT and st is not None:
+        try:
+            return st.secrets["database"]["max_retries"]
+        except (KeyError, FileNotFoundError, AttributeError):
+            pass
+    return 5
 
 
 # ============================================
 # CONFIGURACIÓN DEL ENGINE (CACHED)
 # ============================================
 
-@st.cache_resource(show_spinner="Conectando a base de datos...")
+# Decorador condicional: usar st.cache_resource si streamlit está disponible, sino lru_cache
+def _cache_engine(func):
+    if HAS_STREAMLIT and st is not None:
+        return st.cache_resource(show_spinner="Conectando a base de datos...")(func)
+    else:
+        return lru_cache(maxsize=1)(func)
+
+@_cache_engine
 def get_engine() -> Engine:
     """
     Crea y retorna el engine de SQLAlchemy (SINGLETON CACHEADO).
@@ -265,7 +286,15 @@ def init_database() -> bool:
         return False
 
 
-@st.cache_data(ttl=60, show_spinner=False)
+
+# Decorador condicional para check_database_health
+def _cache_data(func):
+    if HAS_STREAMLIT and st is not None:
+        return st.cache_data(ttl=60, show_spinner=False)(func)
+    else:
+        return lru_cache(maxsize=1)(func)
+
+@_cache_data
 def check_database_health() -> dict:
     """
     Verifica el estado de salud de la base de datos.

@@ -24,12 +24,14 @@
                 <div class="font-semibold text-gray-800">{{ estudiante.modalidad }}</div>
             </div>
         </div>
-        
+
         <div class="mt-6 flex gap-4">
-            <a href="/estudiantes/{{ estudiante.run }}/editar" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold">
+            <a href="/estudiantes/{{ estudiante.run }}/editar"
+                class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold">
                 Editar
             </a>
-            <a href="/documentos?q={{ estudiante.run }}" class="bg-teal-500 hover:bg-teal-600 text-white px-6 py-2 rounded-lg font-semibold">
+            <a href="/documentos/{{ estudiante.run }}"
+                class="bg-teal-500 hover:bg-teal-600 text-white px-6 py-2 rounded-lg font-semibold">
                 Ver Documentos
             </a>
         </div>

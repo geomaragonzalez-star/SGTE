@@ -74,16 +74,19 @@ async def obtener_documentos_estudiante(run: str):
                 Documento.estudiante_run == run
             ).all()
             
-            documentos_dict = {
-                doc.tipo.value: {
+            documentos_dict = {}
+            for doc in docs:
+                t = doc.tipo.value
+                if t not in documentos_dict:
+                    documentos_dict[t] = []
+                
+                documentos_dict[t].append({
                     "id": doc.id,
                     "path": doc.path,
                     "validado": doc.validado,
                     "uploaded_at": doc.uploaded_at.isoformat() if doc.uploaded_at else None,
                     "validated_at": doc.validated_at.isoformat() if doc.validated_at else None
-                }
-                for doc in docs
-            }
+                })
             
             return {"success": True, "data": documentos_dict}
     except Exception as e:
@@ -105,7 +108,12 @@ async def obtener_checklist_estudiante(run: str):
                 Documento.estudiante_run == run
             ).all()
             
-            documentos_dict = {doc.tipo: doc for doc in docs}
+            # Agrupar documentos por tipo
+            documentos_dict = {}
+            for doc in docs:
+                if doc.tipo not in documentos_dict:
+                    documentos_dict[doc.tipo] = []
+                documentos_dict[doc.tipo].append(doc)
             
             # Construir checklist
             checklist = []
@@ -114,22 +122,36 @@ async def obtener_checklist_estudiante(run: str):
             
             # Documentos requeridos
             for tipo_doc in DOCUMENTOS_REQUERIDOS:
-                doc = documentos_dict.get(tipo_doc)
-                tiene_documento = doc is not None and doc.path is not None
-                validado = doc is not None and doc.validado
+                docs_tipo = documentos_dict.get(tipo_doc, [])
+                tiene_documento = len(docs_tipo) > 0
+                validado = any(d.validado for d in docs_tipo)
                 
                 # Para finanzas, solo uno es requerido (título o licenciatura)
                 if tipo_doc == TipoDocumento.FINANZAS_TITULO:
                     # Verificar si tiene título o licenciatura
-                    tiene_finanzas = (
-                        documentos_dict.get(TipoDocumento.FINANZAS_TITULO) is not None or
-                        documentos_dict.get(TipoDocumento.FINANZAS_LICENCIA) is not None
-                    )
+                    docs_titulo = documentos_dict.get(TipoDocumento.FINANZAS_TITULO, [])
+                    docs_licencia = documentos_dict.get(TipoDocumento.FINANZAS_LICENCIA, [])
+                    
+                    tiene_finanzas = len(docs_titulo) > 0 or len(docs_licencia) > 0
+                    
                     validado_finanzas = (
-                        (documentos_dict.get(TipoDocumento.FINANZAS_TITULO) and documentos_dict.get(TipoDocumento.FINANZAS_TITULO).validado) or
-                        (documentos_dict.get(TipoDocumento.FINANZAS_LICENCIA) and documentos_dict.get(TipoDocumento.FINANZAS_LICENCIA).validado)
+                        any(d.validado for d in docs_titulo) or
+                        any(d.validado for d in docs_licencia)
                     )
-                    doc_finanzas = documentos_dict.get(TipoDocumento.FINANZAS_TITULO) or documentos_dict.get(TipoDocumento.FINANZAS_LICENCIA)
+                    
+                    # Usar el primero que encontremos para mostrar info básica
+                    doc_finanzas = docs_titulo[0] if docs_titulo else (docs_licencia[0] if docs_licencia else None)
+
+                    docs_list_objs = docs_titulo + docs_licencia
+
+                    docs_data = [{
+                        "id": d.id,
+                        "path": d.path,
+                        "validado": d.validado,
+                        "uploaded_at": d.uploaded_at.isoformat() if d.uploaded_at else None,
+                        "nombre_archivo": Path(d.path).name if d.path else "Documento"
+                    } for d in docs_list_objs]
+
                     checklist.append({
                         "tipo": tipo_doc.value,
                         "nombre": NOMBRES_DOCUMENTOS[tipo_doc],
@@ -137,7 +159,9 @@ async def obtener_checklist_estudiante(run: str):
                         "tiene_documento": tiene_finanzas,
                         "validado": validado_finanzas,
                         "id": doc_finanzas.id if doc_finanzas else None,
-                        "path": doc_finanzas.path if doc_finanzas else None
+                        "path": doc_finanzas.path if doc_finanzas else None,
+                        "count": len(docs_titulo) + len(docs_licencia),
+                        "documentos": docs_data
                     })
                     if validado_finanzas:
                         documentos_requeridos_validados += 1
@@ -146,14 +170,25 @@ async def obtener_checklist_estudiante(run: str):
                     # Saltar licenciatura si ya se procesó título
                     continue
                 
+                # Prepare list of documents for this type
+                docs_data = [{
+                    "id": d.id,
+                    "path": d.path,
+                    "validado": d.validado,
+                    "uploaded_at": d.uploaded_at.isoformat() if d.uploaded_at else None,
+                    "nombre_archivo": Path(d.path).name if d.path else "Documento"
+                } for d in docs_tipo]
+
                 checklist.append({
                     "tipo": tipo_doc.value,
                     "nombre": NOMBRES_DOCUMENTOS[tipo_doc],
                     "requerido": True,
                     "tiene_documento": tiene_documento,
                     "validado": validado,
-                    "id": doc.id if doc else None,
-                    "path": doc.path if doc else None
+                    "id": docs_tipo[0].id if docs_tipo else None,
+                    "path": docs_tipo[0].path if docs_tipo else None,
+                    "count": len(docs_tipo),
+                    "documentos": docs_data
                 })
                 
                 if validado:
@@ -230,10 +265,15 @@ async def subir_documento(
         # Registrar en BD
         with get_session_context() as session:
             # Verificar si ya existe
-            doc_existente = session.query(Documento).filter(
-                Documento.estudiante_run == run,
-                Documento.tipo == tipo_doc
-            ).first()
+            # Para Finanzas, permitimos múltiples documentos
+            es_finanzas = tipo_doc in [TipoDocumento.FINANZAS_TITULO, TipoDocumento.FINANZAS_LICENCIA]
+            
+            doc_existente = None
+            if not es_finanzas:
+                doc_existente = session.query(Documento).filter(
+                    Documento.estudiante_run == run,
+                    Documento.tipo == tipo_doc
+                ).first()
             
             if doc_existente:
                 doc_existente.path = str(ruta)

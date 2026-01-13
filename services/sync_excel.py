@@ -27,30 +27,65 @@ from services.estudiantes import formatear_run, validar_run
 # CONFIGURACIÓN
 # ============================================
 
-# Ruta del archivo Excel en Google Drive
-EXCEL_PATH = r"G:\Mi unidad\SGTE\alumnos.xlsx"
+# Importar configuración centralizada
+from config import get_config
 
-# Hojas del Excel que deben ser procesadas
-HOJAS_EXCEL = [
-    "2025-2",
-    "2025-1",
-    "2024-2",
-    "2024-1",
-    "Carga Consolidada 2025-2",
-    "Carga Consolidada 2025-1",
-    "Carga Consolidada 2024-2",
-    "Carga Consolidada 2024-1"
-]
+def _get_excel_path() -> str:
+    """Obtiene la ruta del archivo Excel desde la configuración."""
+    try:
+        config = get_config()
+        return config.excel.ruta_archivo
+    except Exception:
+        return r"G:\Mi unidad\SGTE\alumnos.xlsx"
+
+def _get_hojas_excel() -> list:
+    """Obtiene las hojas del Excel desde la configuración."""
+    try:
+        config = get_config()
+        return config.excel.hojas
+    except Exception:
+        return [
+            "2025-2", "2025-1", "2024-2", "2024-1",
+            "Carga Consolidada 2025-2", "Carga Consolidada 2025-1",
+            "Carga Consolidada 2024-2", "Carga Consolidada 2024-1"
+        ]
+
+# Ruta del archivo Excel en Google Drive (para compatibilidad)
+EXCEL_PATH = _get_excel_path()
+
+# Hojas del Excel que deben ser procesadas (para compatibilidad)
+HOJAS_EXCEL = _get_hojas_excel()
 
 # Mapeo de columnas del Excel a campos del modelo
+# Soporta múltiples formatos de nombres de columna
 COLUMN_MAPPING = {
+    # Formato snake_case (actual del Excel del usuario)
+    "run_1": "run",
+    "nombres_1": "nombres",
+    "paterno_1": "paterno",
+    "materno_1": "materno",
+    "carrera_1": "carrera",
+    "guia": "profesor_guia",
+    "titulo_proyecto": "titulo_proyecto",
+    "semestre": "semestre",
+    "estado": "estado",
+    "modalidad_titulacion": "modalidad",
+    # Formato alternativo con mayúsculas (legacy)
     "R.U.N 1": "run",
+    "RUN 1": "run",
+    "RUN_1": "run",
     "NOMBRES 1": "nombres",
+    "NOMBRES_1": "nombres",
     "PATERNO 1": "paterno",
+    "PATERNO_1": "paterno",
     "MATERNO 1": "materno",
+    "MATERNO_1": "materno",
     "CARRERA": "carrera",
+    "CARRERA_1": "carrera",
     "PROFESOR GUÍA": "profesor_guia",
+    "PROFESOR_GUIA": "profesor_guia",
     "TÍTULO DEL PROYECTO": "titulo_proyecto",
+    "TITULO_PROYECTO": "titulo_proyecto",
     "SEMESTRE": "semestre",
     "ESTADO": "estado"
 }
@@ -141,12 +176,15 @@ def mapear_estado_excel(estado_excel: Any) -> EstadoExpediente:
     return EstadoExpediente.PENDIENTE
 
 
-def normalizar_columna(col_name: str) -> str:
+def normalizar_columna(col_name) -> str:
     """
     Normaliza nombres de columnas para hacer búsqueda flexible.
     Elimina espacios extra, convierte a mayúsculas, etc.
+    Maneja columnas con nombres de tipo datetime/int/etc.
     """
-    return col_name.strip().upper().replace(' ', ' ')
+    # Convertir a string de forma segura (puede ser datetime, int, etc.)
+    col_str = str(col_name) if col_name is not None else ''
+    return col_str.strip().upper().replace(' ', ' ')
 
 
 # ============================================
@@ -155,8 +193,8 @@ def normalizar_columna(col_name: str) -> str:
 
 def leer_excel(ruta: str, hojas: List[str] = None) -> Optional[Dict[str, pd.DataFrame]]:
     """
-    Lee el archivo Excel con encabezados en la fila 2 (índice 1).
-    Lee múltiples hojas especificadas.
+    Lee el archivo Excel detectando automáticamente la fila de encabezados.
+    Busca la fila que contiene 'R.U.N' o 'RUN' como indicador de encabezados.
     
     Args:
         ruta: Ruta al archivo Excel
@@ -173,29 +211,58 @@ def leer_excel(ruta: str, hojas: List[str] = None) -> Optional[Dict[str, pd.Data
             logger.error(f"Archivo Excel no encontrado: {ruta}")
             return None
         
-        # Leer todas las hojas especificadas con encabezados en fila 2 (header=1)
         logger.info(f"Leyendo hojas del Excel: {hojas}")
-        dfs = pd.read_excel(
-            ruta, 
-            sheet_name=hojas, 
-            header=1, 
-            engine='openpyxl'
-        )
         
-        # Si solo hay una hoja, pandas puede retornar un DataFrame en lugar de dict
-        if isinstance(dfs, pd.DataFrame):
-            # Convertir a diccionario con el nombre de la primera hoja
-            nombre_hoja = hojas[0] if hojas else "Sheet1"
-            dfs = {nombre_hoja: dfs}
-        
-        # Filtrar hojas que no existen o están vacías
         dfs_validos = {}
-        for nombre_hoja, df in dfs.items():
-            if df is not None and not df.empty:
-                dfs_validos[nombre_hoja] = df
-                logger.info(f"Hoja '{nombre_hoja}': {len(df)} filas, {len(df.columns)} columnas")
-            else:
-                logger.warning(f"Hoja '{nombre_hoja}' está vacía o no existe")
+        
+        for nombre_hoja in hojas:
+            try:
+                # Primero, leer las primeras filas sin encabezado para detectar dónde está
+                df_preview = pd.read_excel(
+                    ruta, 
+                    sheet_name=nombre_hoja, 
+                    header=None,  # Sin encabezado, leer todo como datos
+                    nrows=5,  # Solo primeras 5 filas para encontrar encabezados
+                    engine='openpyxl'
+                )
+                
+                # Buscar la fila que contiene "R.U.N", "RUN" o "run_1" (puede ser en cualquier columna)
+                header_row = None
+                for idx, row in df_preview.iterrows():
+                    row_str = ' '.join([str(val).upper() for val in row.values if pd.notna(val)])
+                    # Buscar cualquier variante de RUN en los encabezados
+                    if 'R.U.N' in row_str or 'RUN 1' in row_str or 'RUN1' in row_str or 'RUN_1' in row_str:
+                        header_row = idx
+                        logger.debug(f"Hoja '{nombre_hoja}': Encabezados encontrados en fila {idx + 1}")
+                        break
+                
+                if header_row is None:
+                    # Si no encontramos encabezados explícitos, probar fila 0 y 1
+                    logger.warning(f"Hoja '{nombre_hoja}': No se encontró 'R.U.N' en encabezados, probando fila 0")
+                    header_row = 0
+                
+                # Ahora leer el Excel completo con la fila de encabezados detectada
+                df = pd.read_excel(
+                    ruta, 
+                    sheet_name=nombre_hoja, 
+                    header=header_row,
+                    engine='openpyxl'
+                )
+                
+                if df is not None and not df.empty:
+                    # Limpiar nombres de columnas (convertir a string)
+                    df.columns = [str(col).strip() if pd.notna(col) else f'Unnamed_{i}' 
+                                  for i, col in enumerate(df.columns)]
+                    
+                    dfs_validos[nombre_hoja] = df
+                    logger.info(f"Hoja '{nombre_hoja}': {len(df)} filas, {len(df.columns)} columnas (header en fila {header_row + 1})")
+                    logger.debug(f"Hoja '{nombre_hoja}' columnas: {list(df.columns[:10])}...")
+                else:
+                    logger.warning(f"Hoja '{nombre_hoja}' está vacía")
+                    
+            except Exception as e:
+                logger.warning(f"Error leyendo hoja '{nombre_hoja}': {e}")
+                continue
         
         if not dfs_validos:
             logger.error("No se encontraron hojas válidas en el Excel")
@@ -294,9 +361,15 @@ def procesar_fila(
             for col_excel, campo in column_mapping.items():
                 if campo == campo_modelo:
                     valor = row.get(col_excel, default)
-                    if pd.isna(valor) or str(valor).strip() == 'nan':
+                    # Manejar valores nulos o NaN
+                    if valor is None or pd.isna(valor):
                         return default
-                    return str(valor).strip()
+                    # Convertir a string de forma segura (maneja datetime, int, float, etc.)
+                    valor_str = str(valor)
+                    # Verificar si es 'nan' o vacío después de convertir
+                    if valor_str.strip().lower() == 'nan' or valor_str.strip() == '':
+                        return default
+                    return valor_str.strip()
             return default
         
         nombres = obtener_valor('nombres', '')
@@ -353,14 +426,15 @@ def procesar_fila(
             
             if actualizado:
                 estudiante.updated_at = datetime.now()
-                log_user_action(
-                    tabla="estudiantes",
-                    registro_id=run,
-                    accion="UPDATE",
-                    usuario=usuario,
-                    descripcion=f"Actualizado desde Excel: {nombres} {apellidos}",
-                    valores_nuevos=f'{{"nombres": "{nombres}", "apellidos": "{apellidos}", "carrera": "{carrera}"}}'
-                )
+                # Log deshabilitado temporalmente durante sync masivo para evitar timeouts
+                # log_user_action(
+                #     tabla="estudiantes",
+                #     registro_id=run,
+                #     accion="UPDATE",
+                #     usuario=usuario,
+                #     descripcion=f"Actualizado desde Excel: {nombres} {apellidos}",
+                #     valores_nuevos=f'{{"nombres": "{nombres}", "apellidos": "{apellidos}", "carrera": "{carrera}"}}'
+                # )
         else:
             # CASO 1: Estudiante nuevo - Crear
             logger.debug(f"Creando nuevo estudiante: {run}")
@@ -372,14 +446,15 @@ def procesar_fila(
                 modalidad=DEFAULT_MODALIDAD_ESTUDIANTE
             )
             session.add(estudiante)
-            log_user_action(
-                tabla="estudiantes",
-                registro_id=run,
-                accion="CREATE",
-                usuario=usuario,
-                descripcion=f"Creado desde Excel: {nombres} {apellidos}",
-                valores_nuevos=f'{{"run": "{run}", "nombres": "{nombres}", "apellidos": "{apellidos}", "carrera": "{carrera}"}}'
-            )
+            # Log deshabilitado temporalmente durante sync masivo para evitar timeouts
+            # log_user_action(
+            #     tabla="estudiantes",
+            #     registro_id=run,
+            #     accion="CREATE",
+            #     usuario=usuario,
+            #     descripcion=f"Creado desde Excel: {nombres} {apellidos}",
+            #     valores_nuevos=f'{{"run": "{run}", "nombres": "{nombres}", "apellidos": "{apellidos}", "carrera": "{carrera}"}}'
+            # )
         
         # Flush para asegurar que el estudiante esté en BD antes de crear proyecto
         session.flush()
