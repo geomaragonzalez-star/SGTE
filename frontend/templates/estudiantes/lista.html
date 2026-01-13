@@ -18,12 +18,12 @@
     
     <!-- Búsqueda y filtros -->
     <div class="bg-white rounded-lg shadow p-6">
-        <form method="GET" class="space-y-4">
+        <div class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div class="md:col-span-2">
                     <input 
                         type="text" 
-                        name="q" 
+                        id="filtro-busqueda"
                         value="{{ query or '' }}"
                         placeholder="Buscar por RUN o nombre..." 
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
@@ -31,7 +31,7 @@
                 </div>
                 <div>
                     <select 
-                        name="carrera" 
+                        id="filtro-carrera"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                     >
                         <option value="">Todas las carreras</option>
@@ -44,7 +44,7 @@
                 </div>
                 <div>
                     <select 
-                        name="modalidad" 
+                        id="filtro-modalidad"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                     >
                         <option value="">Todas las modalidades</option>
@@ -58,9 +58,7 @@
                 <div class="flex items-center space-x-2">
                     <input 
                         type="checkbox" 
-                        id="filtro-listo" 
-                        name="listo" 
-                        value="true"
+                        id="filtro-listo"
                         {% if listo_filter == True %}checked{% endif %}
                         class="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
                     >
@@ -68,14 +66,14 @@
                         Solo estudiantes listos para solicitar apertura
                     </label>
                 </div>
-                <button type="submit" class="bg-gray-800 hover:bg-gray-900 text-white px-6 py-2 rounded-lg font-semibold transition">
+                <button onclick="filtrarEstudiantes()" class="bg-gray-800 hover:bg-gray-900 text-white px-6 py-2 rounded-lg font-semibold transition">
                     <i class="fas fa-search mr-2"></i>Buscar
                 </button>
                 <a href="/estudiantes" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg font-semibold transition">
                     <i class="fas fa-times mr-2"></i>Limpiar
                 </a>
             </div>
-        </form>
+        </div>
     </div>
     
     <!-- Tabla de estudiantes -->
@@ -104,130 +102,282 @@
                         </th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    {% if estudiantes %}
-                        {% for estudiante in estudiantes %}
-                        <tr class="hover:bg-gray-50 transition" id="row-{{ estudiante.run }}" data-run="{{ estudiante.run }}" data-nombre="{{ estudiante.nombre_completo }}">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">{{ estudiante.run }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900 estudiante-nombre">{{ estudiante.nombre_completo }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-500">{{ estudiante.carrera }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                                    {{ estudiante.modalidad }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <div id="checklist-status-{{ estudiante.run }}" class="flex justify-center">
-                                    <div class="text-gray-400">
-                                        <i class="fas fa-spinner fa-spin"></i>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button 
-                                    onclick="mostrarChecklist('{{ estudiante.run }}', '{{ estudiante.nombre_completo }}')" 
-                                    class="text-teal-600 hover:text-teal-900 mr-4"
-                                >
-                                    <i class="fas fa-eye"></i> Ver
-                                </button>
-                                <a href="/estudiantes/{{ estudiante.run }}/editar" class="text-blue-600 hover:text-blue-900">
-                                    <i class="fas fa-edit"></i> Editar
-                                </a>
-                            </td>
-                        </tr>
-                        <!-- Fila expandible para checklist -->
-                        <tr id="checklist-{{ estudiante.run }}" class="hidden">
-                            <td colspan="6" class="px-6 py-4 bg-gray-50">
-                                <div id="checklist-content-{{ estudiante.run }}" class="p-4">
-                                    <div class="text-center text-gray-500">
-                                        <i class="fas fa-spinner fa-spin"></i> Cargando checklist...
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    {% else %}
-                        <tr>
-                            <td colspan="6" class="px-6 py-12 text-center">
-                                <div class="text-gray-500">
-                                    <i class="fas fa-users text-4xl mb-4"></i>
-                                    <p class="text-lg font-semibold">No hay estudiantes registrados</p>
-                                    <p class="text-sm mt-2">Comienza agregando un nuevo estudiante</p>
-                                </div>
-                            </td>
-                        </tr>
-                    {% endif %}
+                <tbody id="tabla-estudiantes" class="bg-white divide-y divide-gray-200">
+                    <tr>
+                        <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                            <i class="fas fa-spinner fa-spin mr-2"></i>Cargando estudiantes...
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
+        
+        <!-- Controles de Paginación -->
+        <div class="mt-4 flex flex-col sm:flex-row justify-between items-center gap-4 px-6 pb-4">
+            <div class="flex items-center space-x-2">
+                <label class="text-sm text-gray-700">Filas por página:</label>
+                <select id="filas-por-pagina" onchange="cambiarFilasPorPagina()" class="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500">
+                    <option value="10" selected>10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                    <option value="40">40</option>
+                </select>
+            </div>
+            
+            <div class="flex items-center space-x-2">
+                <span id="info-paginacion" class="text-sm text-gray-700">Mostrando 0 - 0 de 0</span>
+            </div>
+            
+            <div class="flex items-center space-x-1" id="navegacion-paginas">
+                <!-- Los botones de navegación se generarán dinámicamente -->
+            </div>
+        </div>
     </div>
-    
-    <!-- Paginación (si es necesario) -->
-    {% if estudiantes|length >= 100 %}
-    <div class="flex justify-center items-center space-x-2">
-        <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-            <i class="fas fa-chevron-left"></i>
-        </button>
-        <span class="px-4 py-2 text-gray-700">Página 1</span>
-        <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-            <i class="fas fa-chevron-right"></i>
-        </button>
-    </div>
-    {% endif %}
 </div>
 
 {% block extra_scripts %}
 <script>
+// ============================================
+// VARIABLES GLOBALES DE PAGINACIÓN
+// ============================================
+var paginaActual = 1;
+var filasPorPagina = 10;
+var totalRegistros = 0;
+var totalPaginas = 1;
+var terminoBusqueda = '{{ query or "" }}';
+var carreraFiltro = '{{ carrera_filter or "" }}';
+var modalidadFiltro = '{{ modalidad_filter or "" }}';
+var listoFiltro = {{ 'true' if listo_filter == True else 'false' if listo_filter == False else 'null' }};
+
 // Variable global para almacenar nombres de estudiantes
 const estudiantesNombres = {};
 
-// Cargar estado de checklist para todos los estudiantes
-document.addEventListener('DOMContentLoaded', async () => {
-    const estudiantes = {{ estudiantes | tojson }};
-    // Guardar nombres en el objeto global
-    estudiantes.forEach(e => {
-        estudiantesNombres[e.run] = e.nombre_completo;
-    });
+// ============================================
+// FUNCIONES DE PAGINACIÓN
+// ============================================
+
+async function cargarEstudiantes() {
+    const tbody = document.getElementById('tabla-estudiantes');
+    tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando estudiantes...</td></tr>';
     
-    const runs = estudiantes.map(e => e.run);
-    
-    if (runs.length > 0) {
-        try {
-            const response = await fetch(`/api/estudiantes/checklist-status?runs=${runs.join(',')}`);
-            const result = await response.json();
+    try {
+        const params = new URLSearchParams({
+            pagina: paginaActual,
+            filas_por_pagina: filasPorPagina
+        });
+        
+        if (terminoBusqueda) params.append('q', terminoBusqueda);
+        if (carreraFiltro) params.append('carrera', carreraFiltro);
+        if (modalidadFiltro) params.append('modalidad', modalidadFiltro);
+        if (listoFiltro !== null) params.append('listo', listoFiltro);
+        
+        const response = await fetch(`/api/estudiantes?${params}`);
+        const result = await response.json();
+        
+        if (result.success) {
+            // Manejar tanto la estructura antigua como la nueva
+            let estudiantes, paginacion;
             
-            if (result.success) {
-                const estados = result.data;
-                runs.forEach(run => {
-                    const estado = estados[run];
-                    const container = document.getElementById(`checklist-status-${run}`);
-                    
-                    if (estado && estado.listo) {
-                        container.innerHTML = `
-                            <span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                <i class="fas fa-check-circle mr-1"></i>Listo
-                            </span>
-                        `;
-                    } else {
-                        container.innerHTML = `
-                            <span class="px-3 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                <i class="fas fa-exclamation-circle mr-1"></i>Pendiente
-                            </span>
-                        `;
-                    }
-                });
+            if (result.data && result.data.estudiantes && result.data.paginacion) {
+                // Nueva estructura con paginación
+                estudiantes = result.data.estudiantes;
+                paginacion = result.data.paginacion;
+            } else if (Array.isArray(result.data)) {
+                // Estructura antigua (sin paginación)
+                estudiantes = result.data;
+                totalRegistros = estudiantes.length;
+                totalPaginas = 1;
+                paginacion = {
+                    pagina_actual: 1,
+                    filas_por_pagina: filasPorPagina,
+                    total_registros: totalRegistros,
+                    total_paginas: 1,
+                    tiene_anterior: false,
+                    tiene_siguiente: false
+                };
+            } else {
+                throw new Error('Formato de respuesta no reconocido');
             }
-        } catch (error) {
-            console.error('Error cargando estados:', error);
+            
+            totalRegistros = paginacion.total_registros;
+            totalPaginas = paginacion.total_paginas;
+            paginaActual = paginacion.pagina_actual;
+            
+            renderizarTabla(estudiantes);
+            actualizarControlesPaginacion(paginacion);
+            cargarEstadosChecklist(estudiantes);
+        } else {
+            throw new Error(result.message || 'Error cargando estudiantes');
         }
+    } catch (error) {
+        console.error('Error cargando estudiantes:', error);
+        const tbody = document.getElementById('tabla-estudiantes');
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" class="px-6 py-8 text-center text-red-500">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    Error cargando estudiantes: ${error.message}
+                </td>
+            </tr>
+        `;
+    }
+}
+
+function renderizarTabla(estudiantes) {
+    const tbody = document.getElementById('tabla-estudiantes');
+    
+    if (estudiantes.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-12 text-center text-gray-500"><i class="fas fa-users text-4xl mb-4"></i><p class="text-lg font-semibold">No hay estudiantes registrados</p></td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = estudiantes.map(estudiante => {
+        estudiantesNombres[estudiante.run] = estudiante.nombre_completo;
+        return `
+            <tr class="hover:bg-gray-50 transition" id="row-${estudiante.run}" data-run="${estudiante.run}" data-nombre="${estudiante.nombre_completo}">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-medium text-gray-900">${estudiante.run}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-900 estudiante-nombre">${estudiante.nombre_completo}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-500">${estudiante.carrera}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                        ${estudiante.modalidad}
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                    <div id="checklist-status-${estudiante.run}" class="flex justify-center">
+                        <div class="text-gray-400">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <button onclick="mostrarChecklist('${estudiante.run}', '${estudiante.nombre_completo}')" class="text-teal-600 hover:text-teal-900 mr-4">
+                        <i class="fas fa-eye"></i> Ver
+                    </button>
+                    <a href="/estudiantes/${estudiante.run}/editar" class="text-blue-600 hover:text-blue-900">
+                        <i class="fas fa-edit"></i> Editar
+                    </a>
+                </td>
+            </tr>
+            <tr id="checklist-${estudiante.run}" class="hidden">
+                <td colspan="6" class="px-6 py-4 bg-gray-50">
+                    <div id="checklist-content-${estudiante.run}" class="p-4">
+                        <div class="text-center text-gray-500">
+                            <i class="fas fa-spinner fa-spin"></i> Cargando checklist...
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function actualizarControlesPaginacion(paginacion) {
+    const inicio = (paginaActual - 1) * filasPorPagina + 1;
+    const fin = Math.min(paginaActual * filasPorPagina, totalRegistros);
+    document.getElementById('info-paginacion').textContent = `Mostrando ${inicio} - ${fin} de ${totalRegistros}`;
+    
+    const nav = document.getElementById('navegacion-paginas');
+    let html = '';
+    
+    html += `<button onclick="irAPagina(${paginaActual - 1})" ${!paginacion.tiene_anterior ? 'disabled' : ''} class="px-3 py-1 border border-gray-300 rounded-lg text-sm ${paginacion.tiene_anterior ? 'hover:bg-gray-50' : 'opacity-50 cursor-not-allowed'}"><i class="fas fa-chevron-left"></i></button>`;
+    
+    const maxBotones = 5;
+    let inicioPaginas = Math.max(1, paginaActual - Math.floor(maxBotones / 2));
+    let finPaginas = Math.min(totalPaginas, inicioPaginas + maxBotones - 1);
+    
+    if (finPaginas - inicioPaginas < maxBotones - 1) {
+        inicioPaginas = Math.max(1, finPaginas - maxBotones + 1);
+    }
+    
+    if (inicioPaginas > 1) {
+        html += `<button onclick="irAPagina(1)" class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">1</button>`;
+        if (inicioPaginas > 2) html += `<span class="px-2 text-gray-500">...</span>`;
+    }
+    
+    for (let i = inicioPaginas; i <= finPaginas; i++) {
+        html += `<button onclick="irAPagina(${i})" class="px-3 py-1 border border-gray-300 rounded-lg text-sm ${i === paginaActual ? 'bg-teal-500 text-white border-teal-500' : 'hover:bg-gray-50'}">${i}</button>`;
+    }
+    
+    if (finPaginas < totalPaginas) {
+        if (finPaginas < totalPaginas - 1) html += `<span class="px-2 text-gray-500">...</span>`;
+        html += `<button onclick="irAPagina(${totalPaginas})" class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">${totalPaginas}</button>`;
+    }
+    
+    html += `<button onclick="irAPagina(${paginaActual + 1})" ${!paginacion.tiene_siguiente ? 'disabled' : ''} class="px-3 py-1 border border-gray-300 rounded-lg text-sm ${paginacion.tiene_siguiente ? 'hover:bg-gray-50' : 'opacity-50 cursor-not-allowed'}"><i class="fas fa-chevron-right"></i></button>`;
+    
+    nav.innerHTML = html;
+}
+
+function irAPagina(pagina) {
+    if (pagina < 1 || pagina > totalPaginas || pagina === paginaActual) return;
+    paginaActual = pagina;
+    cargarEstudiantes();
+}
+
+function cambiarFilasPorPagina() {
+    const select = document.getElementById('filas-por-pagina');
+    filasPorPagina = parseInt(select.value);
+    paginaActual = 1;
+    cargarEstudiantes();
+}
+
+async function cargarEstadosChecklist(estudiantes) {
+    const runs = estudiantes.map(e => e.run);
+    if (runs.length === 0) return;
+    
+    try {
+        const response = await fetch(`/api/estudiantes/checklist-status?runs=${runs.join(',')}`);
+        const result = await response.json();
+        
+        if (result.success) {
+            const estados = result.data;
+            runs.forEach(run => {
+                const estado = estados[run];
+                const container = document.getElementById(`checklist-status-${run}`);
+                if (!container) return;
+                
+                if (estado && estado.listo) {
+                    container.innerHTML = `<span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i>Listo</span>`;
+                } else {
+                    container.innerHTML = `<span class="px-3 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800"><i class="fas fa-exclamation-circle mr-1"></i>Pendiente</span>`;
+                }
+            });
+        }
+    } catch (error) {
+        console.error('Error cargando estados:', error);
+    }
+}
+
+// Cargar datos al iniciar
+document.addEventListener('DOMContentLoaded', () => {
+    cargarEstudiantes();
+    
+    // Agregar listener para Enter en el campo de búsqueda
+    const filtroBusqueda = document.getElementById('filtro-busqueda');
+    if (filtroBusqueda) {
+        filtroBusqueda.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                filtrarEstudiantes();
+            }
+        });
     }
 });
+
+function filtrarEstudiantes() {
+    terminoBusqueda = document.getElementById('filtro-busqueda').value.trim();
+    carreraFiltro = document.getElementById('filtro-carrera').value;
+    modalidadFiltro = document.getElementById('filtro-modalidad').value;
+    listoFiltro = document.getElementById('filtro-listo').checked ? true : null;
+    paginaActual = 1;
+    cargarEstudiantes();
+}
 
 async function mostrarChecklist(run, nombre, forceReload = false) {
     // Obtener nombre del estudiante si no se proporciona

@@ -19,11 +19,11 @@ from .estudiantes import (
 )
 
 # RF-03: PDF Splitter
-from .pdf_splitter import (
+from .pdf_splitter_optimized import (
     procesar_pdf_masivo,
-    obtener_paginas_sin_asignar,
+    verificar_pymupdf_disponible,
     detectar_run,
-    HAS_PYMUPDF
+    obtener_paginas_sin_asignar
 )
 
 # RF-04: Generador de Memorándums
@@ -65,9 +65,9 @@ __all__ = [
     "formatear_run",
     # RF-03
     "procesar_pdf_masivo",
-    "obtener_paginas_sin_asignar",
+    "verificar_pymupdf_disponible",
     "detectar_run",
-    "HAS_PYMUPDF",
+    "obtener_paginas_sin_asignar",
     # RF-04
     "generar_memorandum",
     "generar_memorandums_masivo",

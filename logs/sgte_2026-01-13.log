@@ -1,0 +1,101 @@
+2026-01-13 09:57:33.061 | INFO     | backend.api.routes.proyectos:buscar_proyectos:56 - Total de proyectos en BD: 233
+2026-01-13 09:57:33.123 | INFO     | backend.api.routes.proyectos:buscar_proyectos:81 - Proyectos encontrados después de filtros: 233
+2026-01-13 09:57:33.647 | INFO     | backend.api.routes.proyectos:buscar_proyectos:120 - Proyectos procesados exitosamente: 233
+2026-01-13 11:06:49.581 | INFO     | backend.api.routes.proyectos:buscar_proyectos:56 - Total de proyectos en BD: 233
+2026-01-13 11:06:49.598 | INFO     | backend.api.routes.proyectos:buscar_proyectos:81 - Proyectos encontrados después de filtros: 233
+2026-01-13 11:06:50.087 | INFO     | backend.api.routes.proyectos:buscar_proyectos:120 - Proyectos procesados exitosamente: 233
+2026-01-13 11:17:49.004 | INFO     | backend.api.routes.proyectos:buscar_proyectos:56 - Total de proyectos en BD: 233
+2026-01-13 11:17:49.069 | INFO     | backend.api.routes.proyectos:buscar_proyectos:81 - Proyectos encontrados después de filtros: 233
+2026-01-13 11:17:49.564 | INFO     | backend.api.routes.proyectos:buscar_proyectos:120 - Proyectos procesados exitosamente: 233
+2026-01-13 11:27:41.122 | INFO     | backend.api.routes.proyectos:buscar_proyectos:56 - Total de proyectos en BD: 233
+2026-01-13 11:27:41.158 | INFO     | backend.api.routes.proyectos:buscar_proyectos:81 - Proyectos encontrados después de filtros: 233
+2026-01-13 11:27:41.586 | INFO     | backend.api.routes.proyectos:buscar_proyectos:120 - Proyectos procesados exitosamente: 233
+2026-01-13 11:27:42.011 | INFO     | backend.api.routes.proyectos:buscar_proyectos:56 - Total de proyectos en BD: 233
+2026-01-13 11:27:42.024 | INFO     | backend.api.routes.proyectos:buscar_proyectos:81 - Proyectos encontrados después de filtros: 233
+2026-01-13 11:27:42.493 | INFO     | backend.api.routes.proyectos:buscar_proyectos:120 - Proyectos procesados exitosamente: 233
+2026-01-13 11:27:42.556 | INFO     | backend.api.routes.proyectos:buscar_proyectos:56 - Total de proyectos en BD: 233
+2026-01-13 11:27:42.567 | INFO     | backend.api.routes.proyectos:buscar_proyectos:81 - Proyectos encontrados después de filtros: 233
+2026-01-13 11:27:43.018 | INFO     | backend.api.routes.proyectos:buscar_proyectos:120 - Proyectos procesados exitosamente: 233
+2026-01-13 11:27:48.104 | INFO     | backend.api.routes.proyectos:buscar_proyectos:56 - Total de proyectos en BD: 233
+2026-01-13 11:27:48.258 | INFO     | backend.api.routes.proyectos:buscar_proyectos:81 - Proyectos encontrados después de filtros: 233
+2026-01-13 11:27:48.913 | INFO     | backend.api.routes.proyectos:buscar_proyectos:120 - Proyectos procesados exitosamente: 233
+2026-01-13 11:27:49.233 | INFO     | backend.api.routes.proyectos:buscar_proyectos:56 - Total de proyectos en BD: 233
+2026-01-13 11:27:49.242 | INFO     | backend.api.routes.proyectos:buscar_proyectos:81 - Proyectos encontrados después de filtros: 233
+2026-01-13 11:27:49.705 | INFO     | backend.api.routes.proyectos:buscar_proyectos:120 - Proyectos procesados exitosamente: 233
+2026-01-13 11:27:49.721 | INFO     | backend.api.routes.proyectos:buscar_proyectos:56 - Total de proyectos en BD: 233
+2026-01-13 11:27:49.732 | INFO     | backend.api.routes.proyectos:buscar_proyectos:81 - Proyectos encontrados después de filtros: 233
+2026-01-13 11:27:50.156 | INFO     | backend.api.routes.proyectos:buscar_proyectos:120 - Proyectos procesados exitosamente: 233
+2026-01-13 11:32:04.870 | INFO     | backend.api.routes.proyectos:buscar_proyectos:56 - Total de proyectos en BD: 233
+2026-01-13 11:32:04.879 | INFO     | backend.api.routes.proyectos:buscar_proyectos:81 - Proyectos encontrados después de filtros: 233
+2026-01-13 11:32:05.304 | INFO     | backend.api.routes.proyectos:buscar_proyectos:120 - Proyectos procesados exitosamente: 233
+2026-01-13 11:32:05.597 | INFO     | backend.api.routes.proyectos:buscar_proyectos:56 - Total de proyectos en BD: 233
+2026-01-13 11:32:05.601 | INFO     | backend.api.routes.proyectos:buscar_proyectos:81 - Proyectos encontrados después de filtros: 233
+2026-01-13 11:32:06.019 | INFO     | backend.api.routes.proyectos:buscar_proyectos:120 - Proyectos procesados exitosamente: 233
+2026-01-13 11:32:06.249 | INFO     | backend.api.routes.proyectos:buscar_proyectos:56 - Total de proyectos en BD: 233
+2026-01-13 11:32:07.663 | INFO     | backend.api.routes.proyectos:buscar_proyectos:81 - Proyectos encontrados después de filtros: 233
+2026-01-13 11:32:08.069 | INFO     | backend.api.routes.proyectos:buscar_proyectos:120 - Proyectos procesados exitosamente: 233
+2026-01-13 11:32:24.691 | INFO     | backend.api.routes.proyectos:buscar_proyectos:56 - Total de proyectos en BD: 233
+2026-01-13 11:32:24.707 | INFO     | backend.api.routes.proyectos:buscar_proyectos:81 - Proyectos encontrados después de filtros: 233
+2026-01-13 11:32:25.230 | INFO     | backend.api.routes.proyectos:buscar_proyectos:120 - Proyectos procesados exitosamente: 233
+2026-01-13 11:32:25.658 | INFO     | backend.api.routes.proyectos:buscar_proyectos:56 - Total de proyectos en BD: 233
+2026-01-13 11:32:25.666 | INFO     | backend.api.routes.proyectos:buscar_proyectos:81 - Proyectos encontrados después de filtros: 233
+2026-01-13 11:32:26.158 | INFO     | backend.api.routes.proyectos:buscar_proyectos:120 - Proyectos procesados exitosamente: 233
+2026-01-13 11:32:26.183 | INFO     | backend.api.routes.proyectos:buscar_proyectos:56 - Total de proyectos en BD: 233
+2026-01-13 11:32:26.190 | INFO     | backend.api.routes.proyectos:buscar_proyectos:81 - Proyectos encontrados después de filtros: 233
+2026-01-13 11:32:26.723 | INFO     | backend.api.routes.proyectos:buscar_proyectos:120 - Proyectos procesados exitosamente: 233
+2026-01-13 11:34:22.635 | INFO     | backend.api.routes.proyectos:buscar_proyectos:56 - Total de proyectos en BD: 233
+2026-01-13 11:34:22.647 | INFO     | backend.api.routes.proyectos:buscar_proyectos:81 - Proyectos encontrados después de filtros: 233
+2026-01-13 11:34:23.117 | INFO     | backend.api.routes.proyectos:buscar_proyectos:120 - Proyectos procesados exitosamente: 233
+2026-01-13 11:34:23.514 | INFO     | backend.api.routes.proyectos:buscar_proyectos:56 - Total de proyectos en BD: 233
+2026-01-13 11:34:23.516 | INFO     | backend.api.routes.proyectos:buscar_proyectos:81 - Proyectos encontrados después de filtros: 233
+2026-01-13 11:34:23.978 | INFO     | backend.api.routes.proyectos:buscar_proyectos:120 - Proyectos procesados exitosamente: 233
+2026-01-13 11:34:24.007 | INFO     | backend.api.routes.proyectos:buscar_proyectos:56 - Total de proyectos en BD: 233
+2026-01-13 11:34:24.014 | INFO     | backend.api.routes.proyectos:buscar_proyectos:81 - Proyectos encontrados después de filtros: 233
+2026-01-13 11:34:24.479 | INFO     | backend.api.routes.proyectos:buscar_proyectos:120 - Proyectos procesados exitosamente: 233
+2026-01-13 11:34:43.194 | INFO     | backend.api.routes.proyectos:buscar_proyectos:56 - Total de proyectos en BD: 233
+2026-01-13 11:34:43.196 | INFO     | backend.api.routes.proyectos:buscar_proyectos:81 - Proyectos encontrados después de filtros: 233
+2026-01-13 11:34:43.437 | INFO     | backend.api.routes.proyectos:buscar_proyectos:120 - Proyectos procesados exitosamente: 233
+2026-01-13 11:35:08.633 | INFO     | services.memo_generator:generar_memorandum:431 - ✓ Usando plantilla del usuario: C:\Users\YomiT\Downloads\Plantilla_Memo_Grado.docx
+2026-01-13 11:35:08.633 | INFO     | services.memo_generator:generar_memorandum:457 - ✓ Usando plantilla: C:\Users\YomiT\Downloads\Plantilla_Memo_Grado.docx
+2026-01-13 11:35:08.633 | INFO     | services.memo_generator:generar_memorandum:458 -   Datos del estudiante: Camila Fernanda Alfaro Oyarzún (19.186.294-5), Carrera: 1470 - Ingeniería Civil Industrial, Modalidad: Trabajo de Titulación
+2026-01-13 11:35:08.724 | INFO     | services.memo_generator:crear_documento_desde_plantilla:192 - Reemplazando tokens en plantilla: Plantilla_Memo_Grado.docx
+2026-01-13 11:35:08.724 | INFO     | services.memo_generator:crear_documento_desde_plantilla:193 - Datos disponibles: ['fecha_actual', 'anio_actual', 'numero_memo', 'run', 'nombres', 'apellidos', 'nombre_completo', 'carrera', 'email', 'semestre', 'semestre_actual', 'modalidad', 'titulo_proyecto', 'profesor_guia', 'corrector_1', 'corrector_2']
+2026-01-13 11:35:08.725 | INFO     | services.memo_generator:crear_documento_desde_plantilla:194 - Valores: NUM_MEMO=001, NOMBRE=Camila Fernanda Alfaro Oyarzún, RUT=19.186.294-5, CARRERA=1470 - Ingeniería Civil Industrial, MODALIDAD=Trabajo de Titulación, SEMESTRE=2024-1, ANIO=2026, FECHA=13/01/2026
+2026-01-13 11:35:08.730 | INFO     | services.memo_generator:reemplazar_en_texto:206 - Tokens reemplazados en texto: {NUM_MEMO} -> 001, {ANIO_ACTUAL} -> 2026
+2026-01-13 11:35:08.733 | INFO     | services.memo_generator:reemplazar_en_texto:206 - Tokens reemplazados en texto: {FECHA HOY} -> 13/01/2026
+2026-01-13 11:35:08.739 | INFO     | services.memo_generator:reemplazar_en_texto:206 - Tokens reemplazados en texto: {NOMBRE_ESTUDIANTE} -> Camila Fernanda Alfaro Oyarzún, {RUT} -> 19.186.294-5, {CARRERA} -> 1470 - Ingeniería Civil Industrial, {MODALIDAD} -> Trabajo de Titulación, {SEMESTRE_ACTUAL} -> 2024-1
+2026-01-13 11:35:08.747 | DEBUG    | services.memo_generator:crear_documento_desde_plantilla:272 - Tokens reemplazados en plantilla: Plantilla_Memo_Grado.docx
+2026-01-13 11:35:08.812 | INFO     | services.memo_generator:generar_memorandum:484 - Memorándum generado exitosamente para 19.186.294-5: Memo_Apertura_191862945_20260113.docx (611223 bytes)
+2026-01-13 11:35:10.039 | INFO     | services.memo_generator:generar_memorandum:431 - ✓ Usando plantilla del usuario: C:\Users\YomiT\Downloads\Plantilla_Memo_Grado.docx
+2026-01-13 11:35:10.039 | INFO     | services.memo_generator:generar_memorandum:457 - ✓ Usando plantilla: C:\Users\YomiT\Downloads\Plantilla_Memo_Grado.docx
+2026-01-13 11:35:10.039 | INFO     | services.memo_generator:generar_memorandum:458 -   Datos del estudiante: Federico Alvarado Palma (19.685.581-5), Carrera: 1364 - Ingeniería Civil Industrial, Modalidad: Trabajo de Titulación
+2026-01-13 11:35:10.050 | INFO     | services.memo_generator:crear_documento_desde_plantilla:192 - Reemplazando tokens en plantilla: Plantilla_Memo_Grado.docx
+2026-01-13 11:35:10.050 | INFO     | services.memo_generator:crear_documento_desde_plantilla:193 - Datos disponibles: ['fecha_actual', 'anio_actual', 'numero_memo', 'run', 'nombres', 'apellidos', 'nombre_completo', 'carrera', 'email', 'semestre', 'semestre_actual', 'modalidad', 'titulo_proyecto', 'profesor_guia', 'corrector_1', 'corrector_2']
+2026-01-13 11:35:10.050 | INFO     | services.memo_generator:crear_documento_desde_plantilla:194 - Valores: NUM_MEMO=001, NOMBRE=Federico Alvarado Palma, RUT=19.685.581-5, CARRERA=1364 - Ingeniería Civil Industrial, MODALIDAD=Trabajo de Titulación, SEMESTRE=2024-1, ANIO=2026, FECHA=13/01/2026
+2026-01-13 11:35:10.055 | INFO     | services.memo_generator:reemplazar_en_texto:206 - Tokens reemplazados en texto: {NUM_MEMO} -> 001, {ANIO_ACTUAL} -> 2026
+2026-01-13 11:35:10.056 | INFO     | services.memo_generator:reemplazar_en_texto:206 - Tokens reemplazados en texto: {FECHA HOY} -> 13/01/2026
+2026-01-13 11:35:10.058 | INFO     | services.memo_generator:reemplazar_en_texto:206 - Tokens reemplazados en texto: {NOMBRE_ESTUDIANTE} -> Federico Alvarado Palma, {RUT} -> 19.685.581-5, {CARRERA} -> 1364 - Ingeniería Civil Industrial, {MODALIDAD} -> Trabajo de Titulación, {SEMESTRE_ACTUAL} -> 2024-1
+2026-01-13 11:35:10.062 | DEBUG    | services.memo_generator:crear_documento_desde_plantilla:272 - Tokens reemplazados en plantilla: Plantilla_Memo_Grado.docx
+2026-01-13 11:35:10.105 | INFO     | services.memo_generator:generar_memorandum:484 - Memorándum generado exitosamente para 19.685.581-5: Memo_Apertura_196855815_20260113.docx (611214 bytes)
+2026-01-13 11:35:11.626 | INFO     | services.memo_generator:generar_memorandum:431 - ✓ Usando plantilla del usuario: C:\Users\YomiT\Downloads\Plantilla_Memo_Grado.docx
+2026-01-13 11:35:11.626 | INFO     | services.memo_generator:generar_memorandum:457 - ✓ Usando plantilla: C:\Users\YomiT\Downloads\Plantilla_Memo_Grado.docx
+2026-01-13 11:35:11.626 | INFO     | services.memo_generator:generar_memorandum:458 -   Datos del estudiante: Jocelyn Aravena Velarde (10.812.021-5), Carrera: 1470 - Ingeniería Civil Industrial, Modalidad: Trabajo de Titulación
+2026-01-13 11:35:11.647 | INFO     | services.memo_generator:crear_documento_desde_plantilla:192 - Reemplazando tokens en plantilla: Plantilla_Memo_Grado.docx
+2026-01-13 11:35:11.647 | INFO     | services.memo_generator:crear_documento_desde_plantilla:193 - Datos disponibles: ['fecha_actual', 'anio_actual', 'numero_memo', 'run', 'nombres', 'apellidos', 'nombre_completo', 'carrera', 'email', 'semestre', 'semestre_actual', 'modalidad', 'titulo_proyecto', 'profesor_guia', 'corrector_1', 'corrector_2']
+2026-01-13 11:35:11.648 | INFO     | services.memo_generator:crear_documento_desde_plantilla:194 - Valores: NUM_MEMO=001, NOMBRE=Jocelyn Aravena Velarde, RUT=10.812.021-5, CARRERA=1470 - Ingeniería Civil Industrial, MODALIDAD=Trabajo de Titulación, SEMESTRE=2024-1, ANIO=2026, FECHA=13/01/2026
+2026-01-13 11:35:11.650 | INFO     | services.memo_generator:reemplazar_en_texto:206 - Tokens reemplazados en texto: {NUM_MEMO} -> 001, {ANIO_ACTUAL} -> 2026
+2026-01-13 11:35:11.650 | INFO     | services.memo_generator:reemplazar_en_texto:206 - Tokens reemplazados en texto: {FECHA HOY} -> 13/01/2026
+2026-01-13 11:35:11.655 | INFO     | services.memo_generator:reemplazar_en_texto:206 - Tokens reemplazados en texto: {NOMBRE_ESTUDIANTE} -> Jocelyn Aravena Velarde, {RUT} -> 10.812.021-5, {CARRERA} -> 1470 - Ingeniería Civil Industrial, {MODALIDAD} -> Trabajo de Titulación, {SEMESTRE_ACTUAL} -> 2024-1
+2026-01-13 11:35:11.661 | DEBUG    | services.memo_generator:crear_documento_desde_plantilla:272 - Tokens reemplazados en plantilla: Plantilla_Memo_Grado.docx
+2026-01-13 11:35:11.717 | INFO     | services.memo_generator:generar_memorandum:484 - Memorándum generado exitosamente para 10.812.021-5: Memo_Apertura_108120215_20260113.docx (611216 bytes)
+2026-01-13 11:35:13.032 | INFO     | services.memo_generator:generar_memorandum:431 - ✓ Usando plantilla del usuario: C:\Users\YomiT\Downloads\Plantilla_Memo_Grado.docx
+2026-01-13 11:35:13.032 | INFO     | services.memo_generator:generar_memorandum:457 - ✓ Usando plantilla: C:\Users\YomiT\Downloads\Plantilla_Memo_Grado.docx
+2026-01-13 11:35:13.032 | INFO     | services.memo_generator:generar_memorandum:458 -   Datos del estudiante: Marcelo Alejandro Araya Correa (15.013.312-2), Carrera: 1974 - Ingeniería Civil Industrial, Modalidad: Trabajo de Titulación
+2026-01-13 11:35:13.050 | INFO     | services.memo_generator:crear_documento_desde_plantilla:192 - Reemplazando tokens en plantilla: Plantilla_Memo_Grado.docx
+2026-01-13 11:35:13.050 | INFO     | services.memo_generator:crear_documento_desde_plantilla:193 - Datos disponibles: ['fecha_actual', 'anio_actual', 'numero_memo', 'run', 'nombres', 'apellidos', 'nombre_completo', 'carrera', 'email', 'semestre', 'semestre_actual', 'modalidad', 'titulo_proyecto', 'profesor_guia', 'corrector_1', 'corrector_2']
+2026-01-13 11:35:13.050 | INFO     | services.memo_generator:crear_documento_desde_plantilla:194 - Valores: NUM_MEMO=001, NOMBRE=Marcelo Alejandro Araya Correa, RUT=15.013.312-2, CARRERA=1974 - Ingeniería Civil Industrial, MODALIDAD=Trabajo de Titulación, SEMESTRE=2024-1, ANIO=2026, FECHA=13/01/2026
+2026-01-13 11:35:13.051 | INFO     | services.memo_generator:reemplazar_en_texto:206 - Tokens reemplazados en texto: {NUM_MEMO} -> 001, {ANIO_ACTUAL} -> 2026
+2026-01-13 11:35:13.053 | INFO     | services.memo_generator:reemplazar_en_texto:206 - Tokens reemplazados en texto: {FECHA HOY} -> 13/01/2026
+2026-01-13 11:35:13.058 | INFO     | services.memo_generator:reemplazar_en_texto:206 - Tokens reemplazados en texto: {NOMBRE_ESTUDIANTE} -> Marcelo Alejandro Araya Correa, {RUT} -> 15.013.312-2, {CARRERA} -> 1974 - Ingeniería Civil Industrial, {MODALIDAD} -> Trabajo de Titulación, {SEMESTRE_ACTUAL} -> 2024-1
+2026-01-13 11:35:13.064 | DEBUG    | services.memo_generator:crear_documento_desde_plantilla:272 - Tokens reemplazados en plantilla: Plantilla_Memo_Grado.docx
+2026-01-13 11:35:13.115 | INFO     | services.memo_generator:generar_memorandum:484 - Memorándum generado exitosamente para 15.013.312-2: Memo_Apertura_150133122_20260113.docx (611218 bytes)

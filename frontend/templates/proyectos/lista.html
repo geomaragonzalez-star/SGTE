@@ -15,12 +15,12 @@
     
     <!-- Búsqueda y filtros -->
     <div class="bg-white rounded-lg shadow p-6">
-        <form method="GET" class="space-y-4">
+        <div class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="md:col-span-2">
                     <input 
                         type="text" 
-                        name="q" 
+                        id="filtro-busqueda"
                         value="{{ query or '' }}"
                         placeholder="Buscar por RUN, nombre o título del proyecto..." 
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
@@ -28,7 +28,7 @@
                 </div>
                 <div>
                     <select 
-                        name="carrera" 
+                        id="filtro-carrera"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                     >
                         <option value="">Todas las carreras</option>
@@ -41,24 +41,15 @@
                 </div>
             </div>
             <div class="flex gap-4">
-                <button type="submit" class="bg-teal-500 hover:bg-teal-600 text-white px-6 py-2 rounded-lg font-semibold transition">
+                <button onclick="filtrarProyectos()" class="bg-teal-500 hover:bg-teal-600 text-white px-6 py-2 rounded-lg font-semibold transition">
                     <i class="fas fa-search mr-2"></i>Buscar
                 </button>
                 <a href="/proyectos" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg font-semibold transition">
                     <i class="fas fa-times mr-2"></i>Limpiar
                 </a>
             </div>
-        </form>
+        </div>
     </div>
-    
-    <!-- Debug info (temporal) -->
-    {% if proyectos %}
-    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-        <p class="text-sm text-blue-800">
-            <strong>Debug:</strong> Se encontraron {{ proyectos|length }} proyecto(s) en la base de datos.
-        </p>
-    </div>
-    {% endif %}
     
     <!-- Tabla de proyectos -->
     <div class="bg-white rounded-lg shadow overflow-hidden">
@@ -83,59 +74,242 @@
                         </th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    {% if proyectos and proyectos|length > 0 %}
-                        {% for proyecto in proyectos %}
-                        <tr class="hover:bg-gray-50 transition">
-                            <td class="px-6 py-4">
-                                <div class="text-sm text-gray-900 max-w-md">
-                                    {% if proyecto.titulo and proyecto.titulo.strip() %}
-                                        {{ proyecto.titulo }}
-                                    {% else %}
-                                        <span class="text-gray-400 italic">Sin título</span>
-                                    {% endif %}
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="text-sm text-gray-900">
-                                    <div class="font-medium">{{ proyecto.run_estudiante1 or "N/A" }}</div>
-                                    {% if proyecto.run_estudiante2 %}
-                                    <div class="font-medium mt-1">{{ proyecto.run_estudiante2 }}</div>
-                                    {% endif %}
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-500">{{ proyecto.semestre or "N/A" }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-500">{{ proyecto.modalidad_titulacion or "N/A" }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-500">
-                                    {% if proyecto.profesor_guia %}
-                                        {{ proyecto.profesor_guia }}
-                                    {% else %}
-                                        <span class="text-gray-400 italic">Sin asignar</span>
-                                    {% endif %}
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    {% else %}
-                        <tr>
-                            <td colspan="5" class="px-6 py-12 text-center">
-                                <div class="text-gray-500">
-                                    <i class="fas fa-folder-open text-4xl mb-4"></i>
-                                    <p class="text-lg font-semibold">No hay proyectos registrados</p>
-                                    <p class="text-sm mt-2">Los proyectos se crean automáticamente al registrar estudiantes</p>
-                                    <p class="text-xs mt-2 text-gray-400">Total proyectos en BD: {{ proyectos|length if proyectos else 0 }}</p>
-                                </div>
-                            </td>
-                        </tr>
-                    {% endif %}
+                <tbody id="tabla-proyectos" class="bg-white divide-y divide-gray-200">
+                    <tr>
+                        <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                            <i class="fas fa-spinner fa-spin mr-2"></i>Cargando proyectos...
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
+        
+        <!-- Controles de Paginación -->
+        <div class="mt-4 flex flex-col sm:flex-row justify-between items-center gap-4 px-6 pb-4">
+            <div class="flex items-center space-x-2">
+                <label class="text-sm text-gray-700">Filas por página:</label>
+                <select id="filas-por-pagina" onchange="cambiarFilasPorPagina()" class="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500">
+                    <option value="10" selected>10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                    <option value="40">40</option>
+                </select>
+            </div>
+            
+            <div class="flex items-center space-x-2">
+                <span id="info-paginacion" class="text-sm text-gray-700">Mostrando 0 - 0 de 0</span>
+            </div>
+            
+            <div class="flex items-center space-x-1" id="navegacion-paginas">
+                <!-- Los botones de navegación se generarán dinámicamente -->
+            </div>
+        </div>
     </div>
 </div>
+
+{% block extra_scripts %}
+<script>
+// ============================================
+// VARIABLES GLOBALES DE PAGINACIÓN
+// ============================================
+var paginaActual = 1;
+var filasPorPagina = 10;
+var totalRegistros = 0;
+var totalPaginas = 1;
+var terminoBusqueda = '{{ query or "" }}';
+var carreraFiltro = '{{ carrera_filter or "" }}';
+
+// ============================================
+// FUNCIONES DE PAGINACIÓN
+// ============================================
+
+async function cargarProyectos() {
+    const tbody = document.getElementById('tabla-proyectos');
+    tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando proyectos...</td></tr>';
+    
+    try {
+        const params = new URLSearchParams({
+            pagina: paginaActual,
+            filas_por_pagina: filasPorPagina
+        });
+        
+        if (terminoBusqueda) params.append('q', terminoBusqueda);
+        if (carreraFiltro) params.append('carrera', carreraFiltro);
+        
+        const response = await fetch(`/api/proyectos?${params}`);
+        const result = await response.json();
+        
+        if (result.success) {
+            // Manejar tanto la estructura antigua como la nueva
+            let proyectos, paginacion;
+            
+            if (result.data && result.data.proyectos && result.data.paginacion) {
+                // Nueva estructura con paginación
+                proyectos = result.data.proyectos;
+                paginacion = result.data.paginacion;
+            } else if (Array.isArray(result.data)) {
+                // Estructura antigua (sin paginación)
+                proyectos = result.data;
+                totalRegistros = proyectos.length;
+                totalPaginas = 1;
+                paginacion = {
+                    pagina_actual: 1,
+                    filas_por_pagina: filasPorPagina,
+                    total_registros: totalRegistros,
+                    total_paginas: 1,
+                    tiene_anterior: false,
+                    tiene_siguiente: false
+                };
+            } else {
+                throw new Error('Formato de respuesta no reconocido');
+            }
+            
+            totalRegistros = paginacion.total_registros;
+            totalPaginas = paginacion.total_paginas;
+            paginaActual = paginacion.pagina_actual;
+            
+            renderizarTabla(proyectos);
+            actualizarControlesPaginacion(paginacion);
+        } else {
+            throw new Error(result.message || 'Error cargando proyectos');
+        }
+    } catch (error) {
+        console.error('Error cargando proyectos:', error);
+        const tbody = document.getElementById('tabla-proyectos');
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                    <i class="fas fa-folder-open text-4xl mb-4"></i>
+                    <p class="text-lg font-semibold">No hay proyectos registrados</p>
+                    <p class="text-sm mt-2">Los proyectos se crean automáticamente al registrar estudiantes</p>
+                </td>
+            </tr>
+        `;
+    }
+}
+
+function renderizarTabla(proyectos) {
+    const tbody = document.getElementById('tabla-proyectos');
+    
+    if (proyectos.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                    <i class="fas fa-folder-open text-4xl mb-4"></i>
+                    <p class="text-lg font-semibold">No hay proyectos registrados</p>
+                    <p class="text-sm mt-2">Los proyectos se crean automáticamente al registrar estudiantes</p>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = proyectos.map(proyecto => {
+        const titulo = proyecto.titulo && proyecto.titulo.trim() 
+            ? proyecto.titulo 
+            : '<span class="text-gray-400 italic">Sin título</span>';
+        
+        const runs = proyecto.run_estudiante2 
+            ? `<div class="font-medium">${proyecto.run_estudiante1 || "N/A"}</div><div class="font-medium mt-1">${proyecto.run_estudiante2}</div>`
+            : `<div class="font-medium">${proyecto.run_estudiante1 || "N/A"}</div>`;
+        
+        const profesorGuia = proyecto.profesor_guia 
+            ? proyecto.profesor_guia 
+            : '<span class="text-gray-400 italic">Sin asignar</span>';
+        
+        return `
+            <tr class="hover:bg-gray-50 transition">
+                <td class="px-6 py-4">
+                    <div class="text-sm text-gray-900 max-w-md">${titulo}</div>
+                </td>
+                <td class="px-6 py-4">
+                    <div class="text-sm text-gray-900">${runs}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-500">${proyecto.semestre || "N/A"}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-500">${proyecto.modalidad_titulacion || "N/A"}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-500">${profesorGuia}</div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function actualizarControlesPaginacion(paginacion) {
+    const inicio = (paginaActual - 1) * filasPorPagina + 1;
+    const fin = Math.min(paginaActual * filasPorPagina, totalRegistros);
+    document.getElementById('info-paginacion').textContent = `Mostrando ${inicio} - ${fin} de ${totalRegistros}`;
+    
+    const nav = document.getElementById('navegacion-paginas');
+    let html = '';
+    
+    html += `<button onclick="irAPagina(${paginaActual - 1})" ${!paginacion.tiene_anterior ? 'disabled' : ''} class="px-3 py-1 border border-gray-300 rounded-lg text-sm ${paginacion.tiene_anterior ? 'hover:bg-gray-50' : 'opacity-50 cursor-not-allowed'}"><i class="fas fa-chevron-left"></i></button>`;
+    
+    const maxBotones = 5;
+    let inicioPaginas = Math.max(1, paginaActual - Math.floor(maxBotones / 2));
+    let finPaginas = Math.min(totalPaginas, inicioPaginas + maxBotones - 1);
+    
+    if (finPaginas - inicioPaginas < maxBotones - 1) {
+        inicioPaginas = Math.max(1, finPaginas - maxBotones + 1);
+    }
+    
+    if (inicioPaginas > 1) {
+        html += `<button onclick="irAPagina(1)" class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">1</button>`;
+        if (inicioPaginas > 2) html += `<span class="px-2 text-gray-500">...</span>`;
+    }
+    
+    for (let i = inicioPaginas; i <= finPaginas; i++) {
+        html += `<button onclick="irAPagina(${i})" class="px-3 py-1 border border-gray-300 rounded-lg text-sm ${i === paginaActual ? 'bg-teal-500 text-white border-teal-500' : 'hover:bg-gray-50'}">${i}</button>`;
+    }
+    
+    if (finPaginas < totalPaginas) {
+        if (finPaginas < totalPaginas - 1) html += `<span class="px-2 text-gray-500">...</span>`;
+        html += `<button onclick="irAPagina(${totalPaginas})" class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">${totalPaginas}</button>`;
+    }
+    
+    html += `<button onclick="irAPagina(${paginaActual + 1})" ${!paginacion.tiene_siguiente ? 'disabled' : ''} class="px-3 py-1 border border-gray-300 rounded-lg text-sm ${paginacion.tiene_siguiente ? 'hover:bg-gray-50' : 'opacity-50 cursor-not-allowed'}"><i class="fas fa-chevron-right"></i></button>`;
+    
+    nav.innerHTML = html;
+}
+
+function irAPagina(pagina) {
+    if (pagina < 1 || pagina > totalPaginas || pagina === paginaActual) return;
+    paginaActual = pagina;
+    cargarProyectos();
+}
+
+function cambiarFilasPorPagina() {
+    const select = document.getElementById('filas-por-pagina');
+    filasPorPagina = parseInt(select.value);
+    paginaActual = 1;
+    cargarProyectos();
+}
+
+function filtrarProyectos() {
+    terminoBusqueda = document.getElementById('filtro-busqueda').value.trim();
+    carreraFiltro = document.getElementById('filtro-carrera').value;
+    paginaActual = 1;
+    cargarProyectos();
+}
+
+// Cargar datos al iniciar
+document.addEventListener('DOMContentLoaded', () => {
+    cargarProyectos();
+    
+    // Agregar listener para Enter en el campo de búsqueda
+    const filtroBusqueda = document.getElementById('filtro-busqueda');
+    if (filtroBusqueda) {
+        filtroBusqueda.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                filtrarProyectos();
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
 {% endblock %}

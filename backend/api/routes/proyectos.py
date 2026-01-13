@@ -44,22 +44,14 @@ async def test_proyectos():
         }
 
 
-def buscar_proyectos(termino: Optional[str] = None, carrera: Optional[str] = None) -> List[Dict]:
+def buscar_proyectos(termino: Optional[str] = None, carrera: Optional[str] = None, semestre: Optional[str] = None, limite: int = 100, offset: int = 0) -> List[Dict]:
     """Busca proyectos y retorna lista de diccionarios (igual que buscar_estudiantes)."""
     try:
         from loguru import logger
         from sqlalchemy import or_, func
         
         with get_session_context() as session:
-            # Primero, verificar si hay proyectos en la BD
-            total_proyectos = session.query(func.count(Proyecto.id)).scalar() or 0
-            logger.info(f"Total de proyectos en BD: {total_proyectos}")
-            
-            if total_proyectos == 0:
-                logger.warning("No hay proyectos en la base de datos")
-                return []
-            
-            # Consulta base: obtener todos los proyectos
+            # Consulta base: obtener proyectos
             query = session.query(Proyecto)
             
             # Si hay filtro de término, buscar en título o RUN
@@ -77,33 +69,25 @@ def buscar_proyectos(termino: Optional[str] = None, carrera: Optional[str] = Non
                 query = query.join(Estudiante, Proyecto.estudiante_run1 == Estudiante.run)
                 query = query.filter(Estudiante.carrera == carrera)
             
-            proyectos = query.order_by(Proyecto.created_at.desc()).limit(500).all()
-            logger.info(f"Proyectos encontrados después de filtros: {len(proyectos)}")
+            # Si hay filtro de semestre, aplicar directamente en SQL
+            if semestre:
+                query = query.filter(Proyecto.semestre == semestre)
             
-            if len(proyectos) == 0:
-                logger.warning("No se encontraron proyectos con los filtros aplicados")
-                return []
+            # Aplicar paginación directamente en SQL (igual que buscar_estudiantes)
+            proyectos = query.order_by(Proyecto.created_at.desc()).offset(offset).limit(limite).all()
             
             proyectos_data = []
             for proyecto in proyectos:
                 try:
-                    # Obtener estudiante 1 (siempre existe)
-                    estudiante_1 = session.query(Estudiante).filter(Estudiante.run == proyecto.estudiante_run1).first()
-                    
-                    # Si hay filtro de carrera y el estudiante no coincide, saltar
-                    if carrera and carrera != "Todas":
-                        if not estudiante_1 or estudiante_1.carrera != carrera:
-                            continue
-                    
                     # Obtener comisión
                     comision = session.query(Comision).filter(Comision.proyecto_id == proyecto.id).first()
                     
-                    # Obtener título - mostrar None si no existe, no reemplazar con "Sin título"
+                    # Obtener título - mostrar None si no existe
                     titulo = proyecto.titulo if proyecto.titulo and proyecto.titulo.strip() else None
                     
                     proyecto_dict = {
                         'id': proyecto.id,
-                        'titulo': titulo,  # None si no hay título, no "Sin título"
+                        'titulo': titulo,
                         'run_estudiante1': proyecto.estudiante_run1,
                         'run_estudiante2': proyecto.estudiante_run2,
                         'semestre': proyecto.semestre,
@@ -117,7 +101,6 @@ def buscar_proyectos(termino: Optional[str] = None, carrera: Optional[str] = Non
                     logger.debug(traceback.format_exc())
                     continue
             
-            logger.info(f"Proyectos procesados exitosamente: {len(proyectos_data)}")
             return proyectos_data
     except Exception as e:
         import traceback
@@ -141,24 +124,75 @@ async def obtener_semestres():
         raise HTTPException(status_code=500, detail=str(e))
 
 
+def contar_proyectos_filtrados(termino: Optional[str] = None, carrera: Optional[str] = None, semestre: Optional[str] = None) -> int:
+    """Cuenta proyectos filtrados."""
+    try:
+        from sqlalchemy import or_, func
+        with get_session_context() as session:
+            query = session.query(func.count(Proyecto.id))
+            
+            if termino:
+                termino_like = f"%{termino}%"
+                query = query.filter(
+                    or_(
+                        Proyecto.estudiante_run1.ilike(termino_like),
+                        Proyecto.titulo.ilike(termino_like)
+                    )
+                )
+            
+            if carrera and carrera != "Todas":
+                query = query.join(Estudiante, Proyecto.estudiante_run1 == Estudiante.run)
+                query = query.filter(Estudiante.carrera == carrera)
+            
+            if semestre:
+                query = query.filter(Proyecto.semestre == semestre)
+            
+            return query.scalar() or 0
+    except Exception as e:
+        return 0
+
+
 @router.get("/")
 async def listar_proyectos_endpoint(
     q: Optional[str] = Query(None, description="Búsqueda por RUN, nombre o título"),
     carrera: Optional[str] = Query(None, description="Filtrar por carrera"),
-    semestre: Optional[str] = Query(None, description="Filtrar por semestre")
+    semestre: Optional[str] = Query(None, description="Filtrar por semestre"),
+    pagina: int = Query(1, ge=1, description="Número de página"),
+    filas_por_pagina: int = Query(10, ge=1, le=100, description="Filas por página")
 ):
-    """Lista proyectos con filtros opcionales."""
+    """Lista proyectos con filtros opcionales y paginación."""
     try:
-        proyectos = buscar_proyectos(termino=q, carrera=carrera)
         
-        # Filtrar por semestre
-        if semestre:
-            proyectos = [p for p in proyectos if p.get('semestre') == semestre]
+        # Calcular offset (igual que en operaciones masivas)
+        offset = (pagina - 1) * filas_por_pagina
+        
+        # Obtener proyectos paginados (igual que en operaciones masivas)
+        proyectos_paginados = buscar_proyectos(
+            termino=q,
+            carrera=carrera,
+            semestre=semestre,
+            limite=filas_por_pagina,
+            offset=offset
+        )
+        
+        # Contar total (igual que en operaciones masivas)
+        total = contar_proyectos_filtrados(termino=q, carrera=carrera, semestre=semestre)
+        total_paginas = (total + filas_por_pagina - 1) // filas_por_pagina if total > 0 else 1
         
         return {
             "success": True,
-            "data": proyectos,
-            "count": len(proyectos)
+            "data": {
+                "proyectos": proyectos_paginados,
+                "paginacion": {
+                    "pagina_actual": pagina,
+                    "filas_por_pagina": filas_por_pagina,
+                    "total_registros": total,
+                    "total_paginas": total_paginas,
+                    "tiene_anterior": pagina > 1,
+                    "tiene_siguiente": pagina < total_paginas
+                }
+            },
+            "count": len(proyectos_paginados)
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

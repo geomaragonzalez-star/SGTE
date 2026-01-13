@@ -133,16 +133,9 @@ async def dashboard_page(request: Request):
 @app.get("/estudiantes", response_class=HTMLResponse)
 async def estudiantes_page(request: Request, q: str = None, carrera: str = None, modalidad: str = None, listo: str = None):
     """Página de gestión de estudiantes."""
-    # Llamar a la API para obtener estudiantes
-    from services.estudiantes import buscar_estudiantes, obtener_carreras
+    # Obtener carreras para el select (solo esto se necesita del servidor)
+    from services.estudiantes import obtener_carreras
     
-    estudiantes_data = buscar_estudiantes(termino=q, carrera=carrera)
-    
-    # Filtrar por modalidad
-    if modalidad:
-        estudiantes_data = [e for e in estudiantes_data if e.get('modalidad') == modalidad]
-    
-    # Obtener carreras para el select
     carreras = obtener_carreras()
     
     # Convertir listo a bool
@@ -152,14 +145,15 @@ async def estudiantes_page(request: Request, q: str = None, carrera: str = None,
     elif listo == "false":
         listo_bool = False
     
+    # NO pasar estudiantes al template - se cargarán vía JavaScript
     return templates.TemplateResponse(
         "estudiantes/lista.html",
         {
             "request": request,
-            "estudiantes": estudiantes_data,
-            "query": q,
-            "carrera_filter": carrera,
-            "modalidad_filter": modalidad,
+            "estudiantes": [],  # Vacío - se carga vía JavaScript
+            "query": q or "",
+            "carrera_filter": carrera or "",
+            "modalidad_filter": modalidad or "",
             "listo_filter": listo_bool,
             "carreras": carreras
         }
@@ -170,29 +164,12 @@ async def estudiantes_page(request: Request, q: str = None, carrera: str = None,
 async def proyectos_page(request: Request, q: str = None, carrera: str = None, semestre: str = None):
     """Página de gestión de proyectos."""
     try:
-        # Llamar a la función de búsqueda directamente (igual que estudiantes)
-        from backend.api.routes.proyectos import buscar_proyectos
+        # Obtener solo carreras para el select (los proyectos se cargarán vía JavaScript)
         from services.estudiantes import obtener_carreras
+        from database import get_session_context, Proyecto
         
-        proyectos_data = []
         carreras = []
         semestres = []
-        
-        try:
-            proyectos_data = buscar_proyectos(termino=q, carrera=carrera)
-            print(f"DEBUG proyectos_page: Se obtuvieron {len(proyectos_data)} proyectos")
-            if proyectos_data:
-                print(f"DEBUG proyectos_page: Primer proyecto: {proyectos_data[0]}")
-        except Exception as e:
-            import traceback
-            error_trace = traceback.format_exc()
-            print(f"ERROR en buscar_proyectos: {e}")
-            print(error_trace)
-            proyectos_data = []
-        
-        # Filtrar por semestre
-        if semestre:
-            proyectos_data = [p for p in proyectos_data if p.get('semestre') == semestre]
         
         # Obtener carreras para el select
         try:
@@ -203,7 +180,6 @@ async def proyectos_page(request: Request, q: str = None, carrera: str = None, s
         
         # Obtener semestres desde la base de datos directamente
         try:
-            from database import get_session_context, Proyecto
             with get_session_context() as session:
                 semestres_query = session.query(Proyecto.semestre).distinct().order_by(Proyecto.semestre.desc()).all()
                 semestres = [s[0] for s in semestres_query if s[0]]
@@ -213,16 +189,12 @@ async def proyectos_page(request: Request, q: str = None, carrera: str = None, s
             print(traceback.format_exc())
             semestres = []
         
-        # Log para debug
-        print(f"DEBUG: proyectos_data tiene {len(proyectos_data)} proyectos")
-        if proyectos_data:
-            print(f"DEBUG: Primer proyecto: {proyectos_data[0]}")
-        
+        # NO pasar proyectos al template - se cargarán vía JavaScript con paginación
         return templates.TemplateResponse(
             "proyectos/lista.html",
             {
                 "request": request,
-                "proyectos": proyectos_data,
+                "proyectos": [],  # Vacío - se carga vía JavaScript
                 "query": q or "",
                 "carrera_filter": carrera or "",
                 "semestre_filter": semestre or "",

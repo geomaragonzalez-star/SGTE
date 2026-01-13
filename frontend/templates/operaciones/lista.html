@@ -65,7 +65,8 @@
             <div class="flex items-center space-x-2">
                 <label class="text-sm text-gray-700">Filas por página:</label>
                 <select id="filas-por-pagina" onchange="cambiarFilasPorPagina()" class="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500">
-                    <option value="20" selected>20</option>
+                    <option value="10" selected>10</option>
+                    <option value="20">20</option>
                     <option value="30">30</option>
                     <option value="40">40</option>
                 </select>
@@ -182,7 +183,7 @@
 // Verificar que las variables no estén ya declaradas (por si hay código duplicado)
 if (typeof paginaActual === 'undefined') {
     var paginaActual = 1;
-    var filasPorPagina = 20;
+    var filasPorPagina = 10; // Valor por defecto cambiado a 10
     var totalRegistros = 0;
     var totalPaginas = 1;
     var terminoBusqueda = '';
@@ -278,7 +279,7 @@ function renderizarTabla(estudiantes) {
                     <input type="checkbox" class="estudiante-checkbox" value="${estudiante.run}" 
                            data-nombre="${estudiante.nombre_completo}" 
                            ${estaSeleccionado ? 'checked' : ''}
-                           onchange="actualizarContador()">
+                           onchange="manejarCambioCheckbox(this)">
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-900">${estudiante.run}</td>
                 <td class="px-6 py-4 text-sm text-gray-900">${estudiante.nombre_completo}</td>
@@ -400,6 +401,13 @@ function restaurarSelecciones() {
 // ============================================
 // FUNCIONES DE SELECCIÓN
 // ============================================
+
+function manejarCambioCheckbox(checkbox) {
+    // Actualizar el cache cuando se cambia un checkbox
+    estudiantesCache[checkbox.value] = checkbox.checked;
+    // Actualizar el contador y habilitar/deshabilitar botones
+    actualizarContador();
+}
 
 function toggleAll() {
     const selectAll = document.getElementById('select-all');

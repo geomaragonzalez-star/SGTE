@@ -159,6 +159,7 @@ def obtener_estudiante(run: str) -> Optional[Estudiante]:
 def buscar_estudiantes(
     termino: str = None,
     carrera: str = None,
+    modalidad: str = None,
     limite: int = 100,
     offset: int = 0
 ) -> List[Dict[str, Any]]:
@@ -168,6 +169,7 @@ def buscar_estudiantes(
     Args:
         termino: Término de búsqueda (RUN o nombre)
         carrera: Filtrar por carrera
+        modalidad: Filtrar por modalidad (Diurno, Vespertino, Online)
         limite: Número máximo de resultados
         offset: Número de registros a saltar (para paginación)
     
@@ -191,6 +193,9 @@ def buscar_estudiantes(
             if carrera and carrera != "Todas":
                 query = query.filter(Estudiante.carrera == carrera)
             
+            if modalidad:
+                query = query.filter(Estudiante.modalidad == modalidad)
+            
             estudiantes = query.order_by(Estudiante.apellidos).offset(offset).limit(limite).all()
             
             return [
@@ -213,7 +218,8 @@ def buscar_estudiantes(
 
 def contar_estudiantes_filtrados(
     termino: str = None,
-    carrera: str = None
+    carrera: str = None,
+    modalidad: str = None
 ) -> int:
     """
     Cuenta el total de estudiantes que coinciden con los filtros.
@@ -221,6 +227,7 @@ def contar_estudiantes_filtrados(
     Args:
         termino: Término de búsqueda (RUN o nombre)
         carrera: Filtrar por carrera
+        modalidad: Filtrar por modalidad
     
     Returns:
         Número total de estudiantes que coinciden.
@@ -241,6 +248,9 @@ def contar_estudiantes_filtrados(
             
             if carrera and carrera != "Todas":
                 query = query.filter(Estudiante.carrera == carrera)
+            
+            if modalidad:
+                query = query.filter(Estudiante.modalidad == modalidad)
             
             return query.scalar() or 0
             

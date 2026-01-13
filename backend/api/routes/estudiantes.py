@@ -17,7 +17,8 @@ from services.estudiantes import (
     actualizar_estudiante,
     eliminar_estudiante,
     obtener_carreras,
-    contar_estudiantes
+    contar_estudiantes,
+    contar_estudiantes_filtrados
 )
 from database import get_session_context, Estudiante, Documento, TipoDocumento
 
@@ -106,34 +107,55 @@ async def listar_estudiantes_endpoint(
     q: Optional[str] = Query(None, description="Búsqueda por RUN o nombre"),
     carrera: Optional[str] = Query(None, description="Filtrar por carrera"),
     modalidad: Optional[str] = Query(None, description="Filtrar por modalidad"),
-    listo: Optional[bool] = Query(None, description="Filtrar por estudiantes listos")
+    listo: Optional[bool] = Query(None, description="Filtrar por estudiantes listos"),
+    pagina: int = Query(1, ge=1, description="Número de página"),
+    filas_por_pagina: int = Query(10, ge=1, le=100, description="Filas por página")
 ):
-    """Lista estudiantes con filtros opcionales."""
+    """Lista estudiantes con filtros opcionales y paginación."""
     try:
-        estudiantes = buscar_estudiantes(termino=q, carrera=carrera)
         
-        # Filtrar por modalidad
-        if modalidad:
-            estudiantes = [e for e in estudiantes if e.get('modalidad') == modalidad]
+        # Calcular offset (igual que en operaciones masivas)
+        offset = (pagina - 1) * filas_por_pagina
         
-        # Filtrar por estudiantes listos
+        # Obtener estudiantes paginados (igual que en operaciones masivas)
+        # Incluir modalidad en la consulta SQL para mejor rendimiento
+        estudiantes = buscar_estudiantes(
+            termino=q,
+            carrera=carrera,
+            modalidad=modalidad,
+            limite=filas_por_pagina,
+            offset=offset
+        )
+        
+        # Filtrar por estudiantes listos (este filtro requiere verificar documentos)
         if listo is not None:
             runs_list = [e['run'] for e in estudiantes]
             if runs_list:
-                # Obtener estado de checklist para todos
                 estado_checklist = {}
                 for run in runs_list:
                     estado_checklist[run] = verificar_estudiante_listo(run)
-                
-                # Filtrar según el estado
                 estudiantes = [
                     e for e in estudiantes 
                     if estado_checklist.get(e['run'], False) == listo
                 ]
         
+        # Contar total (igual que en operaciones masivas)
+        total = contar_estudiantes_filtrados(termino=q, carrera=carrera, modalidad=modalidad)
+        total_paginas = (total + filas_por_pagina - 1) // filas_por_pagina if total > 0 else 1
+        
         return {
             "success": True,
-            "data": estudiantes,
+            "data": {
+                "estudiantes": estudiantes,
+                "paginacion": {
+                    "pagina_actual": pagina,
+                    "filas_por_pagina": filas_por_pagina,
+                    "total_registros": total,
+                    "total_paginas": total_paginas,
+                    "tiene_anterior": pagina > 1,
+                    "tiene_siguiente": pagina < total_paginas
+                }
+            },
             "count": len(estudiantes)
         }
     except Exception as e:
