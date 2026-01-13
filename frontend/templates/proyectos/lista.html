@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="space-y-6">
-    <!-- Header con acciones -->
+    <!-- Header -->
     <div class="flex justify-between items-center">
         <div>
             <h2 class="text-3xl font-bold text-gray-800">Proyectos</h2>
@@ -16,7 +16,7 @@
     <!-- Búsqueda y filtros -->
     <div class="bg-white rounded-lg shadow p-6">
         <form method="GET" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="md:col-span-2">
                     <input 
                         type="text" 
@@ -39,22 +39,9 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div>
-                    <select 
-                        name="semestre" 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
-                    >
-                        <option value="">Todos los semestres</option>
-                        {% for semestre_item in semestres %}
-                        <option value="{{ semestre_item }}" {% if semestre_filter == semestre_item %}selected{% endif %}>
-                            {{ semestre_item }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
             </div>
             <div class="flex gap-4">
-                <button type="submit" class="bg-gray-800 hover:bg-gray-900 text-white px-6 py-2 rounded-lg font-semibold transition">
+                <button type="submit" class="bg-teal-500 hover:bg-teal-600 text-white px-6 py-2 rounded-lg font-semibold transition">
                     <i class="fas fa-search mr-2"></i>Buscar
                 </button>
                 <a href="/proyectos" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg font-semibold transition">
@@ -64,6 +51,15 @@
         </form>
     </div>
     
+    <!-- Debug info (temporal) -->
+    {% if proyectos %}
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+        <p class="text-sm text-blue-800">
+            <strong>Debug:</strong> Se encontraron {{ proyectos|length }} proyecto(s) en la base de datos.
+        </p>
+    </div>
+    {% endif %}
+    
     <!-- Tabla de proyectos -->
     <div class="bg-white rounded-lg shadow overflow-hidden">
         <div class="overflow-x-auto">
@@ -71,58 +67,48 @@
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            ID
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Título del Proyecto
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Estudiante(s)
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Carrera
+                            RUN(s) Estudiante(s)
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Semestre
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Profesor Guía
+                            Modalidad de Titulación
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Estado
-                        </th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Acciones
+                            Profesor Guía
                         </th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    {% if proyectos %}
+                    {% if proyectos and proyectos|length > 0 %}
                         {% for proyecto in proyectos %}
                         <tr class="hover:bg-gray-50 transition">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">#{{ proyecto.id }}</div>
-                            </td>
                             <td class="px-6 py-4">
                                 <div class="text-sm text-gray-900 max-w-md">
-                                    {{ proyecto.titulo }}
+                                    {% if proyecto.titulo and proyecto.titulo.strip() %}
+                                        {{ proyecto.titulo }}
+                                    {% else %}
+                                        <span class="text-gray-400 italic">Sin título</span>
+                                    {% endif %}
                                 </div>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="text-sm text-gray-900">
-                                    <div class="font-medium">{{ proyecto.estudiante_nombre1 }}</div>
-                                    <div class="text-xs text-gray-500">{{ proyecto.estudiante_run1 }}</div>
-                                    {% if proyecto.estudiante_nombre2 %}
-                                    <div class="mt-1 font-medium text-gray-700">{{ proyecto.estudiante_nombre2 }}</div>
-                                    <div class="text-xs text-gray-500">{{ proyecto.estudiante_run2 }}</div>
+                                    <div class="font-medium">{{ proyecto.run_estudiante1 or "N/A" }}</div>
+                                    {% if proyecto.run_estudiante2 %}
+                                    <div class="font-medium mt-1">{{ proyecto.run_estudiante2 }}</div>
                                     {% endif %}
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-500">{{ proyecto.estudiante_carrera1 or 'N/A' }}</div>
+                                <div class="text-sm text-gray-500">{{ proyecto.semestre or "N/A" }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-500">{{ proyecto.semestre }}</div>
+                                <div class="text-sm text-gray-500">{{ proyecto.modalidad_titulacion or "N/A" }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm text-gray-500">
@@ -133,52 +119,16 @@
                                     {% endif %}
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                {% if proyecto.estado_expediente %}
-                                    {% if proyecto.estado_expediente == 'PENDIENTE' %}
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                            Pendiente
-                                        </span>
-                                    {% elif proyecto.estado_expediente == 'EN_PROCESO' %}
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                                            En Proceso
-                                        </span>
-                                    {% elif proyecto.estado_expediente == 'LISTO_ENVIO' %}
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                            Listo para Envío
-                                        </span>
-                                    {% elif proyecto.estado_expediente == 'TITULADO' %}
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                            Titulado
-                                        </span>
-                                    {% else %}
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                            {{ proyecto.estado_expediente }}
-                                        </span>
-                                    {% endif %}
-                                {% else %}
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-400">
-                                        Sin expediente
-                                    </span>
-                                {% endif %}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button 
-                                    onclick="mostrarDetalleProyecto({{ proyecto.id }})" 
-                                    class="text-teal-600 hover:text-teal-900 mr-4"
-                                >
-                                    <i class="fas fa-eye"></i> Ver
-                                </button>
-                            </td>
                         </tr>
                         {% endfor %}
                     {% else %}
                         <tr>
-                            <td colspan="8" class="px-6 py-12 text-center">
+                            <td colspan="5" class="px-6 py-12 text-center">
                                 <div class="text-gray-500">
                                     <i class="fas fa-folder-open text-4xl mb-4"></i>
                                     <p class="text-lg font-semibold">No hay proyectos registrados</p>
                                     <p class="text-sm mt-2">Los proyectos se crean automáticamente al registrar estudiantes</p>
+                                    <p class="text-xs mt-2 text-gray-400">Total proyectos en BD: {{ proyectos|length if proyectos else 0 }}</p>
                                 </div>
                             </td>
                         </tr>
@@ -188,119 +138,4 @@
         </div>
     </div>
 </div>
-
-<!-- Modal para detalles del proyecto -->
-<div id="modal-detalle-proyecto" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
-        <div class="mt-3">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-gray-900">Detalles del Proyecto</h3>
-                <button onclick="cerrarModalDetalle()" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-            <div id="detalle-proyecto-content" class="space-y-4">
-                <div class="text-center text-gray-500">
-                    <i class="fas fa-spinner fa-spin"></i> Cargando detalles...
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-{% block extra_scripts %}
-<script>
-async function mostrarDetalleProyecto(proyectoId) {
-    const modal = document.getElementById('modal-detalle-proyecto');
-    const content = document.getElementById('detalle-proyecto-content');
-    
-    modal.classList.remove('hidden');
-    content.innerHTML = '<div class="text-center text-gray-500"><i class="fas fa-spinner fa-spin"></i> Cargando detalles...</div>';
-    
-    try {
-        const response = await fetch(`/api/proyectos/${proyectoId}`);
-        const result = await response.json();
-        
-        if (result.success) {
-            const proyecto = result.data;
-            
-            let html = `
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <h4 class="font-semibold text-gray-700 mb-2">Información del Proyecto</h4>
-                        <div class="space-y-2 text-sm">
-                            <div><span class="font-medium">ID:</span> #${proyecto.id}</div>
-                            <div><span class="font-medium">Semestre:</span> ${proyecto.semestre}</div>
-                            <div><span class="font-medium">Modalidad:</span> ${proyecto.modalidad_titulacion}</div>
-                            ${proyecto.titulo ? `<div><span class="font-medium">Título:</span> ${proyecto.titulo}</div>` : ''}
-                            ${proyecto.link_documento ? `<div><span class="font-medium">Documento:</span> <a href="${proyecto.link_documento}" target="_blank" class="text-teal-600 hover:text-teal-800"><i class="fas fa-external-link-alt mr-1"></i>Ver</a></div>` : ''}
-                        </div>
-                    </div>
-                    <div>
-                        <h4 class="font-semibold text-gray-700 mb-2">Estudiante(s)</h4>
-                        <div class="space-y-2 text-sm">
-                            <div>
-                                <div class="font-medium">${proyecto.estudiante_nombre1}</div>
-                                <div class="text-gray-500 text-xs">${proyecto.estudiante_run1}</div>
-                            </div>
-                            ${proyecto.estudiante_nombre2 ? `
-                            <div class="mt-2">
-                                <div class="font-medium">${proyecto.estudiante_nombre2}</div>
-                                <div class="text-gray-500 text-xs">${proyecto.estudiante_run2}</div>
-                            </div>
-                            ` : ''}
-                        </div>
-                    </div>
-                </div>
-                <div class="border-t pt-4 mt-4">
-                    <h4 class="font-semibold text-gray-700 mb-2">Comisión Evaluadora</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                        <div>
-                            <div class="font-medium text-gray-500">Profesor Guía</div>
-                            <div class="mt-1">${proyecto.profesor_guia || '<span class="text-gray-400 italic">Sin asignar</span>'}</div>
-                        </div>
-                        <div>
-                            <div class="font-medium text-gray-500">Corrector 1</div>
-                            <div class="mt-1">${proyecto.corrector_1 || '<span class="text-gray-400 italic">Sin asignar</span>'}</div>
-                        </div>
-                        <div>
-                            <div class="font-medium text-gray-500">Corrector 2</div>
-                            <div class="mt-1">${proyecto.corrector_2 || '<span class="text-gray-400 italic">Sin asignar</span>'}</div>
-                        </div>
-                    </div>
-                </div>
-                ${proyecto.estado_expediente ? `
-                <div class="border-t pt-4 mt-4">
-                    <h4 class="font-semibold text-gray-700 mb-2">Estado del Expediente</h4>
-                    <div class="space-y-2 text-sm">
-                        <div><span class="font-medium">Estado:</span> ${proyecto.estado_expediente}</div>
-                        ${proyecto.observaciones ? `<div><span class="font-medium">Observaciones:</span> ${proyecto.observaciones}</div>` : ''}
-                        ${proyecto.titulado ? `<div><span class="font-medium">Titulado:</span> Sí</div>` : ''}
-                        ${proyecto.semestre_titulacion ? `<div><span class="font-medium">Semestre Titulación:</span> ${proyecto.semestre_titulacion}</div>` : ''}
-                    </div>
-                </div>
-                ` : ''}
-            `;
-            
-            content.innerHTML = html;
-        } else {
-            content.innerHTML = '<div class="text-red-500">Error cargando detalles del proyecto</div>';
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        content.innerHTML = '<div class="text-red-500">Error al cargar los detalles del proyecto</div>';
-    }
-}
-
-function cerrarModalDetalle() {
-    document.getElementById('modal-detalle-proyecto').classList.add('hidden');
-}
-
-// Cerrar modal al hacer clic fuera
-document.getElementById('modal-detalle-proyecto').addEventListener('click', function(e) {
-    if (e.target === this) {
-        cerrarModalDetalle();
-    }
-});
-</script>
 {% endblock %}

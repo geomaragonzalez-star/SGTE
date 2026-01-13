@@ -159,10 +159,17 @@ def obtener_estudiante(run: str) -> Optional[Estudiante]:
 def buscar_estudiantes(
     termino: str = None,
     carrera: str = None,
-    limite: int = 100
+    limite: int = 100,
+    offset: int = 0
 ) -> List[Dict[str, Any]]:
     """
     Busca estudiantes por término (RUN o nombre) y/o carrera.
+    
+    Args:
+        termino: Término de búsqueda (RUN o nombre)
+        carrera: Filtrar por carrera
+        limite: Número máximo de resultados
+        offset: Número de registros a saltar (para paginación)
     
     Returns:
         Lista de diccionarios con datos de estudiantes.
@@ -184,7 +191,7 @@ def buscar_estudiantes(
             if carrera and carrera != "Todas":
                 query = query.filter(Estudiante.carrera == carrera)
             
-            estudiantes = query.order_by(Estudiante.apellidos).limit(limite).all()
+            estudiantes = query.order_by(Estudiante.apellidos).offset(offset).limit(limite).all()
             
             return [
                 {
@@ -202,6 +209,44 @@ def buscar_estudiantes(
     except Exception as e:
         logger.error(f"Error buscando estudiantes: {e}")
         return []
+
+
+def contar_estudiantes_filtrados(
+    termino: str = None,
+    carrera: str = None
+) -> int:
+    """
+    Cuenta el total de estudiantes que coinciden con los filtros.
+    
+    Args:
+        termino: Término de búsqueda (RUN o nombre)
+        carrera: Filtrar por carrera
+    
+    Returns:
+        Número total de estudiantes que coinciden.
+    """
+    try:
+        with get_session_context() as session:
+            query = session.query(func.count(Estudiante.run))
+            
+            if termino:
+                termino_like = f"%{termino}%"
+                query = query.filter(
+                    or_(
+                        Estudiante.run.ilike(termino_like),
+                        Estudiante.nombres.ilike(termino_like),
+                        Estudiante.apellidos.ilike(termino_like)
+                    )
+                )
+            
+            if carrera and carrera != "Todas":
+                query = query.filter(Estudiante.carrera == carrera)
+            
+            return query.scalar() or 0
+            
+    except Exception as e:
+        logger.error(f"Error contando estudiantes: {e}")
+        return 0
 
 
 def listar_estudiantes(limite: int = 500) -> List[Dict[str, Any]]:

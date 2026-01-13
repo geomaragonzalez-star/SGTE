@@ -1,7 +1,7 @@
 """API Routes para operaciones masivas."""
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, UploadFile, File, Query
 from fastapi.responses import StreamingResponse
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel
 from io import BytesIO
 import sys
@@ -13,7 +13,9 @@ if str(ROOT_DIR) not in sys.path:
 
 from services.memo_generator import generar_memorandums_masivo
 from services.email_queue import verificar_outlook, enviar_correos_masivo
-from services.estudiantes import buscar_estudiantes
+from services.estudiantes import buscar_estudiantes, contar_estudiantes_filtrados, obtener_carreras
+from services.sync_excel import sincronizar_excel
+from services.pdf_splitter_optimized import procesar_pdf_masivo, verificar_pymupdf_disponible
 from database import get_session_context, Expediente, EstadoExpediente
 from datetime import datetime
 
@@ -23,6 +25,65 @@ router = APIRouter(prefix="/api/operaciones", tags=["operaciones"])
 class OperacionMasivaRequest(BaseModel):
     runs: List[str]
     solo_borrador: bool = True  # Para correos
+
+
+@router.get("/estudiantes")
+async def obtener_estudiantes_paginados(
+    pagina: int = Query(1, ge=1, description="Número de página"),
+    filas_por_pagina: int = Query(20, ge=1, le=100, description="Filas por página"),
+    termino: Optional[str] = Query(None, description="Búsqueda por RUN o nombre"),
+    carrera: Optional[str] = Query(None, description="Filtrar por carrera")
+):
+    """
+    Obtiene estudiantes paginados para la tabla de operaciones masivas.
+    """
+    try:
+        # Calcular offset
+        offset = (pagina - 1) * filas_por_pagina
+        
+        # Obtener estudiantes
+        estudiantes = buscar_estudiantes(
+            termino=termino,
+            carrera=carrera,
+            limite=filas_por_pagina,
+            offset=offset
+        )
+        
+        # Contar total
+        total = contar_estudiantes_filtrados(termino=termino, carrera=carrera)
+        
+        # Calcular total de páginas
+        total_paginas = (total + filas_por_pagina - 1) // filas_por_pagina if total > 0 else 1
+        
+        return {
+            "success": True,
+            "data": {
+                "estudiantes": estudiantes,
+                "paginacion": {
+                    "pagina_actual": pagina,
+                    "filas_por_pagina": filas_por_pagina,
+                    "total_registros": total,
+                    "total_paginas": total_paginas,
+                    "tiene_anterior": pagina > 1,
+                    "tiene_siguiente": pagina < total_paginas
+                }
+            }
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/carreras")
+async def obtener_carreras_endpoint():
+    """Obtiene lista de carreras para el filtro."""
+    try:
+        carreras = obtener_carreras()
+        return {
+            "success": True,
+            "data": carreras
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/generar-memos")
@@ -181,3 +242,115 @@ async def verificar_outlook_endpoint():
             "disponible": False,
             "mensaje": str(e)
         }
+
+
+@router.post("/sincronizar-excel")
+async def sincronizar_excel_endpoint():
+    """
+    Sincroniza datos desde el archivo Excel histórico de Google Drive.
+    Lee el archivo 'G:\\Mi unidad\\SGTE\\alumnos.xlsx' e importa/actualiza
+    estudiantes, proyectos, comisiones y expedientes en la base de datos.
+    
+    Procesa las siguientes hojas:
+    - 2025-2, 2025-1, 2024-2, 2024-1
+    - Carga Consolidada 2025-2, Carga Consolidada 2025-1
+    - Carga Consolidada 2024-2, Carga Consolidada 2024-1
+    """
+    try:
+        # Ejecutar sincronización
+        resultado = sincronizar_excel(usuario="Sistema")
+        
+        # Formatear respuesta
+        mensaje = (
+            f"Sincronización completada: {resultado['hojas_procesadas']} hojas procesadas, "
+            f"{resultado['procesadas']} filas procesadas, {resultado['errores']} errores "
+            f"de {resultado['total_filas']} filas totales"
+        )
+        
+        return {
+            "success": resultado["success"],
+            "data": {
+                "total_filas": resultado["total_filas"],
+                "procesadas": resultado["procesadas"],
+                "errores": resultado["errores"],
+                "hojas_procesadas": resultado.get("hojas_procesadas", 0),
+                "mensaje": mensaje,
+                "detalles": resultado.get("detalles", {})
+            }
+        }
+    except FileNotFoundError as e:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Archivo Excel no encontrado. Verifica que exista en: G:\\Mi unidad\\SGTE\\alumnos.xlsx - {str(e)}"
+        )
+    except Exception as e:
+        import traceback
+        error_detail = f"Error en sincronización: {str(e)}\n\nTraceback:\n{traceback.format_exc()}"
+        raise HTTPException(status_code=500, detail=error_detail)
+
+
+@router.get("/verificar-pdf-splitter")
+async def verificar_pdf_splitter():
+    """Verifica si las dependencias de PDF Splitter están disponibles."""
+    disponible = verificar_pymupdf_disponible()
+    return {
+        "success": True,
+        "disponible": disponible,
+        "mensaje": "PyMuPDF disponible" if disponible else "PyMuPDF no está instalado"
+    }
+
+
+@router.post("/procesar-pdf")
+async def procesar_pdf(pdf: UploadFile = File(...)):
+    """Procesa un PDF masivo y lo divide por estudiante."""
+    try:
+        # Verificar que es PDF
+        if not pdf.filename or not pdf.filename.endswith('.pdf'):
+            raise HTTPException(status_code=400, detail="Solo se aceptan archivos PDF")
+        
+        # Verificar dependencias
+        if not verificar_pymupdf_disponible():
+            raise HTTPException(
+                status_code=500,
+                detail="PyMuPDF no está instalado. Ejecute: pip install pymupdf"
+            )
+        
+        # Leer contenido del PDF
+        contenido = await pdf.read()
+        
+        # Verificar tamaño (200 MB máximo)
+        if len(contenido) > 200 * 1024 * 1024:
+            raise HTTPException(status_code=400, detail="El archivo es demasiado grande (máximo 200 MB)")
+        
+        # Procesar PDF
+        resultado = procesar_pdf_masivo(contenido, callback=None)
+        
+        # Agrupar por estudiante para el resumen
+        estudiantes_dict = {}
+        for detalle in resultado.detalles:
+            if detalle.asignado and detalle.run_detectado:
+                run = detalle.run_detectado
+                if run not in estudiantes_dict:
+                    estudiantes_dict[run] = {
+                        "run": run,
+                        "paginas": [],
+                        "archivo": detalle.ruta_guardado
+                    }
+                estudiantes_dict[run]["paginas"].append(detalle.pagina)
+        
+        return {
+            "success": True,
+            "data": {
+                "total_paginas": resultado.total_paginas,
+                "paginas_asignadas": resultado.paginas_asignadas,
+                "paginas_sin_asignar": resultado.paginas_sin_asignar,
+                "errores": resultado.errores,
+                "tiempo_proceso": resultado.tiempo_proceso,
+                "estudiantes_encontrados": len(estudiantes_dict),
+                "resumen": list(estudiantes_dict.values())
+            }
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

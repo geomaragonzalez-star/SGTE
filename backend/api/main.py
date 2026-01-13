@@ -21,7 +21,7 @@ from config import get_config
 
 # Importar routers - usar path absoluto desde raíz
 # Cuando uvicorn ejecuta backend.api.main, el path raíz ya está en sys.path
-from backend.api.routes import estudiantes, documentos, expedientes, reportes, dashboard, operaciones, pdf_splitter, proyectos
+from backend.api.routes import estudiantes, documentos, expedientes, reportes, dashboard, operaciones, proyectos
 
 # Crear app FastAPI
 app = FastAPI(
@@ -45,7 +45,6 @@ app.include_router(expedientes.router)
 app.include_router(reportes.router)
 app.include_router(dashboard.router)
 app.include_router(operaciones.router)
-app.include_router(pdf_splitter.router)
 app.include_router(proyectos.router)
 
 
@@ -172,7 +171,7 @@ async def proyectos_page(request: Request, q: str = None, carrera: str = None, s
     """Página de gestión de proyectos."""
     try:
         # Llamar a la función de búsqueda directamente (igual que estudiantes)
-        from backend.api.routes.proyectos import buscar_proyectos, obtener_semestres
+        from backend.api.routes.proyectos import buscar_proyectos
         from services.estudiantes import obtener_carreras
         
         proyectos_data = []
@@ -181,10 +180,14 @@ async def proyectos_page(request: Request, q: str = None, carrera: str = None, s
         
         try:
             proyectos_data = buscar_proyectos(termino=q, carrera=carrera)
+            print(f"DEBUG proyectos_page: Se obtuvieron {len(proyectos_data)} proyectos")
+            if proyectos_data:
+                print(f"DEBUG proyectos_page: Primer proyecto: {proyectos_data[0]}")
         except Exception as e:
             import traceback
+            error_trace = traceback.format_exc()
             print(f"ERROR en buscar_proyectos: {e}")
-            print(traceback.format_exc())
+            print(error_trace)
             proyectos_data = []
         
         # Filtrar por semestre
@@ -198,23 +201,31 @@ async def proyectos_page(request: Request, q: str = None, carrera: str = None, s
             print(f"ERROR obteniendo carreras: {e}")
             carreras = []
         
-        # Obtener semestres
+        # Obtener semestres desde la base de datos directamente
         try:
-            semestres_result = await obtener_semestres()
-            if semestres_result and semestres_result.get("success"):
-                semestres = semestres_result.get("data", [])
+            from database import get_session_context, Proyecto
+            with get_session_context() as session:
+                semestres_query = session.query(Proyecto.semestre).distinct().order_by(Proyecto.semestre.desc()).all()
+                semestres = [s[0] for s in semestres_query if s[0]]
         except Exception as e:
+            import traceback
             print(f"ERROR obteniendo semestres: {e}")
+            print(traceback.format_exc())
             semestres = []
+        
+        # Log para debug
+        print(f"DEBUG: proyectos_data tiene {len(proyectos_data)} proyectos")
+        if proyectos_data:
+            print(f"DEBUG: Primer proyecto: {proyectos_data[0]}")
         
         return templates.TemplateResponse(
             "proyectos/lista.html",
             {
                 "request": request,
                 "proyectos": proyectos_data,
-                "query": q,
-                "carrera_filter": carrera,
-                "semestre_filter": semestre,
+                "query": q or "",
+                "carrera_filter": carrera or "",
+                "semestre_filter": semestre or "",
                 "carreras": carreras,
                 "semestres": semestres
             }
@@ -382,10 +393,6 @@ async def operaciones_masivas_page(request: Request):
     )
 
 
-@app.get("/pdf-splitter", response_class=HTMLResponse)
-async def pdf_splitter_page(request: Request):
-    """Página de PDF Splitter."""
-    return templates.TemplateResponse("pdf_splitter/index.html", {"request": request})
 
 
 # ============================================
